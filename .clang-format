@@ -1,0 +1,37 @@
+# Terrahertz clang code format
+# https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+
+BasedOnStyle: LLVM
+IndentWidth: 4
+
+Language: Cpp
+
+# public, proteceted, private
+AccessModifierOffset: -4
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true
+AlwaysBreakTemplateDeclarations: Yes
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass: true
+    AfterControlStatement: true
+    AfterEnum: true
+    AfterFunction: true
+    AfterNamespace: false
+    AfterStruct: true
+    AfterUnion: true
+    AfterExternBlock: true
+    BeforeCatch: true
+    BeforeElse: true
+    SplitEmptyFunction: false
+    SplitEmptyRecord: false
+    SplitEmptyNamespace: false
+BinPackArguments: false
+BinPackParameters: false
+BreakInheritanceList: BeforeColon
+BreakConstructorInitializers: BeforeColon
+ColumnLimit: 120
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+UseTab: Never
