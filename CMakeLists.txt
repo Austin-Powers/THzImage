@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        7476adacf53a5500f23d3d900921f0dd0d124872 # latest 22.09.12
+	GIT_TAG        d5d9541e28af401fe8be5f5f7888146a4399eb28 # latest 22.09.12
 )
 FetchContent_Declare(
 	gsl
@@ -30,9 +30,26 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(gsl)
 if(NOT DEFINED THzCommon)
-	message("THzCommon not found")
+	message("THzCommon not found...")
+	message("Fetching THzCommon")
 	FetchContent_MakeAvailable(THzCommon)
 endif()
+
+add_library(${PROJECT_NAME} STATIC
+	src/common/pixel.cpp
+
+	include/THzImage/common/colorspaceconverter.h
+	include/THzImage/common/pixel.h
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+	${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC
+	Microsoft.GSL::GSL
+	THzCommon
+)
 
 if(THZ_IMAGE_IS_ROOT)
 	# For Windows: Prevent overriding the parent project's compiler/linker settings
