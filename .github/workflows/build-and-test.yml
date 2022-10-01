@@ -1,0 +1,37 @@
+name: build-and-test
+
+on: [push]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_TYPE: Debug
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install GCC-11
+        run: sudo apt install gcc-11 g++-11
+
+      - name: Create Build Environment
+        run: cmake -E make_directory ${{runner.workspace}}/build
+
+      - name: Configure CMake
+        shell: bash
+        working-directory: ${{runner.workspace}}/build
+        env:
+          CXX: /usr/bin/g++-11
+          CC: /usr/bin/gcc-11
+        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_C_FLAGS=--coverage
+
+      - name: Build
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: cmake --build . --config $BUILD_TYPE --target all
+
+      - name: Test
+        working-directory: ${{runner.workspace}}/build
+        shell: bash
+        run: ctest -C $BUILD_TYPE -V

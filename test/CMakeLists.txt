@@ -17,3 +17,5 @@ target_link_libraries(${PROJECTNAME} PUBLIC
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECTNAME})
+
+add_test(NAME ${PROJECTNAME} COMMAND ${PROJECTNAME})
