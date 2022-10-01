@@ -1,5 +1,5 @@
-#ifndef THZ_IMAGE_COLORSPACECONVERTER_H
-#define THZ_IMAGE_COLORSPACECONVERTER_H
+#ifndef THZ_IMAGE_COMMON_COLORSPACECONVERTER_H
+#define THZ_IMAGE_COMMON_COLORSPACECONVERTER_H
 
 #include "THzCommon/math/constants.h"
 
@@ -121,4 +121,4 @@ inline void HSVtoBGR(float const        hue,
 
 } // namespace Terrahertz
 
-#endif THZ_IMAGE_COLORSPACECONVERTER_H
+#endif // !THZ_IMAGE_COMMON_COLORSPACECONVERTER_H
