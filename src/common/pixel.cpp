@@ -87,14 +87,21 @@ BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept
 
 HSVAPixel lerp(HSVAPixel const &a, HSVAPixel const &b, float const t) noexcept
 {
-    HSVAPixel  result = a;
-    auto const ax     = static_cast<float>(std::cos(a.hue));
-    auto const ay     = static_cast<float>(std::sin(a.hue));
-    auto const bx     = static_cast<float>(std::cos(b.hue));
-    auto const by     = static_cast<float>(std::sin(b.hue));
-    auto const rx     = ax + (t * (bx - ax));
-    auto const ry     = ay + (t * (by - ay));
-    result.hue        = atan2f(ry, rx);
+    HSVAPixel result = a;
+#ifdef __GNUC__
+    auto const ax = cosf(a.hue);
+    auto const ay = sinf(a.hue);
+    auto const bx = cosf(b.hue);
+    auto const by = sinf(b.hue);
+#else
+    auto const ax = std::cosf(a.hue);
+    auto const ay = std::sinf(a.hue);
+    auto const bx = std::cosf(b.hue);
+    auto const by = std::sinf(b.hue);
+#endif
+    auto const rx = ax + (t * (bx - ax));
+    auto const ry = ay + (t * (by - ay));
+    result.hue    = atan2f(ry, rx);
     result.saturation += static_cast<uint8_t>(t * (b.saturation - a.saturation));
     result.value += static_cast<uint8_t>(t * (b.value - a.value));
     result.alpha += static_cast<uint8_t>(t * (b.alpha - a.alpha));

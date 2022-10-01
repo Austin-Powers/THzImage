@@ -218,10 +218,17 @@ TEST_F(Common_Pixel, HSVALerp)
         auto const interpolated = lerp(a, b, t);
         auto       expectation  = a;
 
-        auto const ax   = std::cosf(a.hue);
-        auto const ay   = std::sinf(a.hue);
-        auto const bx   = std::cosf(b.hue);
-        auto const by   = std::sinf(b.hue);
+#ifdef __GNUC__
+        auto const ax = cosf(a.hue);
+        auto const ay = sinf(a.hue);
+        auto const bx = cosf(b.hue);
+        auto const by = sinf(b.hue);
+#else
+        auto const ax = std::cosf(a.hue);
+        auto const ay = std::sinf(a.hue);
+        auto const bx = std::cosf(b.hue);
+        auto const by = std::sinf(b.hue);
+#endif
         auto const rx   = ax + (t * (bx - ax));
         auto const ry   = ay + (t * (by - ay));
         expectation.hue = atan2f(ry, rx);
