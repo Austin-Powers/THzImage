@@ -88,7 +88,7 @@ BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept
 HSVAPixel lerp(HSVAPixel const &a, HSVAPixel const &b, float const t) noexcept
 {
     HSVAPixel result = a;
-#ifdef GCC
+#ifdef __GNUC__
     auto const ax = cosf(a.hue);
     auto const ay = sinf(a.hue);
     auto const bx = cosf(b.hue);
