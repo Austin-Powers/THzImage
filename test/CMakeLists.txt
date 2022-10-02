@@ -3,6 +3,7 @@ set(PROJECTNAME THzImage.Tests)
 add_executable(${PROJECTNAME}
 	common/colorspaceconverter.cpp
 	common/image.cpp
+	common/imageView.cpp
 	common/pixel.cpp
 )
 
