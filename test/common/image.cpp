@@ -9,23 +9,34 @@ namespace Terrahertz::UnitTests {
 
 struct Common_Image : public testing::Test
 {
-    using BGRImage = Image<BGRAPixel>;
-    using HSVImage = Image<HSVAPixel>;
+    Rectangle testDimensions{16, 24, 16, 12};
+    BGRAImage sut{};
 };
 
 TEST_F(Common_Image, ImageConstructionCorrect)
 {
-    BGRImage  sut{};
-    Rectangle expectedDimensions{};
+    Rectangle const expectedDimensions{};
     EXPECT_EQ(sut.dimensions(), expectedDimensions);
 }
 
 TEST_F(Common_Image, SetDimensions)
 {
-    BGRImage  sut{};
-    Rectangle newDimensions{12, 24, 100, 200};
-    EXPECT_TRUE(sut.setDimensions(newDimensions));
-    EXPECT_EQ(sut.dimensions(), newDimensions);
+    EXPECT_TRUE(sut.setDimensions(testDimensions));
+    EXPECT_EQ(sut.dimensions(), testDimensions);
+}
+
+TEST_F(Common_Image, IndexAccess)
+{
+    EXPECT_TRUE(sut.setDimensions(testDimensions));
+    BGRAPixel const expectedDefaultColor{};
+    for (auto i = 0U; i < sut.dimensions().area(); ++i)
+    {
+        EXPECT_EQ(sut[i], expectedDefaultColor);
+    }
+
+    BGRAPixel const testColor{12U, 16U, 20U, 24U};
+    sut[4U] = testColor;
+    EXPECT_EQ(sut[4U], testColor);
 }
 
 } // namespace Terrahertz::UnitTests
