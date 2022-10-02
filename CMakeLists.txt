@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 
 	include/THzImage/common/colorspaceconverter.h
+	include/THzImage/common/image.h
 	include/THzImage/common/pixel.h
 )
 
