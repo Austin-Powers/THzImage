@@ -6,12 +6,17 @@
 #include <array>
 #include <cstdint>
 #include <gtest/gtest.h>
+#include <iterator>
 
 namespace Terrahertz::UnitTests {
 
 struct Common_ImageView : public testing::Test
 {
     using BGRAView = ImageView<BGRAPixel>;
+    using HSVAView = ImageView<HSVAPixel>;
+
+    // static_assert(std::weakly_incrementable<BGRAView>, "ImageView<BGRAPixel> is not weakly_incrementable");
+    // static_assert(std::weakly_incrementable<HSVAView>, "ImageView<HSVAPixel> is not weakly_incrementable");
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -31,6 +36,7 @@ TEST_F(Common_ImageView, DefaultConstruction)
     EXPECT_EQ(view.imageDimensions(), Rectangle{});
     EXPECT_EQ(view.region(), Rectangle{});
     EXPECT_EQ(view.currentPosition(), Point{});
+    EXPECT_EQ(view.operator->(), nullptr);
 }
 
 TEST_F(Common_ImageView, Construction)
@@ -38,7 +44,10 @@ TEST_F(Common_ImageView, Construction)
     EXPECT_EQ(sut.basePointer(), imageBuffer.data());
     EXPECT_EQ(sut.imageDimensions(), dimensions);
     EXPECT_EQ(sut.region(), region);
-    EXPECT_EQ(sut.currentPosition(), Point{});
+    EXPECT_EQ(sut.currentPosition(), region.upperLeftPoint);
+    auto const pos = region.upperLeftPoint.x + (region.upperLeftPoint.y * dimensions.width);
+    EXPECT_EQ(sut.operator->(), (imageBuffer.data() + pos));
+    EXPECT_EQ(&(*sut), (imageBuffer.data() + pos));
 }
 
 TEST_F(Common_ImageView, ConstructionWidthUpperLeftPointInDimensions)

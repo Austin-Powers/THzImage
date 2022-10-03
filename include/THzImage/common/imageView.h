@@ -46,6 +46,7 @@ public:
     {
         _imageDimensions.upperLeftPoint = {};
         _region.upperLeftPoint          = {};
+        reset();
     }
 
     /// @brief Initializes a new ImageView using the given values.
@@ -59,6 +60,15 @@ public:
         _imageDimensions.upperLeftPoint = {};
 
         _region = _imageDimensions.intersection(region);
+        reset();
+    }
+
+    /// @brief Reset the location of this view to theupper left corner of its region.
+    void reset() noexcept
+    {
+        _currentPosition = _region.upperLeftPoint;
+        _currentPointer =
+            _basePointer + (static_cast<ptrdiff_t>(_currentPosition.y) * _imageDimensions.width) + _currentPosition.x;
     }
 
     /// @brief Creates a sub view of this image view by intersecting the region with the given subRegion.
@@ -70,6 +80,18 @@ public:
         return ImageView{_basePointer, _imageDimensions, _region.intersection(subRegion)};
     }
 
+    // operators
+    /// @brief Returns a pointer to the current location in the image buffer.
+    ///
+    /// @return A pointer to the current location in the image buffer.
+    pointer operator->() const noexcept { return _currentPointer; }
+
+    /// @brief Returns a reference to the current location in the image buffer.
+    ///
+    /// @return A reference to the current location in the image buffer.
+    reference operator*() const noexcept { return *_currentPointer; }
+
+    // getters
     /// @brief Returns the pointer to the start of the image buffer.
     ///
     /// @return The pointer to the base image.
@@ -99,6 +121,9 @@ private:
 
     /// @brief The region of the view.
     Rectangle _region{};
+
+    /// @brief The pointer to the current location in the image buffer.
+    pointer _currentPointer{};
 
     /// @brief The current position of the view.
     Point _currentPosition{};
