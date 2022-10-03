@@ -53,13 +53,25 @@ TEST_F(Common_ImageView, ConstructionWidthUpperLeftPointInDimensions)
 TEST_F(Common_ImageView, ConstructionWithRegionOutsideImageDimensions)
 {
     Rectangle const dimensions{-2, 2, 20U, 20U};
-    for (auto i = -23; i < 40; ++i)
+    for (auto i = -23; i < 20; ++i)
     {
         Rectangle const region{i, i, 22U, 22U};
         BGRAView const  view{imageBuffer.data(), dimensions, region};
         Rectangle const expectation{0, 0, 20U, 20U};
         EXPECT_EQ(view.imageDimensions(), expectation);
         EXPECT_EQ(view.region(), expectation.intersection(region));
+    }
+}
+
+TEST_F(Common_ImageView, SubView)
+{
+    for (auto i = -20; i < 20; ++i)
+    {
+        Rectangle const subRegion{i, i, 15U, 8U};
+
+        auto const subView     = sut.subView(subRegion);
+        auto const expectation = sut.region().intersection(subRegion);
+        EXPECT_EQ(subView.region(), expectation);
     }
 }
 

@@ -4,6 +4,7 @@
 #include "THzCommon/math/point.h"
 #include "THzCommon/math/rectangle.h"
 
+#include <cstddef>
 #include <type_traits>
 
 namespace Terrahertz {
@@ -58,6 +59,15 @@ public:
         _imageDimensions.upperLeftPoint = {};
 
         _region = _imageDimensions.intersection(region);
+    }
+
+    /// @brief Creates a sub view of this image view by intersecting the region with the given subRegion.
+    ///
+    /// @param subRegion The region to intersect with the region of this view.
+    /// @return The sub view.
+    ImageView subView(Rectangle const subRegion) const noexcept
+    {
+        return ImageView{_basePointer, _imageDimensions, _region.intersection(subRegion)};
     }
 
     /// @brief Returns the pointer to the start of the image buffer.
