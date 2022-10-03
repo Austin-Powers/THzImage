@@ -12,7 +12,6 @@ namespace Terrahertz::UnitTests {
 struct Common_ImageView : public testing::Test
 {
     using BGRAView = ImageView<BGRAPixel>;
-    using HSVAView = ImageView<HSVAPixel>;
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -22,12 +21,12 @@ struct Common_ImageView : public testing::Test
 
     std::array<BGRAPixel, width * height> imageBuffer{};
 
-    ImageView<BGRAPixel> sut{imageBuffer.data(), dimensions, region};
+    BGRAView sut{imageBuffer.data(), dimensions, region};
 };
 
 TEST_F(Common_ImageView, DefaultConstruction)
 {
-    ImageView<BGRAPixel> view{};
+    BGRAView view{};
     EXPECT_EQ(view.basePointer(), nullptr);
     EXPECT_EQ(view.imageDimensions(), Rectangle{});
     EXPECT_EQ(view.region(), Rectangle{});
@@ -40,6 +39,28 @@ TEST_F(Common_ImageView, Construction)
     EXPECT_EQ(sut.imageDimensions(), dimensions);
     EXPECT_EQ(sut.region(), region);
     EXPECT_EQ(sut.currentPosition(), Point{});
+}
+
+TEST_F(Common_ImageView, ConstructionWidthUpperLeftPointInDimensions)
+{
+    Rectangle const dimensions{-2, 2, 20U, 20U};
+    BGRAView const  view{imageBuffer.data(), dimensions};
+    Rectangle const expectation{0, 0, 20U, 20U};
+    EXPECT_EQ(view.imageDimensions(), expectation);
+    EXPECT_EQ(view.region(), expectation);
+}
+
+TEST_F(Common_ImageView, ConstructionWithRegionOutsideImageDimensions)
+{
+    Rectangle const dimensions{-2, 2, 20U, 20U};
+    for (auto i = -23; i < 40; ++i)
+    {
+        Rectangle const region{i, i, 22U, 22U};
+        BGRAView const  view{imageBuffer.data(), dimensions, region};
+        Rectangle const expectation{0, 0, 20U, 20U};
+        EXPECT_EQ(view.imageDimensions(), expectation);
+        EXPECT_EQ(view.region(), expectation.intersection(region));
+    }
 }
 
 } // namespace Terrahertz::UnitTests
