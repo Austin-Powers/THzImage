@@ -5,6 +5,7 @@
 
 #include <array>
 #include <cstdint>
+#include <gsl/gsl>
 #include <gtest/gtest.h>
 #include <iterator>
 
@@ -15,8 +16,8 @@ struct Common_ImageView : public testing::Test
     using BGRAView = ImageView<BGRAPixel>;
     using HSVAView = ImageView<HSVAPixel>;
 
-    // static_assert(std::weakly_incrementable<BGRAView>, "ImageView<BGRAPixel> is not weakly_incrementable");
-    // static_assert(std::weakly_incrementable<HSVAView>, "ImageView<HSVAPixel> is not weakly_incrementable");
+    static_assert(std::weakly_incrementable<BGRAView>, "ImageView<BGRAPixel> is not weakly_incrementable");
+    static_assert(std::weakly_incrementable<HSVAView>, "ImageView<HSVAPixel> is not weakly_incrementable");
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -81,6 +82,32 @@ TEST_F(Common_ImageView, SubView)
         auto const subView     = sut.subView(subRegion);
         auto const expectation = sut.region().intersection(subRegion);
         EXPECT_EQ(subView.region(), expectation);
+    }
+}
+
+TEST_F(Common_ImageView, Increment)
+{
+    auto const compareViews = [](BGRAView const &a, BGRAView const &b) {
+        ASSERT_EQ(a.currentPosition(), b.currentPosition());
+        ASSERT_EQ(a.operator->(), b.operator->());
+    };
+
+    auto sut2 = sut;
+    for (auto y = 0U; y < region.height; ++y)
+    {
+        for (auto x = 0U; x < region.width; ++x)
+        {
+            Point const expectedPosition{gsl::narrow_cast<std::int32_t>(region.upperLeftPoint.x + x),
+                                         gsl::narrow_cast<std::int32_t>(region.upperLeftPoint.y + y)};
+            ASSERT_EQ(sut.currentPosition(), expectedPosition);
+            auto const pos = expectedPosition.x + (expectedPosition.y * dimensions.width);
+            ASSERT_EQ(&(*sut), imageBuffer.data() + pos);
+
+            auto const before = sut2;
+            compareViews(sut2++, before);
+            ASSERT_EQ(&(++sut), &sut);
+            compareViews(sut, sut2);
+        }
     }
 }
 

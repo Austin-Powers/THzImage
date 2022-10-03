@@ -75,7 +75,7 @@ public:
     ///
     /// @param subRegion The region to intersect with the region of this view.
     /// @return The sub view.
-    ImageView subView(Rectangle const subRegion) const noexcept
+    [[nodiscard]] ImageView subView(Rectangle const subRegion) const noexcept
     {
         return ImageView{_basePointer, _imageDimensions, _region.intersection(subRegion)};
     }
@@ -84,33 +84,59 @@ public:
     /// @brief Returns a pointer to the current location in the image buffer.
     ///
     /// @return A pointer to the current location in the image buffer.
-    pointer operator->() const noexcept { return _currentPointer; }
+    [[nodiscard]] pointer operator->() const noexcept { return _currentPointer; }
 
     /// @brief Returns a reference to the current location in the image buffer.
     ///
     /// @return A reference to the current location in the image buffer.
-    reference operator*() const noexcept { return *_currentPointer; }
+    [[nodiscard]] reference operator*() const noexcept { return *_currentPointer; }
+
+    /// @brief Increments the position of the image view inside its region in the image buffer.
+    ///
+    /// @return The reference to the image view.
+    ImageView &operator++() noexcept
+    {
+        ++_currentPosition.x;
+        ++_currentPointer;
+        if (_currentPosition.x == _region.upperLeftPoint.x + _region.width)
+        {
+            _currentPointer += (_imageDimensions.width - _region.width);
+            _currentPosition.x = _region.upperLeftPoint.x;
+            ++_currentPosition.y;
+        }
+        return *this;
+    }
+
+    /// @brief Increments the position of the ImageView inside its zone in the image buffer.
+    ///
+    /// @return A copy of the image view before incrementing.
+    ImageView operator++(int) noexcept
+    {
+        ImageView temp = *this;
+        ++*this;
+        return temp;
+    }
 
     // getters
     /// @brief Returns the pointer to the start of the image buffer.
     ///
     /// @return The pointer to the base image.
-    pointer basePointer() const noexcept { return _basePointer; }
+    [[nodiscard]] pointer basePointer() const noexcept { return _basePointer; }
 
     /// @brief Returns the dimensions of the base image.
     ///
     /// @return The dimensions of the base image.
-    Rectangle const &imageDimensions() const noexcept { return _imageDimensions; }
+    [[nodiscard]] Rectangle const &imageDimensions() const noexcept { return _imageDimensions; }
 
     /// @brief Returns the region of the view.
     ///
     /// @return The region of the view.
-    Rectangle const &region() const noexcept { return _region; }
+    [[nodiscard]] Rectangle const &region() const noexcept { return _region; }
 
     /// @brief Returns the current position of the view.
     ///
     /// @return The current position of the view.
-    Point const &currentPosition() const noexcept { return _currentPosition; }
+    [[nodiscard]] Point const &currentPosition() const noexcept { return _currentPosition; }
 
 private:
     /// @brief The pointer to the start of the image buffer.
