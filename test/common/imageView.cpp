@@ -18,8 +18,12 @@ struct Common_ImageView : public testing::Test
 
     static_assert(std::bidirectional_iterator<BGRAView>, "ImageView<BGRAPixel> is not a bidirectional_iterator");
     static_assert(std::bidirectional_iterator<HSVAView>, "ImageView<HSVAPixel> is not a bidirectional_iterator");
-    static_assert(std::forward_iterator<BGRAView>, "ImageView<BGRAPixel> is not a forward_iterator");
-    static_assert(std::forward_iterator<HSVAView>, "ImageView<HSVAPixel> is not a forward_iterator");
+    static_assert(std::totally_ordered<BGRAView>, "ImageView<BGRAPixel> is not totally_ordered");
+    static_assert(std::totally_ordered<HSVAView>, "ImageView<HSVAPixel> is not totally_ordered");
+    // static_assert(std::sized_sentinel_for<BGRAView, BGRAView>,
+    //               "ImageView<BGRAPixel> is not sized_sentinel_for BRGAView");
+    // static_assert(std::sized_sentinel_for<HSVAView, HSVAView>,
+    //               "ImageView<HSVAPixel> is not sized_sentinel_for HSVAView");
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -127,10 +131,21 @@ TEST_F(Common_ImageView, Reset)
 TEST_F(Common_ImageView, ComparissonOperators)
 {
     EXPECT_EQ(sut, sut);
+    EXPECT_GE(sut, sut);
+    EXPECT_LE(sut, sut);
+
     auto const sutCopy = sut;
     EXPECT_EQ(sutCopy, sut);
+    EXPECT_GE(sutCopy, sut);
+    EXPECT_LE(sutCopy, sut);
+
     ++sut;
     EXPECT_NE(sutCopy, sut);
+    EXPECT_LE(sutCopy, sut);
+    EXPECT_LT(sutCopy, sut);
+    EXPECT_GT(sut, sutCopy);
+    EXPECT_GE(sut, sutCopy);
+    EXPECT_NE(sut, sutCopy);
 }
 
 TEST_F(Common_ImageView, EndReturnsCorrectResult)

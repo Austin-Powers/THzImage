@@ -5,6 +5,7 @@
 #include "THzCommon/math/rectangle.h"
 
 #include <cstddef>
+#include <iterator>
 #include <type_traits>
 
 namespace Terrahertz {
@@ -16,6 +17,9 @@ template <typename TValueType>
 class ImageView
 {
 public:
+    /// @brief The type of this iterator.
+    using iterator_category = std::random_access_iterator_tag;
+
     /// @brief The value type of the view.
     using value_type = TValueType;
 
@@ -114,10 +118,46 @@ public:
     /// @brief Compares this view to another view.
     ///
     /// @param other The other view to compare this one to.
-    /// @return True if this view points to the same pixel as other, false otherwise.
+    /// @return False if this view points to the same pixel as other, true otherwise.
     [[nodiscard]] bool operator!=(ImageView const &other) const noexcept
     {
         return _currentPointer != other._currentPointer;
+    }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to a pixel with a lower memory address than the other view, false otherwise.
+    [[nodiscard]] bool operator<(ImageView const &other) const noexcept
+    {
+        return _currentPointer < other._currentPointer;
+    }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to a pixel with a higher memory address than the other view, false otherwise.
+    [[nodiscard]] bool operator>(ImageView const &other) const noexcept
+    {
+        return _currentPointer > other._currentPointer;
+    }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to a pixel with a lower memory address than the other view, false otherwise.
+    [[nodiscard]] bool operator<=(ImageView const &other) const noexcept
+    {
+        return _currentPointer <= other._currentPointer;
+    }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to a pixel with a higher memory address than the other view, false otherwise.
+    [[nodiscard]] bool operator>=(ImageView const &other) const noexcept
+    {
+        return _currentPointer >= other._currentPointer;
     }
 
     /// @brief Increments the position of the image view inside its region in the image buffer.
