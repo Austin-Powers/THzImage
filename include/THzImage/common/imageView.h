@@ -80,6 +80,17 @@ public:
         return ImageView{_basePointer, _imageDimensions, _region.intersection(subRegion)};
     }
 
+    /// @brief Returns a copy of this view that already reached the end.
+    ///
+    /// @return A copy of this view that already is at the first pixel after the regoin.
+    ImageView end() const noexcept
+    {
+        ImageView view{_basePointer, _imageDimensions, _region};
+        view._currentPointer += (_imageDimensions.width * _region.height);
+        view._currentPosition.y += view._region.height;
+        return view;
+    }
+
     // operators
     /// @brief Returns a pointer to the current location in the image buffer.
     ///
@@ -90,6 +101,24 @@ public:
     ///
     /// @return A reference to the current location in the image buffer.
     [[nodiscard]] reference operator*() const noexcept { return *_currentPointer; }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to the same pixel as other, false otherwise.
+    [[nodiscard]] bool operator==(ImageView const &other) const noexcept
+    {
+        return _currentPointer == other._currentPointer;
+    }
+
+    /// @brief Compares this view to another view.
+    ///
+    /// @param other The other view to compare this one to.
+    /// @return True if this view points to the same pixel as other, false otherwise.
+    [[nodiscard]] bool operator!=(ImageView const &other) const noexcept
+    {
+        return _currentPointer != other._currentPointer;
+    }
 
     /// @brief Increments the position of the image view inside its region in the image buffer.
     ///

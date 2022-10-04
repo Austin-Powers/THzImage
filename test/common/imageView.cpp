@@ -111,4 +111,43 @@ TEST_F(Common_ImageView, Increment)
     }
 }
 
+TEST_F(Common_ImageView, Reset)
+{
+    auto const start = sut;
+    ++sut;
+    ++sut;
+    ++sut;
+    sut.reset();
+    EXPECT_EQ(start.currentPosition(), sut.currentPosition());
+    EXPECT_EQ(start.operator->(), sut.operator->());
+}
+
+TEST_F(Common_ImageView, ComparissonOperators)
+{
+    EXPECT_EQ(sut, sut);
+    auto const sutCopy = sut;
+    EXPECT_EQ(sutCopy, sut);
+    ++sut;
+    EXPECT_NE(sutCopy, sut);
+}
+
+TEST_F(Common_ImageView, EndReturnsCorrectResult)
+{
+    auto       count = 0U;
+    auto const end   = sut.end();
+    while (sut != end)
+    {
+        ++count;
+        ++sut;
+
+        if (count > (sut.region().area() * 2U))
+        {
+            // abort if we ran clearly beyond the region
+            FAIL();
+        }
+    }
+    EXPECT_EQ(count, sut.region().area());
+    EXPECT_EQ(sut.currentPosition(), end.currentPosition());
+}
+
 } // namespace Terrahertz::UnitTests
