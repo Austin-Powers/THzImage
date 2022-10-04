@@ -146,6 +146,32 @@ public:
         return temp;
     }
 
+    /// @brief Decrements the position of the image view inside its region in the image buffer.
+    ///
+    /// @return The reference to the image view.
+    ImageView &operator--() noexcept
+    {
+        --_currentPosition.x;
+        --_currentPointer;
+        if (_currentPosition.x == _region.upperLeftPoint.x - 1)
+        {
+            _currentPointer -= (_imageDimensions.width - _region.width);
+            _currentPosition.x += _region.width;
+            --_currentPosition.y;
+        }
+        return *this;
+    }
+
+    /// @brief Decrements the position of the ImageView inside its zone in the image buffer.
+    ///
+    /// @return A copy of the image view before incrementing.
+    ImageView operator--(int) noexcept
+    {
+        ImageView temp = *this;
+        --*this;
+        return temp;
+    }
+
     // getters
     /// @brief Returns the pointer to the start of the image buffer.
     ///

@@ -16,8 +16,10 @@ struct Common_ImageView : public testing::Test
     using BGRAView = ImageView<BGRAPixel>;
     using HSVAView = ImageView<HSVAPixel>;
 
-    static_assert(std::weakly_incrementable<BGRAView>, "ImageView<BGRAPixel> is not weakly_incrementable");
-    static_assert(std::weakly_incrementable<HSVAView>, "ImageView<HSVAPixel> is not weakly_incrementable");
+    static_assert(std::bidirectional_iterator<BGRAView>, "ImageView<BGRAPixel> is not a bidirectional_iterator");
+    static_assert(std::bidirectional_iterator<HSVAView>, "ImageView<HSVAPixel> is not a bidirectional_iterator");
+    static_assert(std::forward_iterator<BGRAView>, "ImageView<BGRAPixel> is not a forward_iterator");
+    static_assert(std::forward_iterator<HSVAView>, "ImageView<HSVAPixel> is not a forward_iterator");
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -148,6 +150,33 @@ TEST_F(Common_ImageView, EndReturnsCorrectResult)
     }
     EXPECT_EQ(count, sut.region().area());
     EXPECT_EQ(sut.currentPosition(), end.currentPosition());
+}
+
+TEST_F(Common_ImageView, Decrement)
+{
+    auto const compareViews = [](BGRAView const &a, BGRAView const &b) {
+        ASSERT_EQ(a.currentPosition(), b.currentPosition());
+        ASSERT_EQ(a.operator->(), b.operator->());
+    };
+
+    auto postDec = sut.end();
+    auto preDec  = sut.end();
+    for (auto y = region.height - 1U; y < region.height; --y)
+    {
+        for (auto x = region.width - 1U; x < region.width; --x)
+        {
+            auto const before = postDec;
+            compareViews(postDec--, before);
+            ASSERT_EQ(&(--preDec), &preDec);
+            compareViews(preDec, postDec);
+
+            Point const expectedPosition{gsl::narrow_cast<std::int32_t>(region.upperLeftPoint.x + x),
+                                         gsl::narrow_cast<std::int32_t>(region.upperLeftPoint.y + y)};
+            ASSERT_EQ(preDec.currentPosition(), expectedPosition);
+            auto const pos = expectedPosition.x + (expectedPosition.y * dimensions.width);
+            ASSERT_EQ(&(*preDec), imageBuffer.data() + pos);
+        }
+    }
 }
 
 } // namespace Terrahertz::UnitTests
