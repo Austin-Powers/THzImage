@@ -123,7 +123,7 @@ TEST_F(Common_ImageView, Reset)
     ++sut;
     ++sut;
     ++sut;
-    sut.reset();
+    EXPECT_TRUE(sut.reset());
     EXPECT_EQ(start.currentPosition(), sut.currentPosition());
     EXPECT_EQ(start.operator->(), sut.operator->());
 }
@@ -193,5 +193,7 @@ TEST_F(Common_ImageView, Decrement)
         }
     }
 }
+
+TEST_F(Common_ImageView, ImageTransformerImplementation) {}
 
 } // namespace Terrahertz::UnitTests

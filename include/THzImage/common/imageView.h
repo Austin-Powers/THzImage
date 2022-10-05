@@ -3,6 +3,7 @@
 
 #include "THzCommon/math/point.h"
 #include "THzCommon/math/rectangle.h"
+#include "iImageTransformer.h"
 
 #include <cstddef>
 #include <iterator>
@@ -14,7 +15,7 @@ namespace Terrahertz {
 ///
 /// @tparam TValueType The type of pixel value for this view.
 template <typename TValueType>
-class ImageView
+class ImageView : public IImageTransformer<TValueType>
 {
 public:
     /// @brief The type of this iterator.
@@ -68,11 +69,46 @@ public:
     }
 
     /// @brief Reset the location of this view to theupper left corner of its region.
-    void reset() noexcept
+    bool reset() noexcept override
     {
         _currentPosition = _region.upperLeftPoint;
         _currentPointer =
             _basePointer + (static_cast<ptrdiff_t>(_currentPosition.y) * _imageDimensions.width) + _currentPosition.x;
+        _endPointer = _currentPointer + (_imageDimensions.width * _region.height);
+        return true;
+    }
+
+    /// @brief Returns the dimensions of the image the transformation results in.
+    ///
+    /// @return The dimensions of the image the transformation results in.
+    Rectangle dimensions() const noexcept override
+    {
+        auto dim           = _region;
+        dim.upperLeftPoint = {};
+        return dim;
+    }
+
+    /// @brief Transform the next pixel from the underlying image.
+    ///
+    /// @param pixel Output: The pixel of the result image.
+    /// @return True of there are still more pixels, false otherwise.
+    bool transform(TValueType &pixel) noexcept override
+    {
+        pixel = *_currentPointer;
+        return skip();
+    }
+
+    /// @brief Skips to the next pixel.
+    ///
+    /// @return True if there are still more pixels, false otherwise.
+    bool skip() noexcept override
+    {
+        if (_currentPointer != _endPointer)
+        {
+            return false;
+        }
+        ++(*this);
+        return _currentPointer != _endPointer;
     }
 
     /// @brief Creates a sub view of this image view by intersecting the region with the given subRegion.
@@ -248,6 +284,9 @@ private:
 
     /// @brief The current position of the view.
     Point _currentPosition{};
+
+    /// @brief Pointer to the first pixel after the region of this view.
+    pointer _endPointer{};
 };
 
 } // namespace Terrahertz
