@@ -39,9 +39,11 @@ add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 
 	include/THzImage/common/colorspaceconverter.h
+	include/THzImage/common/iImageTransformer.h
 	include/THzImage/common/image.h
     include/THzImage/common/imageView.h
-	include/THzImage/common/pixel.h)
+	include/THzImage/common/pixel.h
+)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
