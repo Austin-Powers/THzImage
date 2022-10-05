@@ -39,4 +39,27 @@ TEST_F(Common_Image, IndexAccess)
     EXPECT_EQ(sut[4U], testColor);
 }
 
+TEST_F(Common_Image, CreateViewOfEntireImage)
+{
+    EXPECT_TRUE(sut.setDimensions(testDimensions));
+    auto const view = sut.view();
+    EXPECT_EQ(view.basePointer(), &sut[0U]);
+    testDimensions.upperLeftPoint.x = 0U;
+    testDimensions.upperLeftPoint.y = 0U;
+    EXPECT_EQ(view.imageDimensions(), testDimensions);
+    EXPECT_EQ(view.region(), testDimensions);
+}
+
+TEST_F(Common_Image, CreateViewOfImageRegion)
+{
+    EXPECT_TRUE(sut.setDimensions(testDimensions));
+    Rectangle const region{2, 2, 4U, 4U};
+    auto const      view = sut.view(region);
+    EXPECT_EQ(view.basePointer(), &sut[0U]);
+    testDimensions.upperLeftPoint.x = 0U;
+    testDimensions.upperLeftPoint.y = 0U;
+    EXPECT_EQ(view.imageDimensions(), testDimensions);
+    EXPECT_EQ(view.region(), region);
+}
+
 } // namespace Terrahertz::UnitTests

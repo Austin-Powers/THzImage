@@ -2,6 +2,7 @@
 #define THZ_IMAGE_COMMON_IMAGE_H
 
 #include "THzCommon/math/rectangle.h"
+#include "imageView.h"
 #include "pixel.h"
 
 #include <cstddef>
@@ -66,6 +67,37 @@ public:
     /// @param index The index of the pixel to return.
     /// @return The pixel at the given index.
     [[nodiscard]] const_reference operator[](size_type index) const noexcept { return _data[index]; }
+
+    /// @brief Returns a view of the entire image.
+    ///
+    /// @return A view of the entire image.
+    [[nodiscard]] ImageView<TPixelType> view() noexcept { return ImageView<TPixelType>{_data.data(), _dimensions}; }
+
+    /// @brief Returns a view of the entire image.
+    ///
+    /// @return A view of the entire image.
+    [[nodiscard]] ImageView<TPixelType const> view() const noexcept
+    {
+        return ImageView<TPixelType const>{_data.data(), _dimensions};
+    }
+
+    /// @brief Returns a view of the given region of the image.
+    ///
+    /// @param region The region of the image to create the view of.
+    /// @return A view of the region of the image.
+    [[nodiscard]] ImageView<TPixelType> view(Rectangle const &region) noexcept
+    {
+        return ImageView<TPixelType>{_data.data(), _dimensions, region};
+    }
+
+    /// @brief Returns a view of the given region of the image.
+    ///
+    /// @param region The region of the image to create the view of.
+    /// @return A view of the region of the image.
+    [[nodiscard]] ImageView<TPixelType const> view(Rectangle const &region) const noexcept
+    {
+        return ImageView<TPixelType const>{_data.data(), _dimensions, region};
+    }
 
 private:
     /// @brief The dimensions of the image.
