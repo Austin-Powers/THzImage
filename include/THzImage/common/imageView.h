@@ -103,7 +103,7 @@ public:
     /// @return True if there are still more pixels, false otherwise.
     bool skip() noexcept override
     {
-        if (_currentPointer != _endPointer)
+        if (_currentPointer == _endPointer)
         {
             return false;
         }

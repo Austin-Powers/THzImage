@@ -194,6 +194,41 @@ TEST_F(Common_ImageView, Decrement)
     }
 }
 
-TEST_F(Common_ImageView, ImageTransformerImplementation) {}
+TEST_F(Common_ImageView, ImageTransformerImplementation)
+{
+    Rectangle const expectedDimensions{0, 0, region.width, region.height};
+    EXPECT_EQ(sut.dimensions(), expectedDimensions);
+    auto count = 0U;
+    sut->blue  = count;
+    while (sut.skip())
+    {
+        ++count;
+        sut->blue = count;
+        if (count > expectedDimensions.area() * 2U)
+        {
+            FAIL();
+        }
+    }
+    EXPECT_EQ(count, expectedDimensions.area() - 1U);
+
+    count = 0U;
+    sut.reset();
+    for (auto i = 0U; i < 60U; ++i)
+    {
+        BGRAPixel expectation{};
+        expectation.blue = i;
+        BGRAPixel  pixel{};
+        auto const res = sut.transform(pixel);
+        EXPECT_EQ(expectation, pixel);
+        if (i < 59U)
+        {
+            EXPECT_TRUE(res);
+        }
+        else
+        {
+            EXPECT_FALSE(res);
+        }
+    }
+}
 
 } // namespace Terrahertz::UnitTests
