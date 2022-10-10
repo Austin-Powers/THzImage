@@ -158,4 +158,29 @@ TEST_F(Common_Image, ReadReadTrue)
     EXPECT_TRUE(sut.read(&reader));
 }
 
+TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
+{
+    // As gmock has problems creating a MATCHER once templates get involved we do this by hand
+    struct MyMockReader : public IImageReader<BGRAPixel>
+    {
+        Rectangle dim{0, 0, 4U, 4U};
+        bool      multipleImages() const noexcept override { return true; }
+
+        bool init() noexcept override { return true; }
+
+        Rectangle dimensions() const noexcept override { return dim; }
+
+        bool read(gsl::span<BGRAPixel> buffer) noexcept override
+        {
+            EXPECT_EQ(dim.area(), buffer.size());
+            return true;
+        }
+
+        void deinit() noexcept override {}
+    };
+
+    MyMockReader reader{};
+    EXPECT_TRUE(sut.read(&reader));
+}
+
 } // namespace Terrahertz::UnitTests
