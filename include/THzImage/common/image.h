@@ -6,6 +6,7 @@
 #include "THzCommon/utility/spanhelpers.h"
 #include "iImageReader.h"
 #include "iImageTransformer.h"
+#include "iImageWriter.h"
 #include "imageView.h"
 #include "pixel.h"
 
@@ -158,6 +159,7 @@ public:
     {
         if (reader == nullptr)
         {
+            logMessage<LogLevel::Error, ImageProject>("Given reader was nullptr");
             return false;
         }
         if (!reader->init())
@@ -174,11 +176,41 @@ public:
         }
         else if (!reader->read(toSpan<TPixelType>(_data)))
         {
-            logMessage<LogLevel::Error, ImageProject>("Image: Reading failed");
+            logMessage<LogLevel::Error, ImageProject>("Reading failed");
             result = false;
         }
 
         reader->deinit();
+        return result;
+    }
+
+    /// @brief Writes the image to the given writer.
+    ///
+    /// @param writer The writer to write the image data to.
+    /// @return True if the image was successfully written, false otherwise.
+    [[nodiscard]] bool write(IImageWriter<TPixelType> *writer) const noexcept
+    {
+        if (writer == nullptr)
+        {
+            logMessage<LogLevel::Error, ImageProject>("Given writer was nullptr");
+            return false;
+        }
+        if (_dimensions.area() == 0)
+        {
+            logMessage<LogLevel::Error, ImageProject>("Image has no data");
+            return false;
+        }
+        if (!writer->init())
+        {
+            logMessage<LogLevel::Error, ImageProject>("Init of writer failed");
+            return false;
+        }
+        auto const result = writer->write(_dimensions, toSpan<TPixelType const>(_data));
+        if (!result)
+        {
+            logMessage<LogLevel::Error, ImageProject>("Writing failed");
+        }
+        writer->deinit();
         return result;
     }
 

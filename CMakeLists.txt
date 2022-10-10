@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        7654285937c9e109ecb06dcb7656bf45d08b9501 # latest 01.10.12
+	GIT_TAG        65f6985f0d7d17d2522d9ece6e3649693d2ca60a # latest 10.10.22
 )
 FetchContent_Declare(
 	gsl
@@ -44,7 +44,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/common/image.h
     include/THzImage/common/imageView.h
 	include/THzImage/common/pixel.h
-)
+ "include/THzImage/common/iImageWriter.h")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include

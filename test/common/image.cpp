@@ -3,6 +3,7 @@
 #include "THzCommon/math/rectangle.h"
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/iImageTransformer.h"
+#include "THzImage/common/iImageWriter.h"
 #include "THzImage/common/pixel.h"
 
 #include <gmock/gmock.h>
@@ -28,6 +29,17 @@ struct Common_Image : public testing::Test
         MOCK_METHOD(bool, init, (), (noexcept, override));
         MOCK_METHOD(Rectangle, dimensions, (), (const, noexcept, override));
         MOCK_METHOD(bool, read, (gsl::span<BGRAPixel> buffer), (noexcept, override));
+        MOCK_METHOD(void, deinit, (), (noexcept, override));
+    };
+
+    class MockWriter : public IImageWriter<BGRAPixel>
+    {
+    public:
+        MOCK_METHOD(bool, init, (), (noexcept, override));
+        MOCK_METHOD(bool,
+                    write,
+                    (Rectangle const &dimensions, gsl::span<BGRAPixel const> const buffer),
+                    (noexcept, override));
         MOCK_METHOD(void, deinit, (), (noexcept, override));
     };
 
@@ -181,6 +193,71 @@ TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
 
     MyMockReader reader{};
     EXPECT_TRUE(sut.read(&reader));
+}
+
+TEST_F(Common_Image, WriteGivenNullptr) { EXPECT_FALSE(sut.write(nullptr)); }
+
+TEST_F(Common_Image, WriteWithNoDataInTheImage)
+{
+    MockWriter writer{};
+    EXPECT_FALSE(sut.write(&writer));
+}
+
+TEST_F(Common_Image, WriteInitFalse)
+{
+    EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
+    MockWriter writer{};
+    EXPECT_CALL(writer, init()).WillOnce(testing::Return(false));
+    EXPECT_FALSE(sut.write(&writer));
+}
+
+TEST_F(Common_Image, WriteWriteFalse)
+{
+    EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
+    MockWriter writer{};
+    EXPECT_CALL(writer, init()).WillOnce(testing::Return(true));
+    EXPECT_CALL(writer, write(testing::_, testing::_)).WillOnce(testing::Return(false));
+    EXPECT_CALL(writer, deinit()).Times(1);
+    EXPECT_FALSE(sut.write(&writer));
+}
+
+TEST_F(Common_Image, WriteWriteTrue)
+{
+    EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
+    MockWriter writer{};
+    EXPECT_CALL(writer, init()).WillOnce(testing::Return(true));
+    EXPECT_CALL(writer, write(testing::_, testing::_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(writer, deinit()).Times(1);
+    EXPECT_TRUE(sut.write(&writer));
+}
+
+TEST_F(Common_Image, WriteGivenDataCorrect)
+{
+    // As gmock has problems creating a MATCHER once templates get involved we do this by hand
+    struct MyMockWriter : public IImageWriter<BGRAPixel>
+    {
+        Rectangle expectedDimensions{0, 0, 4U, 4U};
+
+        bool init() noexcept override { return true; }
+
+        bool write(Rectangle const &dimensions, gsl::span<BGRAPixel const> buffer) noexcept override
+        {
+            BGRAPixel defaultPixel{};
+            EXPECT_EQ(dimensions, expectedDimensions);
+            EXPECT_EQ(buffer.size(), expectedDimensions.area());
+            for (auto const &pixel : buffer)
+            {
+                EXPECT_EQ(pixel, defaultPixel);
+            }
+            return true;
+        }
+
+        void deinit() noexcept override {}
+    };
+
+    MyMockWriter writer{};
+    EXPECT_TRUE(sut.setDimensions(writer.expectedDimensions));
+    EXPECT_TRUE(sut.write(&writer));
 }
 
 } // namespace Terrahertz::UnitTests
