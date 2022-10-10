@@ -103,4 +103,18 @@ TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
     EXPECT_FALSE(sut.storeResultOf(&transformer));
 }
 
+TEST_F(Common_Image, StoreResultOfSuccess)
+{
+    BGRAPixel       pix{};
+    MockTransformer transformer{};
+    EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(transformer, dimensions()).Times(1).WillRepeatedly(testing::Return(Rectangle{0, 0, 2U, 2U}));
+    EXPECT_CALL(transformer, transform(pix))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(false));
+    EXPECT_FALSE(sut.storeResultOf(&transformer));
+}
+
 } // namespace Terrahertz::UnitTests
