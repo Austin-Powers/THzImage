@@ -14,7 +14,7 @@ target_include_directories(${PROJECTNAME} PUBLIC
 target_link_libraries(${PROJECTNAME} PUBLIC
 	THzCommon
 	THzImage
-	gtest_main
+	gmock_main
 )
 
 include(GoogleTest)

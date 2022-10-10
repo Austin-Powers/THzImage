@@ -3,13 +3,23 @@
 #include "THzCommon/math/rectangle.h"
 #include "THzImage/common/pixel.h"
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 namespace Terrahertz::UnitTests {
 
 struct Common_Image : public testing::Test
 {
-    Rectangle testDimensions{16, 24, 16, 12};
+    class MockTransformer : public IImageTransformer<BGRAPixel>
+    {
+    public:
+        MOCK_METHOD(Rectangle, dimensions, (), (const, noexcept, override));
+        MOCK_METHOD(bool, transform, (BGRAPixel & pixel), (noexcept, override));
+        MOCK_METHOD(bool, skip, (), (noexcept, override));
+        MOCK_METHOD(bool, reset, (), (noexcept, override));
+    };
+
+    Rectangle testDimensions{16, 24, 16U, 12U};
     BGRAImage sut{};
 };
 
@@ -60,6 +70,37 @@ TEST_F(Common_Image, CreateViewOfImageRegion)
     testDimensions.upperLeftPoint.y = 0U;
     EXPECT_EQ(view.imageDimensions(), testDimensions);
     EXPECT_EQ(view.region(), region);
+}
+
+TEST_F(Common_Image, StoreResultOfGivenNullptr) { EXPECT_FALSE(sut.storeResultOf(nullptr)); }
+
+TEST_F(Common_Image, StoreResultOfTransformerResetFalse)
+{
+    MockTransformer transformer{};
+    EXPECT_CALL(transformer, reset()).Times(1);
+    EXPECT_FALSE(sut.storeResultOf(&transformer));
+}
+
+TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
+{
+    MockTransformer transformer{};
+    EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(transformer, dimensions()).Times(1).WillRepeatedly(testing::Return(Rectangle{}));
+    EXPECT_FALSE(sut.storeResultOf(&transformer));
+}
+
+TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
+{
+    BGRAPixel       pix{};
+    MockTransformer transformer{};
+    EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
+    EXPECT_CALL(transformer, dimensions()).Times(1).WillRepeatedly(testing::Return(Rectangle{0, 0, 4U, 4U}));
+    EXPECT_CALL(transformer, transform(pix))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(true))
+        .WillOnce(testing::Return(false));
+    EXPECT_FALSE(sut.storeResultOf(&transformer));
 }
 
 } // namespace Terrahertz::UnitTests

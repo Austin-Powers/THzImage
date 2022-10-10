@@ -1,7 +1,9 @@
 #ifndef THZ_IMAGE_COMMON_IMAGE_H
 #define THZ_IMAGE_COMMON_IMAGE_H
 
+#include "THzCommon/logging/logging.h"
 #include "THzCommon/math/rectangle.h"
+#include "iImageTransformer.h"
 #include "imageView.h"
 #include "pixel.h"
 
@@ -9,6 +11,12 @@
 #include <vector>
 
 namespace Terrahertz {
+
+/// @brief Name provider for the THzImage.Common.Image class.
+struct ImageProject
+{
+    static constexpr char const *name() noexcept { return "THzImage.Common.Image"; }
+};
 
 /// @brief Class representing raster based images.
 ///
@@ -97,6 +105,47 @@ public:
     [[nodiscard]] ImageView<TPixelType const> view(Rectangle const &region) const noexcept
     {
         return ImageView<TPixelType const>{_data.data(), _dimensions, region};
+    }
+
+    /// @brief Calls the given transformer and stores the result in this image.
+    ///
+    /// @param transformer The transformer whose result to store.
+    /// @return True if the image was successfully transformed, false otherwise.
+    bool storeResultOf(IImageTransformer<TPixelType> *const transformer) noexcept
+    {
+        if (transformer == nullptr)
+        {
+            logMessage<LogLevel::Error, ImageProject>("Given transformer was nullptr");
+            return false;
+        }
+        if (!transformer->reset())
+        {
+            logMessage<LogLevel::Error, ImageProject>("Transformer could not be reset");
+            return false;
+        }
+        auto const dimensions = transformer->dimensions();
+        if (dimensions.area() == 0)
+        {
+            logMessage<LogLevel::Error, ImageProject>("Transformer has dimensions of area 0");
+            return false;
+        }
+        if (!setDimensions(dimensions))
+        {
+            logMessage<LogLevel::Error, ImageProject>("Could not resize to transformer dimensions");
+            return false;
+        }
+
+        auto pixel = _data.data();
+        for (auto i = 0U; i < _dimensions.area(); ++i)
+        {
+            if (!transformer->transform(*pixel))
+            {
+                break;
+            }
+            ++pixel;
+        }
+        auto const transformedPixels = std::distance(_data.data(), pixel);
+        return transformedPixels == _dimensions.area();
     }
 
 private:
