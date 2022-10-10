@@ -3,6 +3,8 @@
 
 #include "THzCommon/logging/logging.h"
 #include "THzCommon/math/rectangle.h"
+#include "THzCommon/utility/spanhelpers.h"
+#include "iImageReader.h"
 #include "iImageTransformer.h"
 #include "imageView.h"
 #include "pixel.h"
@@ -111,7 +113,7 @@ public:
     ///
     /// @param transformer The transformer whose result to store.
     /// @return True if the image was successfully transformed, false otherwise.
-    bool storeResultOf(IImageTransformer<TPixelType> *const transformer) noexcept
+    [[nodiscard]] bool storeResultOf(IImageTransformer<TPixelType> *const transformer) noexcept
     {
         if (transformer == nullptr)
         {
@@ -146,6 +148,38 @@ public:
         }
         auto const transformedPixels = std::distance(_data.data(), pixel);
         return transformedPixels == _dimensions.area();
+    }
+
+    /// @brief Reads an image from the given reader.
+    ///
+    /// @param reader The reader to read the image data from.
+    /// @return True if the image was successfully read, false otherwise.
+    [[nodiscard]] bool read(IImageReader<TPixelType> *reader) noexcept
+    {
+        if (reader == nullptr)
+        {
+            return false;
+        }
+        if (!reader->init())
+        {
+            logMessage<LogLevel::Error, ImageProject>("Init of reader failed");
+            return false;
+        }
+
+        auto result = true;
+        if (!setDimensions(reader->dimensions()))
+        {
+            logMessage<LogLevel::Error, ImageProject>("Could not resize to reader dimensions");
+            result = false;
+        }
+        else if (!reader->read(toSpan<TPixelType>(_data)))
+        {
+            logMessage<LogLevel::Error, ImageProject>("Image: Reading failed");
+            result = false;
+        }
+
+        reader->deinit();
+        return result;
     }
 
 private:

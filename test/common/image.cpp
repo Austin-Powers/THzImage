@@ -1,6 +1,8 @@
 #include "THzImage/common/image.h"
 
 #include "THzCommon/math/rectangle.h"
+#include "THzImage/common/iImageReader.h"
+#include "THzImage/common/iImageTransformer.h"
 #include "THzImage/common/pixel.h"
 
 #include <gmock/gmock.h>
@@ -17,6 +19,16 @@ struct Common_Image : public testing::Test
         MOCK_METHOD(bool, transform, (BGRAPixel & pixel), (noexcept, override));
         MOCK_METHOD(bool, skip, (), (noexcept, override));
         MOCK_METHOD(bool, reset, (), (noexcept, override));
+    };
+
+    class MockReader : public IImageReader<BGRAPixel>
+    {
+    public:
+        MOCK_METHOD(bool, multipleImages, (), (const, noexcept, override));
+        MOCK_METHOD(bool, init, (), (noexcept, override));
+        MOCK_METHOD(Rectangle, dimensions, (), (const, noexcept, override));
+        MOCK_METHOD(bool, read, (gsl::span<BGRAPixel> buffer), (noexcept, override));
+        MOCK_METHOD(void, deinit, (), (noexcept, override));
     };
 
     Rectangle testDimensions{16, 24, 16U, 12U};
@@ -115,6 +127,35 @@ TEST_F(Common_Image, StoreResultOfSuccess)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
     EXPECT_FALSE(sut.storeResultOf(&transformer));
+}
+
+TEST_F(Common_Image, ReadGivenNullptr) { EXPECT_FALSE(sut.read(nullptr)); }
+
+TEST_F(Common_Image, ReadInitFalse)
+{
+    MockReader reader{};
+    EXPECT_CALL(reader, init()).WillOnce(testing::Return(false));
+    EXPECT_FALSE(sut.read(&reader));
+}
+
+TEST_F(Common_Image, ReadReadFalse)
+{
+    MockReader reader{};
+    EXPECT_CALL(reader, init()).WillOnce(testing::Return(true));
+    EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
+    EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(false));
+    EXPECT_CALL(reader, deinit()).Times(1);
+    EXPECT_FALSE(sut.read(&reader));
+}
+
+TEST_F(Common_Image, ReadReadTrue)
+{
+    MockReader reader{};
+    EXPECT_CALL(reader, init()).WillOnce(testing::Return(true));
+    EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
+    EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(true));
+    EXPECT_CALL(reader, deinit()).Times(1);
+    EXPECT_TRUE(sut.read(&reader));
 }
 
 } // namespace Terrahertz::UnitTests
