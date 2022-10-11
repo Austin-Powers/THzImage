@@ -5,6 +5,7 @@ add_executable(${PROJECTNAME}
 	common/image.cpp
 	common/imageView.cpp
 	common/pixel.cpp
+	io/bmpReader.cpp
 )
 
 target_include_directories(${PROJECTNAME} PUBLIC
