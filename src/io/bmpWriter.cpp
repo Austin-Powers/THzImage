@@ -48,7 +48,10 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
     header.infoHeader.height    = dimensions.height;
     header.infoHeader.sizeImage = dataSize;
     writeToStream(stream, header);
-    writeToStream(stream, buffer);
+    for (auto const &pixel : buffer)
+    {
+        writeToStream(stream, pixel);
+    }
     return true;
 }
 
