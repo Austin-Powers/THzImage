@@ -1,5 +1,6 @@
 #include "THzImage/io/bmpWriter.h"
 
+#include "THzCommon/logging/logging.h"
 #include "THzCommon/utility/fstreamhelpers.h"
 #include "bmpCommons.h"
 
@@ -7,6 +8,12 @@
 #include <fstream>
 
 namespace Terrahertz::BMP {
+
+/// @brief Name provider for the THzImage.IO.BMPWriter class.
+struct WriterProject
+{
+    static constexpr char const *name() noexcept { return "THzImage.IO.BMPWriter"; }
+};
 
 Writer::Writer(std::string_view const filepath, bool const transparency) noexcept
     : _filepath{filepath}, _transparency{transparency}
@@ -18,6 +25,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
 {
     if (dimensions.area() != buffer.size())
     {
+        logMessage<LogLevel::Error, WriterProject>("Image dimensions do not match the given buffer size");
         return false;
     }
 
@@ -28,6 +36,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
     std::ofstream stream{filepath.data(), std::ios::binary};
     if (!stream.is_open())
     {
+        logMessage<LogLevel::Error, WriterProject>("Could not open the file to write");
         return false;
     }
 
