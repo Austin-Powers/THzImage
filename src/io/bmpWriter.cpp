@@ -16,7 +16,7 @@ struct WriterProject
 };
 
 Writer::Writer(std::string_view const filepath, bool const transparency) noexcept
-    : _filepath{filepath}, _transparency{transparency}
+    : _filepath{filepath}, _bitCount{transparency ? 32U : 24U}
 {}
 
 bool Writer::init() noexcept { return true; }
@@ -40,18 +40,33 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
         return false;
     }
 
-    auto const dataSize = 4U * dimensions.area();
-    Header     header{};
-    header.fileHeader.size      = sizeof(Header) + dataSize;
-    header.infoHeader.bitCount  = 32U;
-    header.infoHeader.width     = dimensions.width;
-    header.infoHeader.height    = dimensions.height;
-    header.infoHeader.sizeImage = dataSize;
+    Header header{static_cast<std::int32_t>(dimensions.width), static_cast<std::int32_t>(dimensions.height), _bitCount};
     writeToStream(stream, header);
-    for (auto const &pixel : buffer)
+    if (_bitCount == 32U)
     {
-        writeToStream(stream, pixel);
+        writeToStream(stream, buffer);
     }
+    else
+    {
+        auto const bytesUsed  = (header.infoHeader.bitCount / 8U) * header.infoHeader.width;
+        auto const lineLength = (bytesUsed + 3U) & ~3U;
+        auto const padding    = lineLength - bytesUsed;
+
+        std::array<char, 3U> const paddingBytes{};
+
+        auto x = 0U;
+        for (auto const &pixel : buffer)
+        {
+            stream.write(std::bit_cast<char const *>(&pixel), 3U);
+            ++x;
+            if (x == header.infoHeader.width)
+            {
+                x = 0U;
+                stream.write(paddingBytes.data(), padding);
+            }
+        }
+    }
+
     return true;
 }
 

@@ -31,8 +31,8 @@ private:
     /// @brief The path to write the BMP-File to.
     std::string_view const _filepath;
 
-    /// @brief True if transparency should be saved, false otherwise.
-    bool const _transparency;
+    /// @brief The bit count of the image (24 or 32).
+    uint8_t const _bitCount;
 };
 
 } // namespace Terrahertz::BMP

@@ -75,6 +75,24 @@ struct Header
 
     /// @brief The InfoHeader.
     InfoHeader infoHeader{};
+
+    /// @brief Default initializes the header structure.
+    Header() noexcept = default;
+
+    /// @brief Initializes the header structure using basic information about the image.
+    ///
+    /// @param width The width of the image [pxl].
+    /// @param height The width of the image [pxl].
+    /// @param bitCount The bit count of the image [bit].
+    Header(std::int32_t const width, std::int32_t const height, std::int16_t const bitCount) noexcept
+    {
+        infoHeader.width    = width;
+        infoHeader.height   = height;
+        infoHeader.bitCount = bitCount;
+        // (x & ~3) equals (x / 4 * 4), needed for padding
+        infoHeader.sizeImage = ((bitCount * width / 8 + 3) & ~3) * height;
+        fileHeader.size      = fileHeader.offBits + infoHeader.sizeImage;
+    }
 };
 
 static_assert(sizeof(Header) == 54U, "Header has the wrong size.");
