@@ -4,17 +4,19 @@
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/pixel.h"
 
+#include <cstdint>
+#include <fstream>
 #include <string_view>
 
-namespace Terrahertz {
+namespace Terrahertz::BMP {
 
-class BMPReader : public IImageReader<BGRAPixel>
+class Reader : public IImageReader<BGRAPixel>
 {
 public:
-    /// @brief Initializes a new BMPReader.
+    /// @brief Initializes a new BMP::Reader.
     ///
     /// @param filepath The path of the file to read from.
-    BMPReader(std::string_view const filepath) noexcept;
+    Reader(std::string_view const filepath) noexcept;
 
     /// @copydoc IImageReader::multipleImages
     bool multipleImages() const noexcept override;
@@ -30,8 +32,18 @@ public:
 
     /// @copydoc IImageReader::deinit
     void deinit() noexcept;
+
+private:
+    /// @brief The stream from which to read the image data.
+    std::ifstream _stream{};
+
+    /// @brief The dimensions of the image.
+    Rectangle _dimensions{};
+
+    /// @brief The bit count of the image data.
+    std::uint8_t _bitCount{};
 };
 
-} // namespace Terrahertz
+} // namespace Terrahertz::BMP
 
 #endif // !THZ_IMAGE_IO_BMPREADER_H

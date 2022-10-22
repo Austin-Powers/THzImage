@@ -84,7 +84,7 @@ struct Header
     /// @param width The width of the image [pxl].
     /// @param height The width of the image [pxl].
     /// @param bitCount The bit count of the image [bit].
-    Header(std::int32_t const width, std::int32_t const height, std::int16_t const bitCount) noexcept
+    Header(std::int32_t const width, std::int32_t const height, std::uint16_t const bitCount) noexcept
     {
         infoHeader.width    = width;
         infoHeader.height   = height;

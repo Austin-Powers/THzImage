@@ -17,7 +17,9 @@ struct WriterProject
 
 Writer::Writer(std::string_view const filepath, bool const transparency) noexcept
     : _filepath{filepath}, _bitCount{transparency ? 32U : 24U}
-{}
+{
+    Logger::globalInstance().addProject<WriterProject>();
+}
 
 bool Writer::init() noexcept { return true; }
 

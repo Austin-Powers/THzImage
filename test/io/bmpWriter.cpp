@@ -62,7 +62,7 @@ TEST_F(IO_BMPWriter, WritingWithoutTransparency)
     BMP::Writer sut{filepath, false};
     EXPECT_TRUE(sut.init());
 
-    Rectangle const dimensions{0, 0, 4U, 2U};
+    Rectangle const dimensions{4U, 2U};
 
     std::array<BGRAPixel, 8U> imageData{};
     imageData[0] = BGRAPixel{0x01U, 0x20U, 0x25U, 0x24U};
@@ -98,7 +98,7 @@ TEST_F(IO_BMPWriter, WritingWithoutTransparencyPadding)
     BMP::Writer sut{filepath, false};
     EXPECT_TRUE(sut.init());
 
-    Rectangle const dimensions{0, 0, 2U, 2U};
+    Rectangle const dimensions{2U, 2U};
 
     std::array<BGRAPixel, 4U> imageData{};
     imageData[0] = BGRAPixel{0x01U, 0x20U, 0x25U, 0x24U};
