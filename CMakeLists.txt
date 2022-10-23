@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
+	src/io/screenReader.cpp
 	src/io/bmpCommons.h
 
 	include/THzImage/common/colorspaceconverter.h
@@ -50,6 +51,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/common/pixel.h
 	include/THzImage/io/bmpReader.h
 	include/THzImage/io/bmpWriter.h
+	include/THzImage/io/screenReader.h
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

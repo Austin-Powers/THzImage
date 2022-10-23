@@ -31,7 +31,7 @@ public:
     bool read(gsl::span<BGRAPixel> buffer) noexcept override;
 
     /// @copydoc IImageReader::deinit
-    void deinit() noexcept;
+    void deinit() noexcept override;
 
 private:
     /// @brief The stream from which to read the image data.
