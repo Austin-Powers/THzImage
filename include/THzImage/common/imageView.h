@@ -120,10 +120,15 @@ public:
         return ImageView{_basePointer, _imageDimensions, _region.intersection(subRegion)};
     }
 
+    /// @brief Returns a copy of this view to use in iterators.
+    ///
+    /// @return A copy of this view.
+    ImageView begin() const noexcept { return *this; }
+
     /// @brief Returns a copy of this view that already reached the end.
     ///
     /// @return A copy of this view that already is at the first pixel after the regoin.
-    ImageView end() const noexcept
+    [[nodiscard]] ImageView end() const noexcept
     {
         ImageView view{_basePointer, _imageDimensions, _region};
         view._currentPointer += (_imageDimensions.width * _region.height);

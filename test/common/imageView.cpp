@@ -231,4 +231,32 @@ TEST_F(Common_ImageView, ImageTransformerImplementation)
     }
 }
 
+TEST_F(Common_ImageView, ForeachLoopCompatibility)
+{
+    auto count = 0U;
+    for (auto &pixel : sut)
+    {
+        pixel.blue = count;
+        ++count;
+    }
+    EXPECT_EQ(count, region.area());
+
+    count = 0U;
+    for (auto y = 0U; y < dimensions.height; ++y)
+    {
+        for (auto x = 0U; x < dimensions.width; ++x)
+        {
+            if ((2U > y) || (y >= (dimensions.height - 2U)) || (2U > x) || (x >= (dimensions.width - 2U)))
+            {
+                EXPECT_EQ(imageBuffer[x + (y * dimensions.width)].blue, 0U);
+            }
+            else
+            {
+                EXPECT_EQ(imageBuffer[x + (y * dimensions.width)].blue, count);
+                ++count;
+            }
+        }
+    }
+}
+
 } // namespace Terrahertz::UnitTests
