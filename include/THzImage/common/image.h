@@ -58,10 +58,14 @@ public:
     [[nodiscard]] bool setDimensions(Rectangle const &dim) noexcept
     {
         auto const newArea = dim.area();
-        _data.resize(newArea);
-        if (_data.size() != newArea)
+        auto const oldArea = _dimensions.area();
+        if (oldArea != newArea)
         {
-            return false;
+            _data.resize(newArea);
+            if (_data.size() != newArea)
+            {
+                return false;
+            }
         }
         _dimensions = dim;
         return true;
