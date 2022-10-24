@@ -48,19 +48,19 @@ public:
     /// @param area The area to use.
     /// @return True if the area fits inside the screen dimensions.
     /// @remarks The area can be retrieved via the dimensions of the reader.
-    bool setArea(Rectangle const &area) noexcept;
+    [[nodiscard]] bool setArea(Rectangle const &area) noexcept;
 
     /// @copydoc IImageReader::multipleImages
-    bool multipleImages() const noexcept override;
+    [[nodiscard]] bool multipleImages() const noexcept override;
 
     /// @copydoc IImageReader::init
-    bool init() noexcept override;
+    [[nodiscard]] bool init() noexcept override;
 
     /// @copydoc IImageReader::dimensions
-    Rectangle dimensions() const noexcept override;
+    [[nodiscard]] Rectangle dimensions() const noexcept override;
 
     /// @copydoc IImageReader::read
-    bool read(gsl::span<BGRAPixel> buffer) noexcept override;
+    [[nodiscard]] bool read(gsl::span<BGRAPixel> buffer) noexcept override;
 
     /// @copydoc IImageReader::deinit
     void deinit() noexcept override;
