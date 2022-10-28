@@ -52,7 +52,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/bmpReader.h
 	include/THzImage/io/bmpWriter.h
 	include/THzImage/io/screenReader.h
-)
+ "include/THzImage/io/qoiWriter.h" "src/io/qoiWriter.cpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
