@@ -7,7 +7,9 @@ add_executable(${PROJECTNAME}
 	common/pixel.cpp
 	io/bmpReader.cpp
 	io/bmpWriter.cpp
- "io/screenReader.cpp" "io/qoiWriter.cpp")
+	io/qoiWriter.cpp
+	io/screenReader.cpp
+)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}

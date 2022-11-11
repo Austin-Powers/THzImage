@@ -41,6 +41,9 @@ private:
     ///
     /// @remarks The worst case is a OpRun followed by a OpRGBA, which amounts to 6 bytes.
     std::array<std::uint8_t, 6U> _codeBuffer{};
+
+    /// @brief The span of the _codeBuffer.
+    gsl::span<std::uint8_t> _codeSpan{_codeBuffer};
 };
 
 } // namespace Internal
