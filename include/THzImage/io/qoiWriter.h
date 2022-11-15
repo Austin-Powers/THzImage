@@ -25,7 +25,7 @@ public:
     ///
     /// @param pixel The next pixel to compress.
     /// @return The next compressed bytes.
-    gsl::span<std::uint8_t const> nextPixel(BGRAPixel const &pixel) noexcept;
+    [[nodiscard]] gsl::span<std::uint8_t const> nextPixel(BGRAPixel const &pixel) noexcept;
 
 private:
     /// @brief The last pixel saved.

@@ -7,12 +7,29 @@ namespace Internal {
 
 Compressor::Compressor() noexcept { reset(); }
 
-void Compressor::reset() noexcept {}
+void Compressor::reset() noexcept
+{
+    _lastPixel = {};
+    for (auto &color : _colorTable)
+    {
+        color = {};
+    }
+}
 
 gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noexcept
 {
-    auto length = 0U;
-    if (_lastPixel.alpha == pixel.alpha)
+    if (_lastPixel == pixel)
+    {
+        return {};
+    }
+    auto const index  = pixelHash(pixel);
+    auto       length = 0U;
+    if (_colorTable[index] == pixel)
+    {
+        _codeBuffer[0U] = OpIndex | index;
+        length          = 1U;
+    }
+    else if (_lastPixel.alpha == pixel.alpha)
     {
         _codeBuffer[0U] = OpRGB;
         _codeBuffer[1U] = pixel.red;
@@ -30,7 +47,8 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
         length          = 5U;
     }
 
-    _lastPixel = pixel;
+    _lastPixel         = pixel;
+    _colorTable[index] = pixel;
     return _codeSpan.subspan(0U, length);
 }
 

@@ -33,6 +33,15 @@ struct IO_QOIWriter : public testing::Test
 
     /// @brief The compressor to test.
     QOI::Internal::Compressor compressor{};
+
+    /// @brief Replica of the method for hasing color values used by QOI.
+    ///
+    /// @param color The color to hash.
+    /// @return The hash value of the color.
+    std::uint8_t hash(BGRAPixel const &color) noexcept
+    {
+        return (color.red * 3U + color.green * 5U + color.blue * 7U + color.alpha * 11U) & 0b111111U;
+    }
 };
 
 TEST_F(IO_QOIWriter, OpBGRA)
@@ -71,12 +80,40 @@ TEST_F(IO_QOIWriter, OpRGB)
     auto pixel = startColor;
     pixel.blue = 0x24U;
     checkCode(pixel);
-    pixel.blue = 0x24U;
+    pixel.green = 0x24U;
     checkCode(pixel);
     pixel.red = 0xFFU;
     checkCode(pixel);
 }
 
-// TEST_F(IO_QOIWriter, OpRunHasHighestPriority) { EXPECT_TRUE(compressor.nextPixel(startColor).empty()); }
+TEST_F(IO_QOIWriter, OpRunHasHighestPriority) { EXPECT_TRUE(compressor.nextPixel(startColor).empty()); }
+
+TEST_F(IO_QOIWriter, OpIndex)
+{
+    auto const firstColor  = BGRAPixel{30U, 0U, 0U};
+    auto const secondColor = BGRAPixel{30U, 50U, 0U};
+    auto const thirdColor  = BGRAPixel{0U, 0U, 70U};
+    ASSERT_EQ(hash(firstColor), hash(thirdColor));
+
+    // check basic functionality
+    EXPECT_EQ(compressor.nextPixel(firstColor).size(), 4U);
+    EXPECT_EQ(compressor.nextPixel(secondColor).size(), 4U);
+    auto code = compressor.nextPixel(firstColor);
+    ASSERT_EQ(code.size(), 1U);
+    EXPECT_EQ(code[0], hash(firstColor));
+
+    // check if codes are overwritten
+    EXPECT_EQ(compressor.nextPixel(thirdColor).size(), 4U);
+    EXPECT_EQ(compressor.nextPixel(firstColor).size(), 4U);
+    EXPECT_EQ(compressor.nextPixel(thirdColor).size(), 4U);
+
+    // reset
+    compressor.reset();
+    EXPECT_EQ(compressor.nextPixel(firstColor).size(), 4U);
+    EXPECT_EQ(compressor.nextPixel(secondColor).size(), 4U);
+    code = compressor.nextPixel(firstColor);
+    ASSERT_EQ(code.size(), 1U);
+    EXPECT_EQ(code[0], hash(firstColor));
+}
 
 } // namespace Terrahertz::UnitTests
