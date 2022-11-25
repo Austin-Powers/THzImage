@@ -82,7 +82,7 @@ TEST_F(IO_QOIWriter, OpRGB)
     checkCode(pixel);
     pixel.green = 0x24U;
     checkCode(pixel);
-    pixel.red = 0xFFU;
+    pixel.red = 0xF0U;
     checkCode(pixel);
 }
 
@@ -114,6 +114,36 @@ TEST_F(IO_QOIWriter, OpIndex)
     code = compressor.nextPixel(firstColor);
     ASSERT_EQ(code.size(), 1U);
     EXPECT_EQ(code[0], hash(firstColor));
+}
+
+TEST_F(IO_QOIWriter, OpDiff)
+{
+    for (auto r = -2; r < 2; ++r)
+    {
+        for (auto g = -2; g < 2; ++g)
+        {
+            for (auto b = -2; b < 2; ++b)
+            {
+                if ((r == 0) && (g == 0) && (b == 0))
+                {
+                    // this would trigger an OpRun
+                    continue;
+                }
+                auto pixel = startColor;
+                pixel.red += r;
+                pixel.green += g;
+                pixel.blue += b;
+                auto const code = compressor.nextPixel(pixel);
+                ASSERT_EQ(code.size(), 1U);
+                std::uint8_t expectedCode{OpDiff};
+                expectedCode |= (r + 2U) << 4U;
+                expectedCode |= (g + 2U) << 2U;
+                expectedCode |= (b + 2U);
+                EXPECT_EQ(code[0U], expectedCode);
+                compressor.reset();
+            }
+        }
+    }
 }
 
 } // namespace Terrahertz::UnitTests
