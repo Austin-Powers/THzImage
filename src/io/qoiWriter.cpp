@@ -11,10 +11,10 @@ Compressor::Compressor() noexcept { reset(); }
 
 void Compressor::reset() noexcept
 {
-    _lastPixel = {};
+    _lastPixel = BGRAPixel{};
     for (auto &color : _colorTable)
     {
-        color = {};
+        color = BGRAPixel{};
     }
 }
 
