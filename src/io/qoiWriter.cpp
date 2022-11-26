@@ -35,11 +35,13 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
     {
         return {};
     }
-    auto const index  = pixelHash(pixel);
-    auto const deltaR = channelDelta(pixel.red, _lastPixel.red);
-    auto const deltaG = channelDelta(pixel.green, _lastPixel.green);
-    auto const deltaB = channelDelta(pixel.blue, _lastPixel.blue);
-    auto       length = 0U;
+    auto const index   = pixelHash(pixel);
+    auto const deltaR  = channelDelta(pixel.red, _lastPixel.red);
+    auto const deltaG  = channelDelta(pixel.green, _lastPixel.green);
+    auto const deltaB  = channelDelta(pixel.blue, _lastPixel.blue);
+    auto const deltaGR = deltaR - deltaG;
+    auto const deltaGB = deltaB - deltaG;
+    auto       length  = 0U;
     if (_colorTable[index] == pixel)
     {
         _codeBuffer[0U] = OpIndex | index;
@@ -54,6 +56,12 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
             _codeBuffer[0U] |= (deltaG + 2U) << 2U;
             _codeBuffer[0U] |= (deltaB + 2U);
             length = 1U;
+        }
+        else if (inRange(deltaG, -32, 31) && inRange(deltaGR, -8, 7) && inRange(deltaGB, -8, 7))
+        {
+            _codeBuffer[0U] = static_cast<std::uint8_t>(OpLuma | (deltaG + 32U));
+            _codeBuffer[1U] = static_cast<std::uint8_t>((deltaGR + 8U) << 4U | (deltaGB + 8U));
+            length          = 2U;
         }
         else
         {

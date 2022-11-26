@@ -146,4 +146,36 @@ TEST_F(IO_QOIWriter, OpDiff)
     }
 }
 
+TEST_F(IO_QOIWriter, OpLuma)
+{
+    auto const inDiffRange = [](std::int32_t const value) noexcept -> bool { return -2 <= value && value <= 1; };
+
+    for (auto g = -32; g < 32; ++g)
+    {
+        for (auto gr = -8; gr < 8; ++gr)
+        {
+            for (auto gb = -8; gb < 8; ++gb)
+            {
+                auto const r = gr + g;
+                auto const b = gb + g;
+                if (inDiffRange(r) && inDiffRange(g) && inDiffRange(b))
+                {
+                    continue;
+                }
+                auto pixel = startColor;
+                pixel.red += r;
+                pixel.green += g;
+                pixel.blue += b;
+                auto const code = compressor.nextPixel(pixel);
+                ASSERT_EQ(code.size(), 2U);
+                std::uint8_t const expectedCode0{static_cast<std::uint8_t>(OpLuma | (g + 32U))};
+                std::uint8_t const expectedCode1{static_cast<std::uint8_t>((gr + 8U) << 4U | (gb + 8U))};
+                ASSERT_EQ(code[0U], expectedCode0);
+                ASSERT_EQ(code[1U], expectedCode1);
+                compressor.reset();
+            }
+        }
+    }
+}
+
 } // namespace Terrahertz::UnitTests
