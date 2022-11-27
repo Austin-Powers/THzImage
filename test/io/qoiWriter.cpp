@@ -178,4 +178,25 @@ TEST_F(IO_QOIWriter, OpLuma)
     }
 }
 
+TEST_F(IO_QOIWriter, OpRunOnRunLongerThan62)
+{
+    auto pixel = startColor;
+    for (auto i = 0U; i < 62U; i++)
+    {
+        ASSERT_EQ(compressor.nextPixel(pixel).size(), 0U);
+    }
+    auto code = compressor.nextPixel(pixel);
+    ASSERT_EQ(code.size(), 1U);
+    EXPECT_EQ(code[0U], OpRun | 62U);
+    for (auto i = 0U; i < 62U; i++)
+    {
+        ASSERT_EQ(compressor.nextPixel(pixel).size(), 0U);
+    }
+    code = compressor.nextPixel(pixel);
+    ASSERT_EQ(code.size(), 1U);
+    EXPECT_EQ(code[0U], OpRun | 62U);
+}
+
+TEST_F(IO_QOIWriter, OpRunFollowedByOtherCodes) {}
+
 } // namespace Terrahertz::UnitTests

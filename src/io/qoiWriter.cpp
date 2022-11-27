@@ -24,15 +24,23 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
         auto const d = is - was;
         if (d >= 128)
         {
-            // this handles diff values if over-/underflow are involved
+            // this handles diff values if over-/underflow is involved
             is += 128;
             was += 128;
             return is - was;
         }
         return d;
     };
+
     if (_lastPixel == pixel)
     {
+        ++_run;
+        if (_run == 63U)
+        {
+            _codeBuffer[0U] = OpRun | (_run - 1U);
+            _run            = 0U;
+            return _codeSpan.subspan(0U, 1U);
+        }
         return {};
     }
     auto const index   = pixelHash(pixel);
