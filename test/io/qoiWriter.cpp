@@ -28,6 +28,9 @@ struct IO_QOIWriter : public testing::Test
     /// @brief Mask for the 2 most significant bits: 0x11000000
     static constexpr std::uint8_t Mask2{0xC0};
 
+    /// @brief The expected value of the first byte after a run was inserted.
+    static constexpr std::uint8_t ExpectedRunCode{OpRun | 7U};
+
     /// @brief The start color of the compression.
     BGRAPixel const startColor{};
 
@@ -41,6 +44,15 @@ struct IO_QOIWriter : public testing::Test
     std::uint8_t hash(BGRAPixel const &color) noexcept
     {
         return (color.red * 3U + color.green * 5U + color.blue * 7U + color.alpha * 11U) & 0b111111U;
+    }
+
+    /// @brief Inserts a run into the compressor.
+    void insertRun() noexcept
+    {
+        for (auto i = 0U; i < 8U; ++i)
+        {
+            EXPECT_EQ(compressor.nextPixel(startColor).size(), 0U);
+        }
     }
 };
 
@@ -197,6 +209,74 @@ TEST_F(IO_QOIWriter, OpRunOnRunLongerThan62)
     EXPECT_EQ(code[0U], OpRun | 62U);
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOtherCodes) {}
+TEST_F(IO_QOIWriter, OpRunFollowedByOpDiff)
+{
+    insertRun();
+    auto color = startColor;
+    color.blue += 1U;
+    color.green += 1U;
+    color.red += 1U;
+    auto const code = compressor.nextPixel(color);
+    ASSERT_EQ(code.size(), 2U);
+    EXPECT_EQ(code[0U], ExpectedRunCode);
+    EXPECT_EQ(code[1U], (OpDiff | 0b111111));
+}
+
+TEST_F(IO_QOIWriter, OpRunFollowedByOpIndex)
+{
+    BGRAPixel const otherColor{0x3F, 0x3F, 0x3F};
+    EXPECT_EQ(compressor.nextPixel(otherColor).size(), 4U);
+    EXPECT_EQ(compressor.nextPixel(startColor).size(), 1U);
+    insertRun();
+    auto const code = compressor.nextPixel(otherColor);
+    ASSERT_EQ(code.size(), 2U);
+    EXPECT_EQ(code[0U], ExpectedRunCode);
+    EXPECT_EQ(code[1U], (OpIndex | hash(otherColor)));
+}
+
+TEST_F(IO_QOIWriter, OpRunFollowedByOpLuma)
+{
+    insertRun();
+    auto color = startColor;
+    color.blue += 23U;
+    color.green += 31U;
+    color.red += 23U;
+    auto const code = compressor.nextPixel(color);
+    ASSERT_EQ(code.size(), 3U);
+    EXPECT_EQ(code[0U], ExpectedRunCode);
+    EXPECT_EQ(code[1U], (OpLuma | 0b111111));
+    EXPECT_EQ(code[2U], 0U);
+}
+
+TEST_F(IO_QOIWriter, OpRunFollowedByOpRGB)
+{
+    insertRun();
+    auto color = startColor;
+    color.blue += 60U;
+    color.green += 60U;
+    color.red += 60U;
+    auto const code = compressor.nextPixel(color);
+    ASSERT_EQ(code.size(), 5U);
+    EXPECT_EQ(code[0U], ExpectedRunCode);
+    EXPECT_EQ(code[1U], OpRGB);
+    EXPECT_EQ(code[2U], 60U);
+    EXPECT_EQ(code[3U], 60U);
+    EXPECT_EQ(code[4U], 60U);
+}
+
+TEST_F(IO_QOIWriter, OpRunFollowedByOpRGBA)
+{
+    insertRun();
+    auto color      = startColor;
+    color.alpha     = 60U;
+    auto const code = compressor.nextPixel(color);
+    ASSERT_EQ(code.size(), 6U);
+    EXPECT_EQ(code[0U], ExpectedRunCode);
+    EXPECT_EQ(code[1U], OpRGBA);
+    EXPECT_EQ(code[2U], 0U);
+    EXPECT_EQ(code[3U], 0U);
+    EXPECT_EQ(code[4U], 0U);
+    EXPECT_EQ(code[5U], 60U);
+}
 
 } // namespace Terrahertz::UnitTests

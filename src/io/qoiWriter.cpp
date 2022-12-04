@@ -31,17 +31,29 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
         }
         return d;
     };
+    auto       length        = 0U;
+    auto const writeToBuffer = [&](std::uint32_t const byte) noexcept {
+        _codeBuffer[length] = static_cast<std::uint8_t>(byte);
+        ++length;
+    };
+    auto const writeRun = [&]() noexcept {
+        writeToBuffer(OpRun | (_run - 1U));
+        _run = 0U;
+    };
 
     if (_lastPixel == pixel)
     {
-        ++_run;
-        if (_run == 63U)
+        if (++_run == 63U)
         {
-            _codeBuffer[0U] = OpRun | (_run - 1U);
-            _run            = 0U;
+            writeRun();
             return _codeSpan.subspan(0U, 1U);
         }
         return {};
+    }
+
+    if (_run > 0U)
+    {
+        writeRun();
     }
     auto const index   = pixelHash(pixel);
     auto const deltaR  = channelDelta(pixel.red, _lastPixel.red);
@@ -49,45 +61,36 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
     auto const deltaB  = channelDelta(pixel.blue, _lastPixel.blue);
     auto const deltaGR = deltaR - deltaG;
     auto const deltaGB = deltaB - deltaG;
-    auto       length  = 0U;
     if (_colorTable[index] == pixel)
     {
-        _codeBuffer[0U] = OpIndex | index;
-        length          = 1U;
+        writeToBuffer(OpIndex | index);
     }
     else if (_lastPixel.alpha == pixel.alpha)
     {
         if (inRange(deltaR, -2, 1) && inRange(deltaG, -2, 1) && inRange(deltaB, -2, 1))
         {
-            _codeBuffer[0U] = OpDiff;
-            _codeBuffer[0U] |= (deltaR + 2U) << 4U;
-            _codeBuffer[0U] |= (deltaG + 2U) << 2U;
-            _codeBuffer[0U] |= (deltaB + 2U);
-            length = 1U;
+            writeToBuffer(OpDiff | ((deltaR + 2U) << 4U) | ((deltaG + 2U) << 2U) | (deltaB + 2U));
         }
         else if (inRange(deltaG, -32, 31) && inRange(deltaGR, -8, 7) && inRange(deltaGB, -8, 7))
         {
-            _codeBuffer[0U] = static_cast<std::uint8_t>(OpLuma | (deltaG + 32U));
-            _codeBuffer[1U] = static_cast<std::uint8_t>((deltaGR + 8U) << 4U | (deltaGB + 8U));
-            length          = 2U;
+            writeToBuffer(OpLuma | (deltaG + 32U));
+            writeToBuffer(((deltaGR + 8U) << 4U) | (deltaGB + 8U));
         }
         else
         {
-            _codeBuffer[0U] = OpRGB;
-            _codeBuffer[1U] = pixel.red;
-            _codeBuffer[2U] = pixel.green;
-            _codeBuffer[3U] = pixel.blue;
-            length          = 4U;
+            writeToBuffer(OpRGB);
+            writeToBuffer(pixel.red);
+            writeToBuffer(pixel.green);
+            writeToBuffer(pixel.blue);
         }
     }
     else
     {
-        _codeBuffer[0U] = OpRGBA;
-        _codeBuffer[1U] = pixel.red;
-        _codeBuffer[2U] = pixel.green;
-        _codeBuffer[3U] = pixel.blue;
-        _codeBuffer[4U] = pixel.alpha;
-        length          = 5U;
+        writeToBuffer(OpRGBA);
+        writeToBuffer(pixel.red);
+        writeToBuffer(pixel.green);
+        writeToBuffer(pixel.blue);
+        writeToBuffer(pixel.alpha);
     }
 
     _lastPixel         = pixel;
