@@ -27,6 +27,12 @@ public:
     /// @return The next compressed bytes.
     [[nodiscard]] gsl::span<std::uint8_t const> nextPixel(BGRAPixel const &pixel) noexcept;
 
+    /// @brief Flushes the buffer at the end of the image data.
+    ///
+    /// @return Either a final OpRun-Code or nothing.
+    /// @remarks This will also reset the compressor.
+    [[nodiscard]] gsl::span<std::uint8_t const> flush() noexcept;
+
 private:
     /// @brief The last pixel saved.
     BGRAPixel _lastPixel{};

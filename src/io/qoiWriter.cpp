@@ -1,5 +1,7 @@
 #include "THzImage/io/qoiWriter.h"
 
+#include "THzCommon/logging/logging.h"
+#include "THzCommon/utility/fstreamhelpers.h"
 #include "qoiCommons.h"
 
 #include <THzCommon/math/inrange.h>
@@ -43,7 +45,7 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
 
     if (_lastPixel == pixel)
     {
-        if (++_run == 63U)
+        if (++_run == 62U)
         {
             writeRun();
             return _codeSpan.subspan(0U, 1U);
@@ -98,13 +100,63 @@ gsl::span<std::uint8_t const> Compressor::nextPixel(BGRAPixel const &pixel) noex
     return _codeSpan.subspan(0U, length);
 }
 
+gsl::span<std::uint8_t const> Compressor::flush() noexcept
+{
+    auto const run = _run;
+    reset();
+    if (run > 0U)
+    {
+        _codeBuffer[0U] = (OpRun | (run - 1U));
+        return _codeSpan.subspan(0U, 1U);
+    }
+    return {};
+}
+
 } // namespace Internal
 
-Writer::Writer(std::string_view const filepath) noexcept {}
+/// @brief Name provider for the THzImage.IO.QOIWriter class.
+struct WriterProject
+{
+    static constexpr char const *name() noexcept { return "THzImage.IO.QOIWriter"; }
+};
+
+Writer::Writer(std::string_view const filepath) noexcept : _filepath{filepath} {}
 
 bool Writer::init() noexcept { return true; }
 
-bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const buffer) noexcept { return false; }
+bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const buffer) noexcept
+{
+    if (dimensions.area() != buffer.size())
+    {
+        logMessage<LogLevel::Error, WriterProject>("Image dimensions do not match the given buffer size");
+        return false;
+    }
+
+    // As string_view is not zero terminated, we copy it just to be save when opening the stream.
+    std::array<char, 512U> filepath{};
+    std::memcpy(filepath.data(), _filepath.data(), std::min(filepath.size(), _filepath.size()));
+
+    std::ofstream stream{filepath.data(), std::ios::binary};
+    if (!stream.is_open())
+    {
+        logMessage<LogLevel::Error, WriterProject>("Could not open the file to write");
+        return false;
+    }
+    Header header{};
+    std::memcpy(header.magic, "qoif", 4U);
+    header.width      = dimensions.width;
+    header.height     = dimensions.height;
+    header.channels   = 4U;
+    header.colorspace = 0U;
+    writeToStream(stream, header);
+    Internal::Compressor compressor{};
+    for (auto const &pixel : buffer)
+    {
+        writeToStream(stream, compressor.nextPixel(pixel));
+    }
+    writeToStream(stream, compressor.flush());
+    return true;
+}
 
 void Writer::deinit() noexcept {}
 

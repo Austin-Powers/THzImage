@@ -1,5 +1,8 @@
 #include "THzImage/io/qoiWriter.h"
 
+#include "THzCommon/utility/fstreamhelpers.h"
+#include "THzCommon/utility/spanhelpers.h"
+
 #include <cstdint>
 #include <gtest/gtest.h>
 
@@ -54,6 +57,8 @@ struct IO_QOIWriter : public testing::Test
             EXPECT_EQ(compressor.nextPixel(startColor).size(), 0U);
         }
     }
+
+    std::string filepath{"test.qoi"};
 };
 
 TEST_F(IO_QOIWriter, OpBGRA)
@@ -190,23 +195,23 @@ TEST_F(IO_QOIWriter, OpLuma)
     }
 }
 
-TEST_F(IO_QOIWriter, OpRunOnRunLongerThan62)
+TEST_F(IO_QOIWriter, OpRunOnRunLongerThan61)
 {
     auto pixel = startColor;
-    for (auto i = 0U; i < 62U; i++)
+    for (auto i = 0U; i < 61U; i++)
     {
         ASSERT_EQ(compressor.nextPixel(pixel).size(), 0U);
     }
     auto code = compressor.nextPixel(pixel);
     ASSERT_EQ(code.size(), 1U);
-    EXPECT_EQ(code[0U], OpRun | 62U);
-    for (auto i = 0U; i < 62U; i++)
+    EXPECT_EQ(code[0U], OpRun | 61U);
+    for (auto i = 0U; i < 61U; i++)
     {
         ASSERT_EQ(compressor.nextPixel(pixel).size(), 0U);
     }
     code = compressor.nextPixel(pixel);
     ASSERT_EQ(code.size(), 1U);
-    EXPECT_EQ(code[0U], OpRun | 62U);
+    EXPECT_EQ(code[0U], OpRun | 61U);
 }
 
 TEST_F(IO_QOIWriter, OpRunFollowedByOpDiff)
@@ -277,6 +282,84 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpRGBA)
     EXPECT_EQ(code[3U], 0U);
     EXPECT_EQ(code[4U], 0U);
     EXPECT_EQ(code[5U], 60U);
+}
+
+TEST_F(IO_QOIWriter, FlushReturnsEmptyAfterNotOpRunCode)
+{
+    auto const checkCase = [this](size_t const      expectedCodeLength,
+                                  std::int8_t const dRed,
+                                  std::int8_t const dGreen,
+                                  std::int8_t const dBlue,
+                                  std::int8_t const dAlpha = 0) noexcept {
+        auto color = startColor;
+        color.red += dRed;
+        color.green += dGreen;
+        color.blue += dBlue;
+        color.alpha += dAlpha;
+        ASSERT_EQ(compressor.nextPixel(color).size(), expectedCodeLength);
+        EXPECT_EQ(compressor.flush().size(), 0U);
+    };
+    // OpDiff
+    checkCase(1U, 1, 1, 1);
+    // OpLuma
+    checkCase(2U, 24, 24, 24);
+    // OpRGB
+    checkCase(4U, 20, 120, 20);
+    // OpRGBA
+    checkCase(5U, 1, 1, 1, 1);
+
+    // OpIndex
+    auto const delta = 123;
+    auto       color = startColor;
+    color.red += delta;
+    color.green += delta;
+    color.blue += delta;
+    ASSERT_EQ(compressor.nextPixel(color).size(), 4U);
+    ASSERT_EQ(compressor.nextPixel(startColor).size(), 1U);
+    checkCase(1U, delta, delta, delta);
+}
+
+TEST_F(IO_QOIWriter, FlushReturnsOpRunCodeIfPresent)
+{
+    for (auto i = 0U; i < 8U; ++i)
+    {
+        ASSERT_EQ(compressor.nextPixel(startColor).size(), 0U);
+    }
+    auto const code = compressor.flush();
+    ASSERT_EQ(code.size(), 1U);
+    EXPECT_EQ(code[0U], (OpRun | 7U));
+}
+
+TEST_F(IO_QOIWriter, DimensionsDoNotFitBufferSize)
+{
+    QOI::Writer sut{filepath};
+    EXPECT_TRUE(sut.init());
+    Rectangle const dimensions{0, 0, 20U, 20U};
+
+    std::array<BGRAPixel, 4U> imageData{};
+    EXPECT_FALSE(sut.write(dimensions, toSpan<BGRAPixel const>(imageData)));
+    sut.deinit();
+}
+
+TEST_F(IO_QOIWriter, Writing)
+{
+    QOI::Writer sut{filepath};
+    EXPECT_TRUE(sut.init());
+    Rectangle const dimensions{0, 0, 10U, 10U};
+
+    std::array<BGRAPixel, 100U> imageData{};
+    EXPECT_TRUE(sut.write(dimensions, toSpan<BGRAPixel const>(imageData)));
+    sut.deinit();
+
+    std::ifstream                       file{filepath, std::ios::binary};
+    std::array<std::uint8_t, 128U>      buffer{};
+    std::array<std::uint8_t, 16U> const fileContentExpectation{
+        0x71U, 0x6FU, 0x69U, 0x66U, 0x0AU, 0x00U, 0x00U, 0x00U, 0x0AU, 0x00U, 0x00U, 0x00U, 0x04U, 0x00U, 0xFDU, 0xE5U};
+    ASSERT_EQ(readFromStream(file, buffer), fileContentExpectation.size());
+    for (auto i = 0U; i < fileContentExpectation.size(); ++i)
+    {
+        ASSERT_EQ(buffer[i], fileContentExpectation[i]) << "idx: " << i;
+    }
 }
 
 } // namespace Terrahertz::UnitTests
