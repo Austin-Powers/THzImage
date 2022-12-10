@@ -58,7 +58,7 @@ struct IO_QOIWriter : public testing::Test
         }
     }
 
-    std::string filepath{"test.qoi"};
+    std::string filepath{"testWrite.qoi"};
 };
 
 TEST_F(IO_QOIWriter, OpBGRA)

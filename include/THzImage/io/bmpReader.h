@@ -10,6 +10,7 @@
 
 namespace Terrahertz::BMP {
 
+/// @brief Reads an image from a file using the BitMap format.
 class Reader : public IImageReader<BGRAPixel>
 {
 public:
