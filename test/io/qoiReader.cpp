@@ -145,6 +145,21 @@ TEST_F(IO_QOIReader, OpLuma)
     EXPECT_EQ(imageArray[1U], expectedColor1);
 }
 
+TEST_F(IO_QOIReader, OpRun)
+{
+    BGRAPixel const expectedColor{0x4BU, 0x14U, 0x15U, 0x32U};
+    addRGBAColor(expectedColor);
+    auto runLength   = 32U;
+    dataArray[0U]    = OpRun | (runLength - 1U);
+    auto const bytes = dataSpan.subspan(0U, 1U);
+    EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
+    for (auto i = 0U; i < runLength; ++i)
+    {
+        ASSERT_EQ(imageArray[i + 1U], expectedColor);
+    }
+    EXPECT_EQ(imageArray[runLength + 1U], BGRAPixel{});
+}
+
 TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers) {}
 
 } // namespace Terrahertz::UnitTests

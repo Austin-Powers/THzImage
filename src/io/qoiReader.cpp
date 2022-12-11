@@ -63,6 +63,13 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
                     _lastPixel.blue += delta;
                     _nextByte = NextByte::LumaByte2;
                 }
+                else if (code == OpRun)
+                {
+                    for (auto i = (byte & ~Mask2) + 1U; i != 0; --i)
+                    {
+                        storePixel();
+                    }
+                }
             }
             break;
         }
