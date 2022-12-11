@@ -12,7 +12,7 @@ namespace Terrahertz::BMP {
 /// @brief Name provider for the THzImage.IO.BMPReader class.
 struct ReaderProject
 {
-    static constexpr char const *name() noexcept { return "THzImage.IO.BMPReader"; }
+    static constexpr char const *name() noexcept { return "THzImage.IO.BMP.Reader"; }
 };
 
 Reader::Reader(std::string_view const filepath) noexcept
@@ -23,6 +23,8 @@ Reader::Reader(std::string_view const filepath) noexcept
     std::memcpy(path.data(), filepath.data(), std::min(path.size(), filepath.size()));
     _stream.open(path.data(), std::ios::binary);
 }
+
+Reader::~Reader() noexcept { deinit(); }
 
 bool Reader::multipleImages() const noexcept { return false; }
 

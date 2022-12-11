@@ -1,5 +1,6 @@
 #include "THzImage/io/qoiReader.h"
 
+#include "THzCommon/utility/spanhelpers.h"
 #include "THzImage/io/qoiWriter.h"
 
 #include <array>
@@ -76,6 +77,21 @@ struct IO_QOIReader : public testing::Test
     void SetUp() noexcept override { decompressor.setOutputBuffer(imageSpan); }
 
     std::string filepath{"testRead.qoi"};
+
+    std::array<std::uint8_t, 32U> testFilecontent{0x71U, 0x6FU, 0x69U, 0x66U,  0x02U, 0x00U, 0x00U,  0x00U,
+                                                  0x02U, 0x00U, 0x00U, 0x00U,  0x04U, 0x00U, OpRGBA, 0x12U,
+                                                  0x23U, 0x34U, 0x45U, OpRGBA, 0x56U, 0x67U, 0x78U,  0xFFU,
+                                                  OpRGB, 0x20U, 0x01U, 0x30U,  OpRGB, 0x00U, 0x00U,  0x00U};
+
+    void prepareTestFile(gsl::span<std::uint8_t const> buffer) noexcept
+    {
+        std::ofstream stream{filepath, std::ios::binary};
+        ASSERT_TRUE(stream.is_open());
+        stream.write(std::bit_cast<char const *>(buffer.data()), buffer.size());
+        stream.close();
+    }
+
+    void prepareTestFile() noexcept { prepareTestFile(testFilecontent); }
 };
 
 TEST_F(IO_QOIReader, EmptyDataBufferGiven) { EXPECT_EQ(decompressor.insertDataChunk(gsl::span<std::uint8_t>{}), 0U); }
@@ -204,6 +220,80 @@ TEST_F(IO_QOIReader, ImageBufferExhausted)
     EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
     EXPECT_EQ(decompressor.insertDataChunk(bytes), 0U);
     EXPECT_EQ(imageArray[imageArray.size() - 1U], expectedColor);
+}
+
+TEST_F(IO_QOIReader, ConstructionCorrect)
+{
+    QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_EQ(sut.dimensions(), Rectangle{});
+}
+
+TEST_F(IO_QOIReader, NonExistingFile)
+{
+    QOI::Reader sut{"notThere.qoi"};
+    EXPECT_FALSE(sut.init());
+    sut.deinit();
+}
+
+TEST_F(IO_QOIReader, FileTooSmallForHeader)
+{
+    std::array<std::uint8_t, 10U> data{};
+    prepareTestFile(data);
+
+    QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.init());
+}
+
+TEST_F(IO_QOIReader, MagicBytesIncorrect)
+{
+    testFilecontent[0U] = 0x33U;
+    prepareTestFile();
+
+    QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.init());
+}
+
+TEST_F(IO_QOIReader, WidthZero)
+{
+    testFilecontent[4U] = 0x0U;
+    prepareTestFile();
+
+    QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.init());
+}
+
+TEST_F(IO_QOIReader, HeightZero)
+{
+    testFilecontent[8U] = 0x0U;
+    prepareTestFile();
+
+    QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.init());
+}
+
+TEST_F(IO_QOIReader, BufferTooSmallForData)
+{
+    prepareTestFile();
+
+    QOI::Reader sut{filepath};
+    ASSERT_TRUE(sut.init());
+    Rectangle const expectedDimensions{2U, 2U};
+    ASSERT_EQ(sut.dimensions(), expectedDimensions);
+    std::array<BGRAPixel, 2U> arr{};
+    EXPECT_FALSE(sut.read(toSpan<BGRAPixel>(arr)));
+}
+
+TEST_F(IO_QOIReader, ReadingData)
+{
+    prepareTestFile();
+
+    QOI::Reader sut{filepath};
+    ASSERT_TRUE(sut.init());
+    Rectangle const expectedDimensions{2U, 2U};
+    ASSERT_EQ(sut.dimensions(), expectedDimensions);
+    std::array<BGRAPixel, 4U> arr{};
+    EXPECT_TRUE(sut.read(toSpan<BGRAPixel>(arr)));
 }
 
 } // namespace Terrahertz::UnitTests

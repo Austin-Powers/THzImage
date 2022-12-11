@@ -7,8 +7,11 @@ namespace Terrahertz::QOI {
 /// @brief The header of the QOI file format.
 struct Header
 {
+    /// @brief The value of the magic bytes of the file header.
+    static constexpr std::uint32_t MagicBytes{0x66696F71};
+
     /// @brief The magic bytes 'qoif'.
-    char magic[4]{};
+    std::uint32_t magic{};
 
     /// @brief The width of the image [pxl].
     std::uint32_t width;

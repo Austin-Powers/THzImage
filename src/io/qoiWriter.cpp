@@ -143,7 +143,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
         return false;
     }
     Header header{};
-    std::memcpy(header.magic, "qoif", 4U);
+    header.magic      = Header::MagicBytes;
     header.width      = dimensions.width;
     header.height     = dimensions.height;
     header.channels   = 4U;

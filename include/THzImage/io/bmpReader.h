@@ -19,6 +19,21 @@ public:
     /// @param filepath The path of the file to read from.
     Reader(std::string_view const filepath) noexcept;
 
+    /// @brief Explicitly deleted to prevent copy construction.
+    Reader(Reader const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move construction.
+    Reader(Reader &&other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent copy assignment.
+    Reader &operator=(Reader const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move assignment.
+    Reader &operator=(Reader &&other) noexcept = delete;
+
+    /// @brief Finalizes this instance, performing a deinit.
+    ~Reader() noexcept;
+
     /// @copydoc IImageReader::multipleImages
     bool multipleImages() const noexcept override;
 

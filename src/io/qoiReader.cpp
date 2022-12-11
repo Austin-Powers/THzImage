@@ -1,5 +1,8 @@
 #include "THzImage/io/qoiReader.h"
 
+#include "THzCommon/logging/logging.h"
+#include "THzCommon/utility/fstreamhelpers.h"
+#include "THzCommon/utility/spanhelpers.h"
 #include "qoiCommons.h"
 
 namespace Terrahertz::QOI {
@@ -124,4 +127,79 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
 }
 
 } // namespace Internal
+
+/// @brief Name provider for the THzImage.IO.QOIReader class.
+struct ReaderProject
+{
+    static constexpr char const *name() noexcept { return "THzImage.IO.QOI.Reader"; }
+};
+
+Reader::Reader(std::string_view const filepath) noexcept
+{
+    Logger::globalInstance().addProject<ReaderProject>();
+    // As string_view is not zero terminated, we copy it just to be save when opening the stream.
+    std::array<char, 512U> path{};
+    std::memcpy(path.data(), filepath.data(), std::min(path.size(), filepath.size()));
+    _stream.open(path.data(), std::ios::binary);
+}
+
+Reader::~Reader() noexcept { deinit(); }
+
+bool Reader::multipleImages() const noexcept { return false; }
+
+bool Reader::init() noexcept
+{
+    if (!_stream.is_open())
+    {
+        logMessage<LogLevel::Error, ReaderProject>("File could not be opened");
+        return false;
+    }
+    Header header{};
+    if (!readFromStream(_stream, header))
+    {
+        logMessage<LogLevel::Error, ReaderProject>("File too small for header structure");
+        return false;
+    }
+    if (header.magic != Header::MagicBytes)
+    {
+        logMessage<LogLevel::Error, ReaderProject>("Given file is not a QOI file");
+        return false;
+    }
+    if (header.width == 0)
+    {
+        logMessage<LogLevel::Error, ReaderProject>("Width is zero");
+        return false;
+    }
+    if (header.height == 0)
+    {
+        logMessage<LogLevel::Error, ReaderProject>("Height is zero");
+        return false;
+    }
+    _dimensions.width  = header.width;
+    _dimensions.height = header.height;
+    return true;
+}
+
+Rectangle Reader::dimensions() const noexcept { return _dimensions; }
+
+bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept
+{
+    std::array<std::uint8_t, 256U> readBuffer{};
+    Internal::Decompressor         decompressor{};
+    decompressor.setOutputBuffer(buffer);
+
+    auto readSpan = toSpan<std::uint8_t>(readBuffer);
+    for (auto bytes = readFromStream(_stream, readBuffer); bytes != 0U; bytes = readFromStream(_stream, readBuffer))
+    {
+        if (decompressor.insertDataChunk(readSpan.subspan(0U, bytes)) != bytes)
+        {
+            logMessage<LogLevel::Error, ReaderProject>("Ran out of image buffer space");
+            return false;
+        }
+    }
+    return true;
+}
+
+void Reader::deinit() noexcept { _stream.close(); }
+
 } // namespace Terrahertz::QOI

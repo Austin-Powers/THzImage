@@ -5,6 +5,7 @@
 #include "THzImage/common/pixel.h"
 
 #include <cstdint>
+#include <fstream>
 #include <gsl/gsl>
 #include <string_view>
 
@@ -72,6 +73,21 @@ public:
     /// @param filepath The path of the file to read from.
     Reader(std::string_view const filepath) noexcept;
 
+    /// @brief Explicitly deleted to prevent copy construction.
+    Reader(Reader const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move construction.
+    Reader(Reader &&other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent copy assignment.
+    Reader &operator=(Reader const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move assignment.
+    Reader &operator=(Reader &&other) noexcept = delete;
+
+    /// @brief Finalizes this instance, performing a deinit.
+    ~Reader() noexcept;
+
     /// @copydoc IImageReader::multipleImages
     bool multipleImages() const noexcept override;
 
@@ -86,6 +102,16 @@ public:
 
     /// @copydoc IImageReader::deinit
     void deinit() noexcept override;
+
+private:
+    /// @brief The stream from which to read the iamge data.
+    std::ifstream _stream{};
+
+    /// @brief The dimensions of the image.
+    Rectangle _dimensions{};
+
+    /// @brief The decompressor for the image data.
+    Internal::Decompressor _decompressor{};
 };
 
 } // namespace Terrahertz::QOI

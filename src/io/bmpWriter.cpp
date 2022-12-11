@@ -9,10 +9,10 @@
 
 namespace Terrahertz::BMP {
 
-/// @brief Name provider for the THzImage.IO.BMPWriter class.
+/// @brief Name provider for the THzImage.IO.BMP.Writer class.
 struct WriterProject
 {
-    static constexpr char const *name() noexcept { return "THzImage.IO.BMPWriter"; }
+    static constexpr char const *name() noexcept { return "THzImage.IO.BMP.Writer"; }
 };
 
 Writer::Writer(std::string_view const filepath, bool const transparency) noexcept
