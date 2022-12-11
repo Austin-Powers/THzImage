@@ -160,6 +160,37 @@ TEST_F(IO_QOIReader, OpRun)
     EXPECT_EQ(imageArray[runLength + 1U], BGRAPixel{});
 }
 
-TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers) {}
+TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers)
+{
+    auto const writeByte = [this](std::uint8_t const byte) noexcept {
+        dataArray[0U] = byte;
+        ASSERT_EQ(decompressor.insertDataChunk(dataSpan.subspan(0U, 1U)), 1U);
+    };
+    BGRAPixel const expectedRGBA{0x42U, 0x08U, 0x15U, 0xABU};
+    writeByte(OpRGBA);
+    writeByte(expectedRGBA.red);
+    writeByte(expectedRGBA.green);
+    writeByte(expectedRGBA.blue);
+    writeByte(expectedRGBA.alpha);
+    EXPECT_EQ(imageArray[0U], expectedRGBA);
+    BGRAPixel const expectedRGB{0x08U, 0x15U, 0x42U, 0xABU};
+    writeByte(OpRGB);
+    writeByte(expectedRGB.red);
+    writeByte(expectedRGB.green);
+    writeByte(expectedRGB.blue);
+    EXPECT_EQ(imageArray[1U], expectedRGB);
+
+    std::int8_t dGreenRed{4};
+    std::int8_t dGreen{-24};
+    std::int8_t dGreenBlue{-3};
+
+    BGRAPixel const expectedLuma{static_cast<std::uint8_t>(expectedRGB.blue + dGreen + dGreenBlue),
+                                 static_cast<std::uint8_t>(expectedRGB.green + dGreen),
+                                 static_cast<std::uint8_t>(expectedRGB.red + dGreen + dGreenRed),
+                                 expectedRGB.alpha};
+    writeByte(OpLuma | (dGreen + 32U));
+    writeByte(((dGreenRed + 8U) << 4U) | (dGreenBlue + 8U));
+    EXPECT_EQ(imageArray[2U], expectedLuma);
+}
 
 } // namespace Terrahertz::UnitTests
