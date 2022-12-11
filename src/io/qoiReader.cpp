@@ -9,16 +9,20 @@ Decompressor::Decompressor() noexcept {}
 
 void Decompressor::setOutputBuffer(gsl::span<BGRAPixel> buffer) noexcept
 {
-    //
+    _nextByte             = NextByte::Code;
+    _lastPixel            = BGRAPixel{};
     _remainingImageBuffer = buffer;
 }
 
 size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer) noexcept
 {
     auto const storePixel = [this]() noexcept {
-        _remainingImageBuffer[0U]          = _lastPixel;
-        _remainingImageBuffer              = _remainingImageBuffer.subspan(1U);
-        _colorTable[pixelHash(_lastPixel)] = _lastPixel;
+        if (!_remainingImageBuffer.empty())
+        {
+            _remainingImageBuffer[0U]          = _lastPixel;
+            _remainingImageBuffer              = _remainingImageBuffer.subspan(1U);
+            _colorTable[pixelHash(_lastPixel)] = _lastPixel;
+        }
     };
 
     size_t readBytes = 0U;
@@ -28,10 +32,10 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
         {
             break;
         }
-        ++readBytes;
         switch (_nextByte)
         {
         case NextByte::Code: {
+            auto const code = byte & Mask2;
             if (byte == OpRGBA)
             {
                 _nextByte = NextByte::RGBARed;
@@ -40,35 +44,31 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
             {
                 _nextByte = NextByte::RGBRed;
             }
-            else
+            else if (code == OpIndex)
             {
-                auto const code = byte & Mask2;
-                if (code == OpIndex)
+                _lastPixel = _colorTable[(byte & ~Mask2)];
+                storePixel();
+            }
+            else if (code == OpDiff)
+            {
+                _lastPixel.red += ((byte >> 4U) & 0x03U) - 2;
+                _lastPixel.green += ((byte >> 2U) & 0x03U) - 2;
+                _lastPixel.blue += (byte & 0x03U) - 2;
+                storePixel();
+            }
+            else if (code == OpLuma)
+            {
+                auto const delta = (byte & ~Mask2) - 32U;
+                _lastPixel.red += delta;
+                _lastPixel.green += delta;
+                _lastPixel.blue += delta;
+                _nextByte = NextByte::LumaByte2;
+            }
+            else if (code == OpRun)
+            {
+                for (auto i = (byte & ~Mask2) + 1U; i != 0; --i)
                 {
-                    _lastPixel = _colorTable[(byte & ~Mask2)];
                     storePixel();
-                }
-                else if (code == OpDiff)
-                {
-                    _lastPixel.red += ((byte >> 4U) & 0x03U) - 2;
-                    _lastPixel.green += ((byte >> 2U) & 0x03U) - 2;
-                    _lastPixel.blue += (byte & 0x03U) - 2;
-                    storePixel();
-                }
-                else if (code == OpLuma)
-                {
-                    auto const delta = (byte & ~Mask2) - 32U;
-                    _lastPixel.red += delta;
-                    _lastPixel.green += delta;
-                    _lastPixel.blue += delta;
-                    _nextByte = NextByte::LumaByte2;
-                }
-                else if (code == OpRun)
-                {
-                    for (auto i = (byte & ~Mask2) + 1U; i != 0; --i)
-                    {
-                        storePixel();
-                    }
                 }
             }
             break;
@@ -118,6 +118,7 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
             break;
         }
         }
+        ++readBytes;
     }
     return readBytes;
 }
