@@ -16,8 +16,9 @@ void Decompressor::setOutputBuffer(gsl::span<BGRAPixel> buffer) noexcept
 size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer) noexcept
 {
     auto const storePixel = [this]() noexcept {
-        _remainingImageBuffer[0U] = _lastPixel;
-        _remainingImageBuffer     = _remainingImageBuffer.subspan(1U);
+        _remainingImageBuffer[0U]          = _lastPixel;
+        _remainingImageBuffer              = _remainingImageBuffer.subspan(1U);
+        _colorTable[pixelHash(_lastPixel)] = _lastPixel;
     };
 
     size_t readBytes = 0U;
@@ -38,6 +39,30 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
             else if (byte == OpRGB)
             {
                 _nextByte = NextByte::RGBRed;
+            }
+            else
+            {
+                auto const code = byte & Mask2;
+                if (code == OpIndex)
+                {
+                    _lastPixel = _colorTable[(byte & ~Mask2)];
+                    storePixel();
+                }
+                else if (code == OpDiff)
+                {
+                    _lastPixel.red += ((byte >> 4U) & 0x03U) - 2;
+                    _lastPixel.green += ((byte >> 2U) & 0x03U) - 2;
+                    _lastPixel.blue += (byte & 0x03U) - 2;
+                    storePixel();
+                }
+                else if (code == OpLuma)
+                {
+                    auto const delta = (byte & ~Mask2) - 32U;
+                    _lastPixel.red += delta;
+                    _lastPixel.green += delta;
+                    _lastPixel.blue += delta;
+                    _nextByte = NextByte::LumaByte2;
+                }
             }
             break;
         }
@@ -75,6 +100,13 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
         case NextByte::RGBBlue: {
             _lastPixel.blue = byte;
             _nextByte       = NextByte::Code;
+            storePixel();
+            break;
+        }
+        case NextByte::LumaByte2: {
+            _lastPixel.red += ((byte >> 4U) & 0x0FU) - 8U;
+            _lastPixel.blue += (byte & 0x0FU) - 8U;
+            _nextByte = NextByte::Code;
             storePixel();
             break;
         }

@@ -61,29 +61,34 @@ struct IO_QOIReader : public testing::Test
         return (color.red * 3U + color.green * 5U + color.blue * 7U + color.alpha * 11U) & 0b111111U;
     }
 
-    std::string filepath{"testRead.qoi"};
+    void addRGBAColor(BGRAPixel const &color) noexcept
+    {
+        dataArray[0U]    = OpRGBA;
+        dataArray[1U]    = color.red;
+        dataArray[2U]    = color.green;
+        dataArray[3U]    = color.blue;
+        dataArray[4U]    = color.alpha;
+        auto const bytes = dataSpan.subspan(0U, 5U);
+        EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
+        EXPECT_EQ(imageArray[0U], color);
+    }
 
     void SetUp() noexcept override { decompressor.setOutputBuffer(imageSpan); }
+
+    std::string filepath{"testRead.qoi"};
 };
 
 TEST_F(IO_QOIReader, EmptyDataBufferGiven) { EXPECT_EQ(decompressor.insertDataChunk(gsl::span<std::uint8_t>{}), 0U); }
 
 TEST_F(IO_QOIReader, OpRGBA)
 {
-    BGRAPixel expectedColor{0x12U, 0x16U, 0x1AU, 0x4BU};
-    dataArray[0U]    = OpRGBA;
-    dataArray[1U]    = expectedColor.red;
-    dataArray[2U]    = expectedColor.green;
-    dataArray[3U]    = expectedColor.blue;
-    dataArray[4U]    = expectedColor.alpha;
-    auto const bytes = dataSpan.subspan(0U, 5U);
-    EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
-    EXPECT_EQ(imageArray[0U], expectedColor);
+    BGRAPixel const expectedColor{0x12U, 0x16U, 0x1AU, 0x4BU};
+    addRGBAColor(expectedColor);
 }
 
 TEST_F(IO_QOIReader, OpRGB)
 {
-    BGRAPixel expectedColor{0x16U, 0x1AU, 0x4BU};
+    BGRAPixel const expectedColor{0x16U, 0x1AU, 0x4BU};
     dataArray[0U]    = OpRGB;
     dataArray[1U]    = expectedColor.red;
     dataArray[2U]    = expectedColor.green;
@@ -93,6 +98,53 @@ TEST_F(IO_QOIReader, OpRGB)
     EXPECT_EQ(imageArray[0U], expectedColor);
 }
 
-TEST_F(IO_QOIReader, CodeSplitOverTwoDataBuffers) {}
+TEST_F(IO_QOIReader, OpIndex)
+{
+    BGRAPixel const expectedColor{0x14U, 0x15U, 0x32U, 0x4BU};
+    addRGBAColor(expectedColor);
+    dataArray[0U]    = (OpIndex | hash(expectedColor));
+    auto const bytes = dataSpan.subspan(0U, 1U);
+    EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
+    EXPECT_EQ(imageArray[1U], expectedColor);
+}
+
+TEST_F(IO_QOIReader, OpDiff)
+{
+    BGRAPixel const expectedColor0{0x15U, 0x32U, 0x4BU, 0x14U};
+    addRGBAColor(expectedColor0);
+    std::int8_t dRed{1};
+    std::int8_t dGreen{-1};
+    std::int8_t dBlue{0};
+
+    BGRAPixel const expectedColor1{static_cast<std::uint8_t>(expectedColor0.blue + dBlue),
+                                   static_cast<std::uint8_t>(expectedColor0.green + dGreen),
+                                   static_cast<std::uint8_t>(expectedColor0.red + dRed),
+                                   expectedColor0.alpha};
+    dataArray[0U]    = OpDiff | ((dRed + 2U) << 4U) | ((dGreen + 2U) << 2U) | (dBlue + 2U);
+    auto const bytes = dataSpan.subspan(0U, 1U);
+    EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
+    EXPECT_EQ(imageArray[1U], expectedColor1);
+}
+
+TEST_F(IO_QOIReader, OpLuma)
+{
+    BGRAPixel const expectedColor0{0x32U, 0x4BU, 0x14U, 0x15U};
+    addRGBAColor(expectedColor0);
+    std::int8_t dGreenRed{4};
+    std::int8_t dGreen{-24};
+    std::int8_t dGreenBlue{-3};
+
+    BGRAPixel const expectedColor1{static_cast<std::uint8_t>(expectedColor0.blue + dGreen + dGreenBlue),
+                                   static_cast<std::uint8_t>(expectedColor0.green + dGreen),
+                                   static_cast<std::uint8_t>(expectedColor0.red + dGreen + dGreenRed),
+                                   expectedColor0.alpha};
+    dataArray[0U]    = OpLuma | (dGreen + 32U);
+    dataArray[1U]    = ((dGreenRed + 8U) << 4U) | (dGreenBlue + 8U);
+    auto const bytes = dataSpan.subspan(0U, 2U);
+    EXPECT_EQ(decompressor.insertDataChunk(bytes), bytes.size());
+    EXPECT_EQ(imageArray[1U], expectedColor1);
+}
+
+TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers) {}
 
 } // namespace Terrahertz::UnitTests
