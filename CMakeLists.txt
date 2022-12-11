@@ -35,6 +35,8 @@ if(NOT DEFINED THzCommon)
 	FetchContent_MakeAvailable(THzCommon)
 endif()
 
+add_subdirectory(png)
+
 add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 	src/io/bmpReader.cpp

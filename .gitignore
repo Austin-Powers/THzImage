@@ -39,3 +39,6 @@ out/
 .vs/
 obj/
 bin/
+
+# libpng shenanigans
+pnglibconf.h
