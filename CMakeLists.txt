@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        237da4644376b4b31efecdd23da661a4d1823de1 # latest 11.12.22
+	GIT_TAG        6b6d47fdd1c3d375b2f67a473aafab883bcce23a # latest 12.12.22
 )
 FetchContent_Declare(
 	gsl
@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
+	src/io/pngReader.cpp
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
 	src/io/screenReader.cpp
@@ -56,6 +57,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/common/pixel.h
 	include/THzImage/io/bmpReader.h
 	include/THzImage/io/bmpWriter.h
+	include/THzImage/io/pngReader.h
 	include/THzImage/io/qoiReader.h
 	include/THzImage/io/qoiWriter.h
 	include/THzImage/io/screenReader.h
@@ -68,6 +70,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Microsoft.GSL::GSL
 	THzCommon
+	png
 )
 
 if(THZ_IMAGE_IS_ROOT)

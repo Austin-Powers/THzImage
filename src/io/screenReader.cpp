@@ -166,11 +166,11 @@ struct Reader::Impl
     HBITMAP _hScreenBM{};
 };
 
-Reader::Reader() noexcept { _impl = std::make_unique<Reader::Impl>(getScreenDimensions()); }
+Reader::Reader() noexcept { _impl.init(getScreenDimensions()); }
 
-Reader::Reader(Rectangle const &area) noexcept { _impl = std::make_unique<Reader::Impl>(area); }
+Reader::Reader(Rectangle const &area) noexcept { _impl.init(area); }
 
-Reader::~Reader() noexcept { _impl.reset(); }
+Reader::~Reader() noexcept {}
 
 bool Reader::setArea(Rectangle const &area) noexcept { return _impl->setArea(area); }
 

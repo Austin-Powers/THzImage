@@ -5,6 +5,7 @@
 #ifdef _WIN32
 
 #include "THzCommon/math/rectangle.h"
+#include "THzCommon/utility/staticPImpl.h"
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/pixel.h"
 
@@ -70,7 +71,7 @@ private:
     struct Impl;
 
     /// @brief Pointer to the implementation.
-    std::unique_ptr<Impl> _impl{};
+    StaticPImpl<Impl, 40U> _impl{};
 };
 
 } // namespace Terrahertz::Screen

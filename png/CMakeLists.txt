@@ -55,7 +55,7 @@ add_library(${PROJECT_NAME} STATIC
 	pnglibconf.h
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC
+target_compile_definitions(${PROJECT_NAME} PRIVATE
 	# not my code, not my warnings, not my problem :)
 	_CRT_SECURE_NO_WARNINGS
 )
@@ -68,5 +68,5 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
-	zlib
+	zlibstatic
 )
