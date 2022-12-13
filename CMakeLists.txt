@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
 	src/io/pngReader.cpp
+	src/io/pngWriter.cpp
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
 	src/io/screenReader.cpp
@@ -58,6 +59,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/bmpReader.h
 	include/THzImage/io/bmpWriter.h
 	include/THzImage/io/pngReader.h
+	include/THzImage/io/pngWriter.h
 	include/THzImage/io/qoiReader.h
 	include/THzImage/io/qoiWriter.h
 	include/THzImage/io/screenReader.h

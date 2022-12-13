@@ -8,6 +8,7 @@ add_executable(${PROJECTNAME}
 	io/bmpReader.cpp
 	io/bmpWriter.cpp
 	io/pngReader.cpp
+	io/pngWriter.cpp
 	io/qoiReader.cpp
 	io/qoiWriter.cpp
 	io/screenReader.cpp
