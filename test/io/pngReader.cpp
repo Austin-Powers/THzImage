@@ -39,20 +39,20 @@ TEST_F(IO_PNGReader, ConstructionCorrect)
     writer.write(dimensions, toSpan<BGRAPixel const>(imageData));
     writer.deinit();
 
-    // PNG::Reader sut{filepath};
-    // EXPECT_FALSE(sut.multipleImages());
-    // EXPECT_EQ(sut.dimensions(), Rectangle{});
-    // EXPECT_TRUE(sut.init());
-    // EXPECT_EQ(sut.dimensions(), dimensions);
-    //
-    // std::array<BGRAPixel, 100U> loadedData{};
-    // EXPECT_TRUE(sut.read(toSpan<BGRAPixel>(loadedData)));
-    // sut.deinit();
-    //
-    // for (auto i = 0U; i < loadedData.size(); ++i)
-    //{
-    //     ASSERT_EQ(loadedData[i], imageData[i]);
-    // }
+    PNG::Reader sut{filepath};
+    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_EQ(sut.dimensions(), Rectangle{});
+    EXPECT_TRUE(sut.init());
+    EXPECT_EQ(sut.dimensions(), dimensions);
+
+    std::array<BGRAPixel, 100U> loadedData{};
+    EXPECT_TRUE(sut.read(toSpan<BGRAPixel>(loadedData)));
+    sut.deinit();
+
+    for (auto i = 0U; i < loadedData.size(); ++i)
+    {
+        ASSERT_EQ(loadedData[i], imageData[i]);
+    }
 }
 
 } // namespace Terrahertz::UnitTests

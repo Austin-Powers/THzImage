@@ -146,10 +146,12 @@ struct Reader::Impl
         if (_png_ptr != nullptr)
         {
             png_destroy_read_struct(&_png_ptr, &_info_ptr, nullptr);
+            _png_ptr = nullptr;
         }
         if (_pngFile != nullptr)
         {
             fclose(_pngFile);
+            _pngFile = nullptr;
         }
     }
 
