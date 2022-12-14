@@ -3,6 +3,7 @@
 #include "THzCommon/logging/logging.h"
 
 #include <array>
+#include <cstdio>
 #include <cstring>
 #include <png.h>
 

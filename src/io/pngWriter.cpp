@@ -2,6 +2,7 @@
 
 #include "THzCommon/logging/logging.h"
 
+#include <cstdio>
 #include <png.h>
 
 namespace Terrahertz::PNG {
