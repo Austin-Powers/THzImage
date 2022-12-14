@@ -29,7 +29,7 @@ struct Reader::Impl
 #ifdef _WIN32
         fopen_s(&_pngFile, path.data(), "rb");
 #else
-        fopen(&_pngFile, path.data(), "rb");
+        pngFile = fopen(path.data(), "rb");
 #endif
     }
 

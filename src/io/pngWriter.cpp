@@ -36,7 +36,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
 #ifdef _WIN32
     fopen_s(&pngFile, filepath.data(), "wb");
 #else
-    pngFile = fopen_s(filepath.data(), "wb");
+    pngFile = fopen(filepath.data(), "wb");
 #endif
     if (pngFile == NULL)
     {
