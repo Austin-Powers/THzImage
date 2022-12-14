@@ -26,7 +26,11 @@ struct Reader::Impl
         // As string_view is not zero terminated, we copy it just to be save when opening the stream.
         std::array<char, 512U> path{};
         std::memcpy(path.data(), filepath.data(), std::min(path.size(), filepath.size()));
+#ifdef _WIN32
         fopen_s(&_pngFile, path.data(), "rb");
+#else
+        fopen(&_pngFile, path.data(), "rb");
+#endif
     }
 
     ~Impl() noexcept { deinit(); }
