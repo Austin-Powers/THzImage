@@ -1,6 +1,7 @@
 #include "THzImage/io/qoiReader.h"
 
 #include "THzCommon/logging/logging.h"
+#include "THzCommon/utility/byteorder.h"
 #include "THzCommon/utility/fstreamhelpers.h"
 #include "THzCommon/utility/spanhelpers.h"
 #include "qoiCommons.h"
@@ -175,8 +176,8 @@ bool Reader::init() noexcept
         logMessage<LogLevel::Error, ReaderProject>("Height is zero");
         return false;
     }
-    _dimensions.width  = header.width;
-    _dimensions.height = header.height;
+    _dimensions.width  = flipByteOrder(header.width);
+    _dimensions.height = flipByteOrder(header.height);
     return true;
 }
 

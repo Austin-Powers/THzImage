@@ -1,6 +1,7 @@
 #include "THzImage/io/qoiWriter.h"
 
 #include "THzCommon/logging/logging.h"
+#include "THzCommon/utility/byteorder.h"
 #include "THzCommon/utility/fstreamhelpers.h"
 #include "qoiCommons.h"
 
@@ -144,8 +145,8 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
     }
     Header header{};
     header.magic      = Header::MagicBytes;
-    header.width      = dimensions.width;
-    header.height     = dimensions.height;
+    header.width      = flipByteOrder(dimensions.width);
+    header.height     = flipByteOrder(dimensions.height);
     header.channels   = 4U;
     header.colorspace = 0U;
     writeToStream(stream, header);

@@ -24,6 +24,7 @@ struct ImageProject
 /// @brief Class representing raster based images.
 ///
 /// @tparam TPixelType The type of pixel used by the image.
+/// @remarks Pixels are stored Left to Right, Top to Bottom.
 template <typename TPixelType>
 class Image
 {

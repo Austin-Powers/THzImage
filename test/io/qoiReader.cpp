@@ -78,8 +78,8 @@ struct IO_QOIReader : public testing::Test
 
     std::string filepath{"testRead.qoi"};
 
-    std::array<std::uint8_t, 32U> testFilecontent{0x71U, 0x6FU, 0x69U, 0x66U,  0x02U, 0x00U, 0x00U,  0x00U,
-                                                  0x02U, 0x00U, 0x00U, 0x00U,  0x04U, 0x00U, OpRGBA, 0x12U,
+    std::array<std::uint8_t, 32U> testFilecontent{0x71U, 0x6FU, 0x69U, 0x66U,  0x00U, 0x00U, 0x00U,  0x02U,
+                                                  0x00U, 0x00U, 0x00U, 0x02U,  0x04U, 0x00U, OpRGBA, 0x12U,
                                                   0x23U, 0x34U, 0x45U, OpRGBA, 0x56U, 0x67U, 0x78U,  0xFFU,
                                                   OpRGB, 0x20U, 0x01U, 0x30U,  OpRGB, 0x00U, 0x00U,  0x00U};
 
@@ -256,7 +256,7 @@ TEST_F(IO_QOIReader, MagicBytesIncorrect)
 
 TEST_F(IO_QOIReader, WidthZero)
 {
-    testFilecontent[4U] = 0x0U;
+    testFilecontent[7U] = 0x0U;
     prepareTestFile();
 
     QOI::Reader sut{filepath};
@@ -265,7 +265,7 @@ TEST_F(IO_QOIReader, WidthZero)
 
 TEST_F(IO_QOIReader, HeightZero)
 {
-    testFilecontent[8U] = 0x0U;
+    testFilecontent[11U] = 0x0U;
     prepareTestFile();
 
     QOI::Reader sut{filepath};
