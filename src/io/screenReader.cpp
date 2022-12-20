@@ -3,6 +3,7 @@
 #include "THzImage/io/screenReader.h"
 
 #include "THzCommon/logging/logging.hpp"
+#include "THzCommon/utility/flipBuffer.hpp"
 #include "bmpCommons.h"
 
 #include <Windows.h>
@@ -133,7 +134,7 @@ struct Reader::Impl
                   DIB_RGB_COLORS);
 
         releaseHandles();
-        return true;
+        return flipBufferHorizontally(buffer, _area);
     }
 
     /// @brief Releases all handles needed for taken a screenshot.
