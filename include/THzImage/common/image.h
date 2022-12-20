@@ -1,9 +1,9 @@
 #ifndef THZ_IMAGE_COMMON_IMAGE_H
 #define THZ_IMAGE_COMMON_IMAGE_H
 
-#include "THzCommon/logging/logging.h"
-#include "THzCommon/math/rectangle.h"
-#include "THzCommon/utility/spanhelpers.h"
+#include "THzCommon/logging/logging.hpp"
+#include "THzCommon/math/rectangle.hpp"
+#include "THzCommon/utility/spanhelpers.hpp"
 #include "iImageReader.h"
 #include "iImageTransformer.h"
 #include "iImageWriter.h"

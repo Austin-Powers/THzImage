@@ -1,7 +1,7 @@
 #ifndef THZ_IMAGE_COMMON_IIMAGEWRITER_H
 #define THZ_IMAGE_COMMON_IIMAGEWRITER_H
 
-#include "THzCommon/math/rectangle.h"
+#include "THzCommon/math/rectangle.hpp"
 #include "pixel.h"
 
 #include <gsl/gsl>

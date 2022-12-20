@@ -1,6 +1,6 @@
 #include "THzImage/common/imageView.h"
 
-#include "THzCommon/math/rectangle.h"
+#include "THzCommon/math/rectangle.hpp"
 #include "THzImage/common/pixel.h"
 
 #include <array>

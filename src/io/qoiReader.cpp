@@ -1,9 +1,9 @@
 #include "THzImage/io/qoiReader.h"
 
-#include "THzCommon/logging/logging.h"
-#include "THzCommon/utility/byteorder.h"
-#include "THzCommon/utility/fstreamhelpers.h"
-#include "THzCommon/utility/spanhelpers.h"
+#include "THzCommon/logging/logging.hpp"
+#include "THzCommon/utility/byteorder.hpp"
+#include "THzCommon/utility/fstreamhelpers.hpp"
+#include "THzCommon/utility/spanhelpers.hpp"
 #include "qoiCommons.h"
 
 namespace Terrahertz::QOI {

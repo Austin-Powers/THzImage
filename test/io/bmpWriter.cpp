@@ -1,7 +1,7 @@
 #include "THzImage/io/bmpWriter.h"
 
-#include "THzCommon/utility/fstreamhelpers.h"
-#include "THzCommon/utility/spanhelpers.h"
+#include "THzCommon/utility/fstreamhelpers.hpp"
+#include "THzCommon/utility/spanhelpers.hpp"
 
 #include <array>
 #include <fstream>

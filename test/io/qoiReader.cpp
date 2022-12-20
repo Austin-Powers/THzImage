@@ -1,6 +1,6 @@
 #include "THzImage/io/qoiReader.h"
 
-#include "THzCommon/utility/spanhelpers.h"
+#include "THzCommon/utility/spanhelpers.hpp"
 #include "THzImage/io/qoiWriter.h"
 
 #include <array>

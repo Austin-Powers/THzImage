@@ -1,6 +1,6 @@
 #include "THzImage/io/pngWriter.h"
 
-#include "THzCommon/logging/logging.h"
+#include "THzCommon/logging/logging.hpp"
 
 #include <cstdio>
 #include <png.h>

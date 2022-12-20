@@ -1,7 +1,7 @@
 #ifndef THZ_IMAGE_IO_PNGREADER_H
 #define THZ_IMAGE_IO_PNGREADER_H
 
-#include "THzCommon/utility/staticPImpl.h"
+#include "THzCommon/utility/staticPImpl.hpp"
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/pixel.h"
 

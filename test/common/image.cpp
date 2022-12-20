@@ -1,6 +1,6 @@
 #include "THzImage/common/image.h"
 
-#include "THzCommon/math/rectangle.h"
+#include "THzCommon/math/rectangle.hpp"
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/iImageTransformer.h"
 #include "THzImage/common/iImageWriter.h"

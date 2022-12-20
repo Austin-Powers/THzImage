@@ -1,7 +1,7 @@
 #ifndef THZ_IMAGE_COMMON_IIMAGETRANSFORMER_H
 #define THZ_IMAGE_COMMON_IIMAGETRANSFORMER_H
 
-#include "THzCommon/math/rectangle.h"
+#include "THzCommon/math/rectangle.hpp"
 #include "pixel.h"
 
 namespace Terrahertz {

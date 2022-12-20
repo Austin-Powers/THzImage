@@ -1,8 +1,8 @@
 #ifndef THZ_IMAGE_COMMON_IMAGEVIEW_H
 #define THZ_IMAGE_COMMON_IMAGEVIEW_H
 
-#include "THzCommon/math/point.h"
-#include "THzCommon/math/rectangle.h"
+#include "THzCommon/math/point.hpp"
+#include "THzCommon/math/rectangle.hpp"
 #include "iImageTransformer.h"
 
 #include <cstddef>

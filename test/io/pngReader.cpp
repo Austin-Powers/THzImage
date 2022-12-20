@@ -1,8 +1,13 @@
 #include "THzImage/io/pngReader.h"
 
-#include "THzCommon/utility/spanhelpers.h"
+#include "THzCommon/utility/spanhelpers.hpp"
 #include "THzImage/common/image.h"
+#include "THzImage/io/bmpReader.h"
+#include "THzImage/io/bmpWriter.h"
 #include "THzImage/io/pngWriter.h"
+#include "THzImage/io/qoiReader.h"
+#include "THzImage/io/qoiWriter.h"
+#include "THzImage/io/screenReader.h"
 
 #include <gtest/gtest.h>
 
@@ -53,6 +58,26 @@ TEST_F(IO_PNGReader, ConstructionCorrect)
     {
         ASSERT_EQ(loadedData[i], imageData[i]);
     }
+}
+
+TEST_F(IO_PNGReader, Misc)
+{
+    Image<BGRAPixel> image{};
+    Screen::Reader   screenReader{Rectangle{200U, 200U}};
+    EXPECT_TRUE(image.read(&screenReader));
+
+    PNG::Writer pngWriter{"screen.png"};
+    BMP::Writer bmpWriter{"screen.bmp"};
+    QOI::Writer qoiWriter{"screen.qoi"};
+
+    EXPECT_TRUE(image.write(&pngWriter));
+    EXPECT_TRUE(image.write(&bmpWriter));
+    EXPECT_TRUE(image.write(&qoiWriter));
+
+    QOI::Reader qoiReader{"screen.qoi"};
+    EXPECT_TRUE(image.read(&qoiReader));
+    BMP::Writer bmpWriter2{"screen2.bmp"};
+    EXPECT_TRUE(image.write(&bmpWriter2));
 }
 
 } // namespace Terrahertz::UnitTests

@@ -1,6 +1,6 @@
 #include "THzImage/io/pngWriter.h"
 
-#include "THzCommon/utility/fstreamhelpers.h"
+#include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzImage/common/image.h"
 
 #include <array>

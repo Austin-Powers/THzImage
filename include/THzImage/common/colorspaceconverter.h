@@ -1,7 +1,7 @@
 #ifndef THZ_IMAGE_COMMON_COLORSPACECONVERTER_H
 #define THZ_IMAGE_COMMON_COLORSPACECONVERTER_H
 
-#include "THzCommon/math/constants.h"
+#include "THzCommon/math/constants.hpp"
 
 #include <algorithm>
 #include <cstdint>

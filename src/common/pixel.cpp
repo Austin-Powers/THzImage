@@ -1,6 +1,6 @@
 #include "THzImage/common/pixel.h"
 
-#include "THzCommon/math/constants.h"
+#include "THzCommon/math/constants.hpp"
 #include "THzImage/common/colorspaceconverter.h"
 
 #include <algorithm>

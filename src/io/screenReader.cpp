@@ -2,7 +2,7 @@
 
 #include "THzImage/io/screenReader.h"
 
-#include "THzCommon/logging/logging.h"
+#include "THzCommon/logging/logging.hpp"
 #include "bmpCommons.h"
 
 #include <Windows.h>

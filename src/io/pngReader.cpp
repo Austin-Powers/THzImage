@@ -1,6 +1,6 @@
 #include "THzImage/io/pngReader.h"
 
-#include "THzCommon/logging/logging.h"
+#include "THzCommon/logging/logging.hpp"
 
 #include <array>
 #include <cstdio>

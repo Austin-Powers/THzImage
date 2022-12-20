@@ -1,7 +1,7 @@
 #include "THzImage/io/bmpWriter.h"
 
-#include "THzCommon/logging/logging.h"
-#include "THzCommon/utility/fstreamhelpers.h"
+#include "THzCommon/logging/logging.hpp"
+#include "THzCommon/utility/fstreamhelpers.hpp"
 #include "bmpCommons.h"
 
 #include <cstring>

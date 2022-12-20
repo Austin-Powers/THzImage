@@ -4,8 +4,8 @@
 // functions used by this class are OS specific and we support only windows for now
 #ifdef _WIN32
 
-#include "THzCommon/math/rectangle.h"
-#include "THzCommon/utility/staticPImpl.h"
+#include "THzCommon/math/rectangle.hpp"
+#include "THzCommon/utility/staticPImpl.hpp"
 #include "THzImage/common/iImageReader.h"
 #include "THzImage/common/pixel.h"
 
