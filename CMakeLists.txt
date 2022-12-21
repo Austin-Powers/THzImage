@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        830ff3c08c0918456659ae28ace362f2532429cf # latest 20.12.22
+	GIT_TAG        b511fabe36f63d309005c20fbf9e566aae92baa8 # latest 21.12.22
 )
 FetchContent_Declare(
 	gsl
@@ -63,7 +63,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/qoiReader.h
 	include/THzImage/io/qoiWriter.h
 	include/THzImage/io/screenReader.h
- "src/io/bmpCommons.cpp")
+ )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
