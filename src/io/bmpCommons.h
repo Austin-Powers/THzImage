@@ -1,7 +1,11 @@
 #ifndef THZ_IMAGE_IO_BMPCOMMONS_H
 #define THZ_IMAGE_IO_BMPCOMMONS_H
 
+#include "THzImage/common/pixel.h"
+
 #include <cstdint>
+#include <gsl/gsl>
+#include <optional>
 
 namespace Terrahertz::BMP {
 
@@ -98,6 +102,47 @@ struct Header
 static_assert(sizeof(Header) == 54U, "Header has the wrong size.");
 
 #pragma pack()
+
+/// @brief Selects the next line in the buffer for reading/writing.
+///
+/// @remarks This class is mainly needed because BMP can be stored top-down or bottom-up.
+class LineSelector
+{
+public:
+    /// @brief Creates a nwe LineSelector, if the buffer.size() is a multiple of width.
+    ///
+    /// @param buffer The buffer to split into lines.
+    /// @param width The width of each line.
+    /// @param back Flag signalling if the line should be selected starting from the front or back of the buffer.
+    /// @return The selector, if buffer.size() is a multiple of width.
+    [[nodiscard]] static std::optional<LineSelector>
+    create(gsl::span<BGRAPixel> buffer, std::uint32_t width, bool back = true) noexcept;
+
+    /// @brief Default initializes a new LineSelector.
+    LineSelector() noexcept = default;
+
+    /// @brief Returns the next line in the buffer.
+    ///
+    /// @return The next line, or empty span if buffer as fully traversed.
+    [[nodiscard]] gsl::span<BGRAPixel> nextLine() noexcept;
+
+private:
+    /// @brief Initializes a new LineSelector using the given parameters.
+    ///
+    /// @param buffer The buffer to split into lines.
+    /// @param width The width of each line.
+    /// @param bottomUp Flag signalling if the line should be selected starting from the front or back of the buffer.
+    LineSelector(gsl::span<BGRAPixel> buffer, std::uint32_t width, bool back) noexcept;
+
+    /// @brief The remaining buffer.
+    gsl::span<BGRAPixel> _buffer{};
+
+    /// @brief The line width.
+    std::uint32_t _width{};
+
+    /// @brief Flag signalling if the line should be selected starting from the front or back of the buffer.
+    bool _back{};
+};
 
 } // namespace Terrahertz::BMP
 
