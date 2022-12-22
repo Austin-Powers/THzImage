@@ -58,6 +58,9 @@ private:
 
     /// @brief The bit count of the image data.
     std::uint8_t _bitCount{};
+
+    /// @brief The direction in which to read the lines of the file.
+    bool _bottomUp{};
 };
 
 } // namespace Terrahertz::BMP

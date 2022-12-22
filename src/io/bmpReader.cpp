@@ -2,6 +2,7 @@
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/utility/fstreamhelpers.hpp"
+#include "THzCommon/utility/lineSequencer.hpp"
 #include "bmpCommons.h"
 
 #include <array>
@@ -76,10 +77,11 @@ bool Reader::init() noexcept
         logMessage<LogLevel::Error, ReaderProject>("Unsupported number of offBits");
         return false;
     }
+    _bottomUp = true;
     if (header.infoHeader.height < 0)
     {
-        logMessage<LogLevel::Error, ReaderProject>("Negative height not supported");
-        return false;
+        header.infoHeader.height = -header.infoHeader.height;
+        _bottomUp                = false;
     }
     Header sanityCheck{header.infoHeader.width, header.infoHeader.height, header.infoHeader.bitCount};
     if (header.infoHeader.sizeImage != sanityCheck.infoHeader.sizeImage)
@@ -102,8 +104,18 @@ bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept
         logMessage<LogLevel::Error, ReaderProject>("Given buffer is too small for the data");
         return false;
     }
-
-    if (_bitCount == 24U)
+    auto sequencer = LineSequencer<BGRAPixel>::create(buffer, _dimensions.width, _bottomUp);
+    if (_bitCount == 32U)
+    {
+        for (auto line = sequencer->nextLine(); !line.empty(); line = sequencer->nextLine())
+        {
+            if (readFromStream(_stream, line) != line.size())
+            {
+                return false;
+            }
+        }
+    }
+    else
     {
         auto const bytesUsed  = (_bitCount / 8U) * _dimensions.width;
         auto const lineLength = (bytesUsed + 3U) & ~3U;
@@ -111,28 +123,24 @@ bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept
 
         std::array<char, 3U> paddingBytes{};
 
-        auto x = 0U;
-        for (auto const &pixel : buffer)
+        for (auto line = sequencer->nextLine(); !line.empty(); line = sequencer->nextLine())
         {
-            _stream.read(std::bit_cast<char *>(&pixel), 3U);
-            if (!_stream.good())
+            for (auto const &pixel : line)
             {
-                return false;
-            }
-            ++x;
-            if (x == _dimensions.width)
-            {
-                x = 0U;
-                _stream.read(paddingBytes.data(), padding);
+                _stream.read(std::bit_cast<char *>(&pixel), 3U);
                 if (!_stream.good())
                 {
                     return false;
                 }
             }
+            _stream.read(paddingBytes.data(), padding);
+            if (!_stream.good())
+            {
+                return false;
+            }
         }
-        return true;
     }
-    return readFromStream(_stream, buffer) == _dimensions.area();
+    return true;
 }
 
 void Reader::deinit() noexcept { _stream.close(); }

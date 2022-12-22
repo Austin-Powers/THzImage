@@ -208,7 +208,12 @@ TEST_F(IO_BMPReader, HeightNegative)
 
     BGRAImage   image{};
     BMP::Reader sut{filepath};
-    EXPECT_FALSE(image.read(&sut));
+    EXPECT_TRUE(image.read(&sut));
+    ASSERT_EQ(image.dimensions(), (Rectangle{2U, 2U}));
+    EXPECT_EQ(image[0U], (BGRAPixel{0x01U, 0x20U, 0x25U, 0x24U}));
+    EXPECT_EQ(image[1U], (BGRAPixel{0x13U, 0x24U, 0x50U, 0x34U}));
+    EXPECT_EQ(image[2U], (BGRAPixel{0x31U, 0x22U, 0x05U, 0x20U}));
+    EXPECT_EQ(image[3U], (BGRAPixel{0x01U, 0x44U, 0xFFU, 0x17U}));
 }
 
 TEST_F(IO_BMPReader, FileTooSmall)
