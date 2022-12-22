@@ -2,6 +2,7 @@
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/utility/fstreamhelpers.hpp"
+#include "THzCommon/utility/lineSequencer.hpp"
 #include "bmpCommons.h"
 
 #include <cstring>
@@ -44,9 +45,13 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
 
     Header header{static_cast<std::int32_t>(dimensions.width), static_cast<std::int32_t>(dimensions.height), _bitCount};
     writeToStream(stream, header);
+    auto sequencer = LineSequencer<BGRAPixel const>::create(buffer, dimensions.width);
     if (_bitCount == 32U)
     {
-        writeToStream(stream, buffer);
+        for (auto line = sequencer->nextLine(); !line.empty(); line = sequencer->nextLine())
+        {
+            writeToStream(stream, line);
+        }
     }
     else
     {
@@ -56,16 +61,13 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
 
         std::array<char, 3U> const paddingBytes{};
 
-        auto x = 0U;
-        for (auto const &pixel : buffer)
+        for (auto line = sequencer->nextLine(); !line.empty(); line = sequencer->nextLine())
         {
-            stream.write(std::bit_cast<char const *>(&pixel), 3U);
-            ++x;
-            if (x == header.infoHeader.width)
+            for (auto const &pixel : line)
             {
-                x = 0U;
-                stream.write(paddingBytes.data(), padding);
+                stream.write(std::bit_cast<char const *>(&pixel), 3U);
             }
+            stream.write(paddingBytes.data(), padding);
         }
     }
 
