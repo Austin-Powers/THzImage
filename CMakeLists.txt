@@ -46,23 +46,23 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
 	src/io/screenReader.cpp
-	src/io/bmpCommons.h
-	src/io/qoiCommons.h
+	src/io/bmpCommons.hpp
+	src/io/qoiCommons.hpp
 
-	include/THzImage/common/colorspaceconverter.h
-	include/THzImage/common/iImageReader.h
-	include/THzImage/common/iImageTransformer.h
-	include/THzImage/common/iImageWriter.h
-	include/THzImage/common/image.h
-    include/THzImage/common/imageView.h
-	include/THzImage/common/pixel.h
-	include/THzImage/io/bmpReader.h
-	include/THzImage/io/bmpWriter.h
-	include/THzImage/io/pngReader.h
-	include/THzImage/io/pngWriter.h
-	include/THzImage/io/qoiReader.h
-	include/THzImage/io/qoiWriter.h
-	include/THzImage/io/screenReader.h
+	include/THzImage/common/colorspaceconverter.hpp
+	include/THzImage/common/iImageReader.hpp
+	include/THzImage/common/iImageTransformer.hpp
+	include/THzImage/common/iImageWriter.hpp
+	include/THzImage/common/image.hpp
+    include/THzImage/common/imageView.hpp
+	include/THzImage/common/pixel.hpp
+	include/THzImage/io/bmpReader.hpp
+	include/THzImage/io/bmpWriter.hpp
+	include/THzImage/io/pngReader.hpp
+	include/THzImage/io/pngWriter.hpp
+	include/THzImage/io/qoiReader.hpp
+	include/THzImage/io/qoiWriter.hpp
+	include/THzImage/io/screenReader.hpp
  )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
