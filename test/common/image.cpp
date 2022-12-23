@@ -1,10 +1,10 @@
-#include "THzImage/common/image.h"
+#include "THzImage/common/image.hpp"
 
 #include "THzCommon/math/rectangle.hpp"
-#include "THzImage/common/iImageReader.h"
-#include "THzImage/common/iImageTransformer.h"
-#include "THzImage/common/iImageWriter.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageReader.hpp"
+#include "THzImage/common/iImageTransformer.hpp"
+#include "THzImage/common/iImageWriter.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

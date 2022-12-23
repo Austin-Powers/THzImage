@@ -1,7 +1,7 @@
-#include "THzImage/io/qoiReader.h"
+#include "THzImage/io/qoiReader.hpp"
 
 #include "THzCommon/utility/spanhelpers.hpp"
-#include "THzImage/io/qoiWriter.h"
+#include "THzImage/io/qoiWriter.hpp"
 
 #include <array>
 #include <cstdint>

@@ -1,14 +1,14 @@
-#ifndef THZ_IMAGE_COMMON_IMAGE_H
-#define THZ_IMAGE_COMMON_IMAGE_H
+#ifndef THZ_IMAGE_COMMON_IMAGE_HPP
+#define THZ_IMAGE_COMMON_IMAGE_HPP
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/math/rectangle.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"
-#include "iImageReader.h"
-#include "iImageTransformer.h"
-#include "iImageWriter.h"
-#include "imageView.h"
-#include "pixel.h"
+#include "iImageReader.hpp"
+#include "iImageTransformer.hpp"
+#include "iImageWriter.hpp"
+#include "imageView.hpp"
+#include "pixel.hpp"
 
 #include <cstddef>
 #include <vector>
@@ -235,4 +235,4 @@ using BGRAImage = Image<BGRAPixel>;
 
 } // namespace Terrahertz
 
-#endif // !THZ_IMAGE_COMMON_IMAGE_H
+#endif // !THZ_IMAGE_COMMON_IMAGE_HPP

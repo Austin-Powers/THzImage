@@ -1,13 +1,13 @@
-#ifndef THZ_IMAGE_IO_SCREENREADER_H
-#define THZ_IMAGE_IO_SCREENREADER_H
+#ifndef THZ_IMAGE_IO_SCREENREADER_HPP
+#define THZ_IMAGE_IO_SCREENREADER_HPP
 
 // functions used by this class are OS specific and we support only windows for now
 #ifdef _WIN32
 
 #include "THzCommon/math/rectangle.hpp"
 #include "THzCommon/utility/staticPImpl.hpp"
-#include "THzImage/common/iImageReader.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageReader.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <memory>
 
@@ -77,4 +77,4 @@ private:
 } // namespace Terrahertz::Screen
 
 #endif // !_WIN32
-#endif // !THZ_IMAGE_IO_SCREENREADER_H
+#endif // !THZ_IMAGE_IO_SCREENREADER_HPP

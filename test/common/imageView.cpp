@@ -1,7 +1,7 @@
-#include "THzImage/common/imageView.h"
+#include "THzImage/common/imageView.hpp"
 
 #include "THzCommon/math/rectangle.hpp"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/pixel.hpp"
 
 #include <array>
 #include <cstdint>

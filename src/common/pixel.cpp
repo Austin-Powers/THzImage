@@ -1,7 +1,7 @@
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/pixel.hpp"
 
 #include "THzCommon/math/constants.hpp"
-#include "THzImage/common/colorspaceconverter.h"
+#include "THzImage/common/colorspaceconverter.hpp"
 
 #include <algorithm>
 #include <cmath>

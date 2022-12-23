@@ -1,7 +1,7 @@
-#ifndef THZ_IMAGE_IO_BMPCOMMONS_H
-#define THZ_IMAGE_IO_BMPCOMMONS_H
+#ifndef THZ_IMAGE_IO_BMPCOMMONS_HPP
+#define THZ_IMAGE_IO_BMPCOMMONS_HPP
 
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/pixel.hpp"
 
 #include <cstdint>
 #include <gsl/gsl>
@@ -105,4 +105,4 @@ static_assert(sizeof(Header) == 54U, "Header has the wrong size.");
 
 } // namespace Terrahertz::BMP
 
-#endif // !THZ_IMAGE_IO_BMPCOMMONS_H
+#endif // !THZ_IMAGE_IO_BMPCOMMONS_HPP

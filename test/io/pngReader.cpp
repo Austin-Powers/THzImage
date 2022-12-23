@@ -1,8 +1,8 @@
-#include "THzImage/io/pngReader.h"
+#include "THzImage/io/pngReader.hpp"
 
 #include "THzCommon/utility/spanhelpers.hpp"
-#include "THzImage/common/image.h"
-#include "THzImage/io/pngWriter.h"
+#include "THzImage/common/image.hpp"
+#include "THzImage/io/pngWriter.hpp"
 
 #include <gtest/gtest.h>
 

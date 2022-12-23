@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_COMMON_IIMAGEREADER_H
-#define THZ_IMAGE_COMMON_IIMAGEREADER_H
+#ifndef THZ_IMAGE_COMMON_IIMAGEREADER_HPP
+#define THZ_IMAGE_COMMON_IIMAGEREADER_HPP
 
 #include "THzCommon/math/rectangle.hpp"
-#include "pixel.h"
+#include "pixel.hpp"
 
 #include <gsl/gsl>
 
@@ -52,4 +52,4 @@ public:
 
 } // namespace Terrahertz
 
-#endif // !THZ_IMAGE_COMMON_IIMAGEREADER_H
+#endif // !THZ_IMAGE_COMMON_IIMAGEREADER_HPP

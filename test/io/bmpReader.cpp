@@ -1,7 +1,7 @@
-#include "THzImage/io/bmpReader.h"
+#include "THzImage/io/bmpReader.hpp"
 
-#include "THzImage/common/image.h"
-#include "THzImage/io/bmpWriter.h"
+#include "THzImage/common/image.hpp"
+#include "THzImage/io/bmpWriter.hpp"
 
 #include <array>
 #include <fstream>

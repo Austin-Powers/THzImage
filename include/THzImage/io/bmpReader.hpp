@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_IO_BMPREADER_H
-#define THZ_IMAGE_IO_BMPREADER_H
+#ifndef THZ_IMAGE_IO_BMPREADER_HPP
+#define THZ_IMAGE_IO_BMPREADER_HPP
 
-#include "THzImage/common/iImageReader.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageReader.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <cstdint>
 #include <fstream>
@@ -65,4 +65,4 @@ private:
 
 } // namespace Terrahertz::BMP
 
-#endif // !THZ_IMAGE_IO_BMPREADER_H
+#endif // !THZ_IMAGE_IO_BMPREADER_HPP

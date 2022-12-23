@@ -1,9 +1,9 @@
-#ifndef THZ_IMAGE_COMMON_IMAGEVIEW_H
-#define THZ_IMAGE_COMMON_IMAGEVIEW_H
+#ifndef THZ_IMAGE_COMMON_IMAGEVIEW_HPP
+#define THZ_IMAGE_COMMON_IMAGEVIEW_HPP
 
 #include "THzCommon/math/point.hpp"
 #include "THzCommon/math/rectangle.hpp"
-#include "iImageTransformer.h"
+#include "iImageTransformer.hpp"
 
 #include <cstddef>
 #include <iterator>
@@ -296,4 +296,4 @@ private:
 
 } // namespace Terrahertz
 
-#endif // !THZ_IMAGE_COMMON_IMAGEVIEW_H
+#endif // !THZ_IMAGE_COMMON_IMAGEVIEW_HPP

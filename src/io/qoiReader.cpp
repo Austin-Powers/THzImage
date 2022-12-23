@@ -1,10 +1,10 @@
-#include "THzImage/io/qoiReader.h"
+#include "THzImage/io/qoiReader.hpp"
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/utility/byteorder.hpp"
 #include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"
-#include "qoiCommons.h"
+#include "qoiCommons.hpp"
 
 namespace Terrahertz::QOI {
 namespace Internal {

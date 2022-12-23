@@ -1,5 +1,7 @@
-#ifndef THZ_IMAGE_IO_QOICOMMONS_H
-#define THZ_IMAGE_IO_QOICOMMONS_H
+#ifndef THZ_IMAGE_IO_QOICOMMONS_HPP
+#define THZ_IMAGE_IO_QOICOMMONS_HPP
+
+#include <cstdint>
 
 namespace Terrahertz::QOI {
 
@@ -81,4 +83,4 @@ constexpr std::uint8_t pixelHash(BGRAPixel const &pixel) noexcept
 
 } // namespace Terrahertz::QOI
 
-#endif // !THZ_IMAGE_IO_QOICOMMONS_H
+#endif // !THZ_IMAGE_IO_QOICOMMONS_HPP

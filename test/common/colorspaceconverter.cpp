@@ -1,4 +1,4 @@
-#include "THzImage/common/colorspaceconverter.h"
+#include "THzImage/common/colorspaceconverter.hpp"
 
 #include <gtest/gtest.h>
 

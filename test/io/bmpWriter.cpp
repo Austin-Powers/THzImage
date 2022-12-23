@@ -1,4 +1,4 @@
-#include "THzImage/io/bmpWriter.h"
+#include "THzImage/io/bmpWriter.hpp"
 
 #include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"

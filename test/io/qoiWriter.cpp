@@ -1,4 +1,4 @@
-#include "THzImage/io/qoiWriter.h"
+#include "THzImage/io/qoiWriter.hpp"
 
 #include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"

@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_IO_QOIREADER_H
-#define THZ_IMAGE_IO_QOIREADER_H
+#ifndef THZ_IMAGE_IO_QOIREADER_HPP
+#define THZ_IMAGE_IO_QOIREADER_HPP
 
-#include "THzImage/common/iImageReader.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageReader.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <cstdint>
 #include <fstream>
@@ -116,4 +116,4 @@ private:
 
 } // namespace Terrahertz::QOI
 
-#endif // !THZ_IMAGE_IO_QOIREADER_H
+#endif // !THZ_IMAGE_IO_QOIREADER_HPP

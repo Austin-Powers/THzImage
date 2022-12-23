@@ -1,6 +1,6 @@
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/pixel.hpp"
 
-#include "THzImage/common/colorspaceconverter.h"
+#include "THzImage/common/colorspaceconverter.hpp"
 
 #include <cmath>
 #include <gtest/gtest.h>

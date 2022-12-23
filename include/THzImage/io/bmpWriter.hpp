@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_IO_BMPWRITER_H
-#define THZ_IMAGE_IO_BMPWRITER_H
+#ifndef THZ_IMAGE_IO_BMPWRITER_HPP
+#define THZ_IMAGE_IO_BMPWRITER_HPP
 
-#include "THzImage/common/iImageWriter.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageWriter.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <string_view>
 
@@ -37,4 +37,4 @@ private:
 
 } // namespace Terrahertz::BMP
 
-#endif // !THZ_IMAGE_IO_BMPWRITER_H
+#endif // !THZ_IMAGE_IO_BMPWRITER_HPP

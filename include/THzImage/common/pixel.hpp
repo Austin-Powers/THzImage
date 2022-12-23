@@ -1,5 +1,5 @@
-#ifndef THZ_IMAGE_COMMON_PIXEL_H
-#define THZ_IMAGE_COMMON_PIXEL_H
+#ifndef THZ_IMAGE_COMMON_PIXEL_HPP
+#define THZ_IMAGE_COMMON_PIXEL_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -197,4 +197,4 @@ struct is_pixel_type<HSVAPixel> : std::true_type
 
 } // namespace Terrahertz
 
-#endif // !THZ_IMAGE_COMMON_PIXEL_H
+#endif // !THZ_IMAGE_COMMON_PIXEL_HPP

@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_IO_QOIWRITER_H
-#define THZ_IMAGE_IO_QOIWRITER_H
+#ifndef THZ_IMAGE_IO_QOIWRITER_HPP
+#define THZ_IMAGE_IO_QOIWRITER_HPP
 
-#include "THzImage/common/iImageWriter.h"
-#include "THzImage/common/pixel.h"
+#include "THzImage/common/iImageWriter.hpp"
+#include "THzImage/common/pixel.hpp"
 
 #include <array>
 #include <gsl/gsl>
@@ -81,4 +81,4 @@ private:
 
 } // namespace Terrahertz::QOI
 
-#endif // !THZ_IMAGE_IO_BMPWRITER_H
+#endif // !THZ_IMAGE_IO_BMPWRITER_HPP

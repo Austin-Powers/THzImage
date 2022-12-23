@@ -1,9 +1,9 @@
-#include "THzImage/io/bmpWriter.h"
+#include "THzImage/io/bmpWriter.hpp"
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzCommon/utility/lineSequencer.hpp"
-#include "bmpCommons.h"
+#include "bmpCommons.hpp"
 
 #include <cstring>
 #include <fstream>

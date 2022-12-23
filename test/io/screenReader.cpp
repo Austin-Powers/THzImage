@@ -1,8 +1,8 @@
 #ifdef _WIN32
 
-#include "THzImage/io/screenReader.h"
+#include "THzImage/io/screenReader.hpp"
 
-#include "THzImage/common/image.h"
+#include "THzImage/common/image.hpp"
 
 #include <Windows.h>
 #include <gtest/gtest.h>

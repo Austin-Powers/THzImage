@@ -1,10 +1,10 @@
 #ifdef _WIN32
 
-#include "THzImage/io/screenReader.h"
+#include "THzImage/io/screenReader.hpp"
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/utility/flipBuffer.hpp"
-#include "bmpCommons.h"
+#include "bmpCommons.hpp"
 
 #include <Windows.h>
 #include <cstdint>

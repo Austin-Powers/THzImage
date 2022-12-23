@@ -1,4 +1,4 @@
-#include "THzImage/io/pngReader.h"
+#include "THzImage/io/pngReader.hpp"
 
 #include "THzCommon/logging/logging.hpp"
 

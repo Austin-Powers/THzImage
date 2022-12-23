@@ -1,8 +1,8 @@
-#ifndef THZ_IMAGE_COMMON_IIMAGETRANSFORMER_H
-#define THZ_IMAGE_COMMON_IIMAGETRANSFORMER_H
+#ifndef THZ_IMAGE_COMMON_IIMAGETRANSFORMER_HPP
+#define THZ_IMAGE_COMMON_IIMAGETRANSFORMER_HPP
 
 #include "THzCommon/math/rectangle.hpp"
-#include "pixel.h"
+#include "pixel.hpp"
 
 namespace Terrahertz {
 
@@ -45,4 +45,4 @@ public:
 
 } // namespace Terrahertz
 
-#endif // !THZ_IMAGE_COMMON_IIMAGETRANSFORMER_H
+#endif // !THZ_IMAGE_COMMON_IIMAGETRANSFORMER_HPP
