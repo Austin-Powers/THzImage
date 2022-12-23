@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 #include <png.h>
+#include <vector>
 
 namespace Terrahertz::PNG {
 
