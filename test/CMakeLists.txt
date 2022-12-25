@@ -12,6 +12,7 @@ add_executable(${PROJECTNAME}
 	io/qoiReader.cpp
 	io/qoiWriter.cpp
 	io/screenReader.cpp
+	transformation/colorReduction.cpp
 )
 
 target_include_directories(${PROJECTNAME} PUBLIC
