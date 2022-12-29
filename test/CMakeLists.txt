@@ -12,6 +12,7 @@ add_executable(${PROJECTNAME}
 	io/qoiReader.cpp
 	io/qoiWriter.cpp
 	io/screenReader.cpp
+	io/testImageGenerator.cpp
 	transformation/colorReduction.cpp
 )
 

@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        b511fabe36f63d309005c20fbf9e566aae92baa8 # latest 21.12.22
+	GIT_TAG        e92da29dcdefdd011d24d4b05340f26c3826788b # latest 28.12.22
 )
 FetchContent_Declare(
 	gsl
@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
 	src/io/screenReader.cpp
+	src/io/testImageGenerator.cpp
 	src/io/bmpCommons.hpp
 	src/io/qoiCommons.hpp
 	src/transformation/colorReduction.cpp
@@ -64,6 +65,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/qoiReader.hpp
 	include/THzImage/io/qoiWriter.hpp
 	include/THzImage/io/screenReader.hpp
+	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/transformation/colorReduction.hpp
 )
 
