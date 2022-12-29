@@ -39,7 +39,11 @@ bool TestImageGenerator::read(gsl::span<BGRAPixel> buffer) noexcept
         auto const maxLength_sq = (halfWidth * halfWidth) + (halfHeight * halfHeight);
         auto const ratio        = (length_sq / maxLength_sq) * 5.0F;
 
-        pixel.hue        = std::atan2f(x, y) + PiF;
+#ifdef _WIN32
+        pixel.hue = std::atan2f(x, y) + PiF;
+#else
+        pixel.hue = atan2f(x, y) + PiF;
+#endif // _WIN32
         pixel.saturation = ratio > 0.98F ? 0xFFU : static_cast<std::uint8_t>((ratio - 1.0F) * 255.0F);
         pixel.value      = ratio <= 1.02F ? 0xFFU : static_cast<std::uint8_t>((1.0F - ratio) * 255.0F);
 
