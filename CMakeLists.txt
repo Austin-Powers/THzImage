@@ -49,7 +49,6 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/testImageGenerator.cpp
 	src/io/bmpCommons.hpp
 	src/io/qoiCommons.hpp
-	src/transformation/colorReduction.cpp
 
 	include/THzImage/common/colorspaceconverter.hpp
 	include/THzImage/common/iImageReader.hpp
@@ -66,7 +65,6 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/qoiWriter.hpp
 	include/THzImage/io/screenReader.hpp
 	include/THzImage/io/testImageGenerator.hpp
-	include/THzImage/transformation/colorReduction.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
