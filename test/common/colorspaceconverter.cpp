@@ -53,4 +53,23 @@ TEST_F(Common_ColorSpaceConverter, BGRtoHSVtoBGRConversion)
     }
 }
 
+TEST_F(Common_ColorSpaceConverter, BGRtoGrayConversion)
+{
+    auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {
+        auto const expectedValue = static_cast<std::uint8_t>((0.0722F * b) + (0.7152F * g) + (0.2126F * r));
+        EXPECT_EQ(BGRtoGray(b, g, r), expectedValue);
+    };
+
+    for (auto r = 0U; r < 256U; r += 7)
+    {
+        for (auto g = 0U; g < 256U; g += 4)
+        {
+            for (auto b = 0U; b < 256U; b += 11)
+            {
+                checkConversion(b, g, r);
+            }
+        }
+    }
+}
+
 } // namespace Terrahertz::UnitTests

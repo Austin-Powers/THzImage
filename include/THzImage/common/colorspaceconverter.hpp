@@ -8,7 +8,7 @@
 
 namespace Terrahertz {
 
-/// @brief Converts a BGR to a HSV Color.
+/// @brief Converts a BGR to a HSV color.
 ///
 /// @param blue The blue value of the BGR color.
 /// @param green The green value of the BGR color.
@@ -54,7 +54,7 @@ inline void BGRtoHSV(std::uint8_t const blue,
     value = max;
 }
 
-/// @brief Converts a HSV to a BGR Color.
+/// @brief Converts a HSV to a BGR color.
 ///
 /// @param hue The hue of the HSV color [rad].
 /// @param saturation The saturation of the HSV color.
@@ -117,6 +117,18 @@ inline void HSVtoBGR(float const        hue,
             break;
         }
     }
+}
+
+/// @brief Converts a BGR color to a gray-value.
+///
+/// @param blue The blue value of the BGR color.
+/// @param green The green value of the BGR color.
+/// @param red The red value of the BGR color.
+/// @return The gray value for the color.
+/// @remarks The conversion is perceptual luminance-preserving.
+inline std::uint8_t BGRtoGray(std::uint8_t const blue, std::uint8_t const green, std::uint8_t const red) noexcept
+{
+    return static_cast<std::uint8_t>((0.0722F * blue) + (0.7152F * green) + (0.2126F * red));
 }
 
 } // namespace Terrahertz
