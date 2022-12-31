@@ -12,7 +12,7 @@ namespace Terrahertz::BMP {
 class Writer : public IImageWriter<BGRAPixel>
 {
 public:
-    /// @brief Initializes a nwe BMPWriter.
+    /// @brief Initializes a new BMP::Writer.
     ///
     /// @param filepath The path to write the BMP-File to.
     /// @param transparency True if transparency should be saved, false otherwise.

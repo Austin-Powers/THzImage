@@ -41,6 +41,8 @@ add_library(${PROJECT_NAME} STATIC
 	src/common/pixel.cpp
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
+	src/io/gifReader.cpp
+	src/io/gifWriter.cpp
 	src/io/pngReader.cpp
 	src/io/pngWriter.cpp
 	src/io/qoiReader.cpp
@@ -48,6 +50,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/screenReader.cpp
 	src/io/testImageGenerator.cpp
 	src/io/bmpCommons.hpp
+	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
 
 	include/THzImage/common/colorspaceconverter.hpp
@@ -59,6 +62,8 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/common/pixel.hpp
 	include/THzImage/io/bmpReader.hpp
 	include/THzImage/io/bmpWriter.hpp
+	include/THzImage/io/gifReader.hpp
+	include/THzImage/io/gifWriter.hpp
 	include/THzImage/io/pngReader.hpp
 	include/THzImage/io/pngWriter.hpp
 	include/THzImage/io/qoiReader.hpp
