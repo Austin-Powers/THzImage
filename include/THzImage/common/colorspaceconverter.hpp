@@ -23,8 +23,8 @@ inline void BGRtoHSV(std::uint8_t const blue,
                      std::uint8_t      &saturation,
                      std::uint8_t      &value) noexcept
 {
-    auto max = std::max(std::max(blue, green), red);
-    auto min = std::min(std::min(blue, green), red);
+    auto const max = std::max(std::max(blue, green), red);
+    auto const min = std::min(std::min(blue, green), red);
     // Hue
     if (min == max)
     {
