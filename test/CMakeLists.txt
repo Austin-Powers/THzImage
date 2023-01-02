@@ -15,6 +15,7 @@ add_executable(${PROJECTNAME}
 	io/qoiWriter.cpp
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
+	transformation/pixelTransformer.cpp
 )
 
 target_include_directories(${PROJECTNAME} PUBLIC

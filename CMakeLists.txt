@@ -70,6 +70,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/qoiWriter.hpp
 	include/THzImage/io/screenReader.hpp
 	include/THzImage/io/testImageGenerator.hpp
+	include/THzImage/transformation/pixelTransformer.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
