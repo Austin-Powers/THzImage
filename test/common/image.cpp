@@ -138,7 +138,7 @@ TEST_F(Common_Image, StoreResultOfSuccess)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.storeResultOf(&transformer));
+    EXPECT_TRUE(sut.storeResultOf(&transformer));
 }
 
 TEST_F(Common_Image, ReadGivenNullptr) { EXPECT_FALSE(sut.read(nullptr)); }
@@ -258,6 +258,15 @@ TEST_F(Common_Image, WriteGivenDataCorrect)
     MyMockWriter writer{};
     EXPECT_TRUE(sut.setDimensions(writer.expectedDimensions));
     EXPECT_TRUE(sut.write(&writer));
+}
+
+TEST_F(Common_Image, CopyViaStoreResultOf)
+{
+    BGRAImage orig{};
+    EXPECT_TRUE(orig.setDimensions(Rectangle{2U, 2U}));
+    BGRAImage dest{};
+    auto      view = orig.view();
+    EXPECT_TRUE(dest.storeResultOf(&view));
 }
 
 } // namespace Terrahertz::UnitTests

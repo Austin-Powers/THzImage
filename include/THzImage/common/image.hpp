@@ -148,6 +148,7 @@ public:
         {
             if (!transformer->transform(*pixel))
             {
+                ++pixel;
                 break;
             }
             ++pixel;
