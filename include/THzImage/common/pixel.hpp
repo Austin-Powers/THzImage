@@ -96,6 +96,62 @@ struct BGRAPixel
     BGRAPixel operator-(BGRAPixel const &other) const noexcept;
 };
 
+struct BGRAPixelFloat
+{
+    /// @brief Blue value of the pixel.
+    float blue{};
+
+    /// @brief Green value of the pixel.
+    float green{};
+
+    /// @brief Red value of the pixel.
+    float red{};
+
+    /// @brief Alpha value of the pixel.
+    float alpha{0xFFU};
+
+    /// @brief Initializes a new pixel using the BGRA color space.
+    ///
+    /// @param b Blue.
+    /// @param g Green.
+    /// @param r Red.
+    /// @param a Alpha.
+    BGRAPixelFloat(float b, float g, float r, float a = 0xFFU) noexcept : blue{b}, green{g}, red{r}, alpha{a} {}
+
+    /// @brief Default initializes a new BGRAPixel.
+    BGRAPixelFloat() noexcept = default;
+
+    /// @brief Explicitly default the constructor so all special methods are defined.
+    BGRAPixelFloat(BGRAPixelFloat const &) noexcept = default;
+
+    /// @brief Copy-Constructor to convert from a BGRAPixel.
+    ///
+    /// @param other The pixel to convert.
+    BGRAPixelFloat(BGRAPixel const &other) noexcept;
+
+    /// @brief Explicitly default the constructor so all special methods are defined.
+    BGRAPixelFloat(BGRAPixelFloat &&) noexcept = default;
+
+    /// @brief Explicitly default the operator so all special methods are defined.
+    BGRAPixelFloat &operator=(BGRAPixelFloat const &) noexcept = default;
+
+    /// @brief Assignment operator to convert from a BGRAPixel.
+    ///
+    /// @param other The pixel to convert.
+    BGRAPixelFloat &operator=(BGRAPixel const &other) noexcept;
+
+    /// @brief Explicitly default the operator so all special methods are defined.
+    BGRAPixelFloat &operator=(BGRAPixelFloat &&) noexcept = default;
+
+    /// @brief Explicitly default the destructor so all special methods are defined.
+    ~BGRAPixelFloat() noexcept = default;
+
+    /// @brief Cast operator to convert this instance into a regular BGRAPixel.
+    ///
+    /// @return A BGRAPixel, the float value will be clamped to the std::uint8_t range.
+    operator BGRAPixel() const noexcept;
+};
+
 /// @brief Struct for HSVA pixel.
 struct HSVAPixel
 {

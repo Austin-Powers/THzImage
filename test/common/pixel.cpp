@@ -239,4 +239,63 @@ TEST_F(Common_Pixel, HSVALerp)
     }
 }
 
+TEST_F(Common_Pixel, BGRAPixelFloatConstruction)
+{
+    BGRAPixelFloat sut{};
+    EXPECT_EQ(sut.blue, 0.0F);
+    EXPECT_EQ(sut.green, 0.0F);
+    EXPECT_EQ(sut.red, 0.0F);
+    EXPECT_EQ(sut.alpha, 255.0F);
+}
+
+TEST_F(Common_Pixel, BGRAPixelFloatConversion)
+{
+    BGRAPixel      base{14U, 56U, 21U};
+    BGRAPixelFloat sut{base};
+    EXPECT_EQ(sut.blue, static_cast<float>(base.blue));
+    EXPECT_EQ(sut.green, static_cast<float>(base.green));
+    EXPECT_EQ(sut.red, static_cast<float>(base.red));
+    EXPECT_EQ(sut.alpha, static_cast<float>(base.alpha));
+
+    base.blue  = 22U;
+    base.green = 222U;
+    base.red   = 2U;
+    sut        = base;
+    EXPECT_EQ(sut.blue, static_cast<float>(base.blue));
+    EXPECT_EQ(sut.green, static_cast<float>(base.green));
+    EXPECT_EQ(sut.red, static_cast<float>(base.red));
+    EXPECT_EQ(sut.alpha, static_cast<float>(base.alpha));
+
+    auto const checkLambda = [&](BGRAPixel const &pixel) { EXPECT_EQ(pixel, base); };
+    checkLambda(sut);
+
+    BGRAPixel base2 = sut;
+    EXPECT_EQ(base, base2);
+}
+
+TEST_F(Common_Pixel, BGRAPixelFloatClampingCorrect)
+{
+    auto const check0 = [](BGRAPixel const &pixel) {
+        EXPECT_EQ(pixel.blue, 0U);
+        EXPECT_EQ(pixel.green, 0U);
+        EXPECT_EQ(pixel.red, 0U);
+        EXPECT_EQ(pixel.alpha, 0U);
+    };
+    auto const check255 = [](BGRAPixel const &pixel) {
+        EXPECT_EQ(pixel.blue, 255U);
+        EXPECT_EQ(pixel.green, 255U);
+        EXPECT_EQ(pixel.red, 255U);
+        EXPECT_EQ(pixel.alpha, 255U);
+    };
+
+    {
+        BGRAPixelFloat sut{-1.0F, -1.0F, -1.0F, -1.0F};
+        check0(sut);
+    }
+    {
+        BGRAPixelFloat sut{255.1F, 255.1F, 255.1F, 255.1F};
+        check255(sut);
+    }
+}
+
 } // namespace Terrahertz::UnitTests

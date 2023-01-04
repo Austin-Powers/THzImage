@@ -56,6 +56,30 @@ BGRAPixel BGRAPixel::operator-(BGRAPixel const &other) const noexcept
     return result;
 }
 
+BGRAPixelFloat::BGRAPixelFloat(BGRAPixel const &other) noexcept
+    : blue{static_cast<float>(other.blue)},
+      green{static_cast<float>(other.green)},
+      red{static_cast<float>(other.red)},
+      alpha{static_cast<float>(other.alpha)}
+{}
+
+BGRAPixelFloat &BGRAPixelFloat::operator=(BGRAPixel const &other) noexcept
+{
+    blue  = other.blue;
+    green = other.green;
+    red   = other.red;
+    alpha = other.alpha;
+    return *this;
+}
+
+BGRAPixelFloat::operator BGRAPixel() const noexcept
+{
+    auto const convert = [](float value) noexcept -> std::uint8_t {
+        return static_cast<std::uint8_t>(std::clamp(value + 0.01F, 0.0F, 255.0F));
+    };
+    return BGRAPixel{convert(blue), convert(green), convert(red), convert(alpha)};
+}
+
 HSVAPixel::HSVAPixel(BGRAPixel const &other) noexcept { *this = other; }
 
 HSVAPixel &HSVAPixel::operator=(BGRAPixel const &other) noexcept
