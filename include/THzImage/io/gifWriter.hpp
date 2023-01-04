@@ -1,7 +1,6 @@
 #ifndef THZ_IMAGE_IO_GIFWRITER_HPP
 #define THZ_IMAGE_IO_GIFWRITER_HPP
 
-#include "THzCommon/structures/octree.hpp"
 #include "THzImage/common/iImageWriter.hpp"
 #include "THzImage/common/pixel.hpp"
 
@@ -36,8 +35,14 @@ public:
     std::uint8_t convert(BGRAPixel const &color) const noexcept;
 
 private:
-    /// @brief The type of octree to reduction is based on.
-    using BGROctreeType = Octree<std::uint8_t, std::uint16_t, std::uint8_t>;
+    /// @brief The subdivisions of the quick access cube.
+    static constexpr size_t QALength{8U};
+
+    /// @brief The entries in each cell of the quick access cube.
+    static constexpr size_t QAEntries{16U};
+
+    /// @brief The length of a quick access slice of the colorspace.
+    static constexpr size_t QASlice{256U / QALength};
 
     /// @brief The number of colors used in the color table.
     std::uint8_t _colorCount{2U};
@@ -45,8 +50,11 @@ private:
     /// @brief The color table of the reduction.
     std::array<BGRAPixel, TargetColors> _colorTable{BGRAPixel{0xFFU, 0xFFU, 0xFFU}};
 
-    /// @brief An octree for quickly finding the index related to a given color.
-    BGROctreeType _quickAccess{};
+    /// @brief The quick access cube for cutting down lookup time.
+    ///
+    /// @remarks Each cell of the cube contains a list of the colors closest to this cell.
+    std::array<std::array<std::array<std::array<std::uint8_t, QAEntries>, QALength>, QALength>, QALength>
+        _quickAccess{};
 };
 
 } // namespace Internal
