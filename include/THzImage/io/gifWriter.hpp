@@ -4,9 +4,11 @@
 #include "THzImage/common/iImageWriter.hpp"
 #include "THzImage/common/pixel.hpp"
 
+#include <array>
 #include <cstddef>
 #include <gsl/gsl>
 #include <string_view>
+#include <vector>
 
 namespace Terrahertz::GIF {
 namespace Internal {
@@ -55,6 +57,39 @@ private:
     /// @remarks Each cell of the cube contains a list of the colors closest to this cell.
     std::array<std::array<std::array<std::array<std::uint8_t, QAEntries>, QALength>, QALength>, QALength>
         _quickAccess{};
+};
+
+/// @brief Encapsulates the dithering algorithm.
+class Dithering
+{
+public:
+    /// @brief Sets the parameters for the dithering.
+    ///
+    /// @param width The width of the image.
+    /// @param colorReduction The color reduction instance to use.
+    void setParameters(std::uint32_t const width, ColorReduction const &colorReduction) noexcept;
+
+    /// @brief Converts the given color into an index in the color table of the given colorReduction.
+    ///
+    /// @param color The color to convert.
+    /// @return The index of the color in the table of the colorReduction.
+    std::uint8_t convert(BGRAPixel color) noexcept;
+
+private:
+    /// @brief The width of the image.
+    std::uint32_t _width{};
+
+    /// @brief Counter for the row of the image.
+    std::uint32_t _rowCounter{};
+
+    /// @brief The color reduction instance to use.
+    ColorReduction const *_colorReduction{};
+
+    /// @brief The floating point parts of the dithering process.
+    std::vector<BGRAPixelFloat> _floatingParts{};
+
+    /// @brief Pointers to the pixels to currently work with.
+    std::array<BGRAPixelFloat *, 6U> _pixel{};
 };
 
 } // namespace Internal

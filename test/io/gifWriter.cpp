@@ -44,4 +44,41 @@ TEST_F(IO_GIFWriter_ColorReduction, ConversionResultCloseToOriginal)
     EXPECT_NEAR(accumulatedDeviations, 268.63, 0.05);
 }
 
+TEST_F(IO_GIFWriter_ColorReduction, ReductionGivenDataWithLessThan255Colors) {}
+
+struct IO_GIFWriter_Dithering : public testing::Test
+{
+    GIF::Internal::ColorReduction colorReduction{};
+    GIF::Internal::Dithering      sut{};
+};
+
+TEST_F(IO_GIFWriter_Dithering, InitialStateCorrect)
+{
+    for (auto i = 0U; i < 256U; ++i)
+    {
+        BGRAPixel pixel{static_cast<std::uint8_t>(i), static_cast<std::uint8_t>(i), static_cast<std::uint8_t>(i)};
+        EXPECT_EQ(sut.convert(pixel), 0U);
+    }
+}
+
+TEST_F(IO_GIFWriter_Dithering, ConversionResultCloseToOriginal)
+{
+    BGRAImage          image{};
+    TestImageGenerator generator{Rectangle{64U, 64U}};
+    EXPECT_TRUE(image.read(&generator));
+    colorReduction.analyze(gsl::span<BGRAPixel const>{&image[0U], image.dimensions().area()});
+    auto const colorTable = colorReduction.colorTable();
+
+    auto accumulatedDeviations = 0.0;
+    sut.setParameters(image.dimensions().width, colorReduction);
+    for (auto const i : image.dimensions().range())
+    {
+        auto const oColor = image[i];
+        auto const rColor = colorTable[sut.convert(oColor)];
+        accumulatedDeviations += oColor.distanceSquared(rColor);
+    }
+    accumulatedDeviations /= image.dimensions().area();
+    EXPECT_NEAR(accumulatedDeviations, 345.74, 0.05);
+}
+
 } // namespace Terrahertz::UnitTests

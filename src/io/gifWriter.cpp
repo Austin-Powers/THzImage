@@ -66,6 +66,7 @@ void ColorReduction::analyze(gsl::span<BGRAPixel const> const buffer) noexcept
         if (children.empty())
         {
             // if the largest node has no children, we have split all nodes
+            // TODO assumption incorrect largest node can have no children while others still have
             break;
         }
         while (emptySlots != 0U)
@@ -180,6 +181,92 @@ std::uint8_t ColorReduction::convert(BGRAPixel const &color) const noexcept
         }
     }
     return minIdx;
+}
+
+void Dithering::setParameters(std::uint32_t const width, ColorReduction const &colorReduction) noexcept
+{
+    _width          = width;
+    _rowCounter     = 0U;
+    _colorReduction = &colorReduction;
+    _floatingParts.resize(1ULL + width);
+    std::fill(_floatingParts.begin(), _floatingParts.end(), BGRAPixelFloat{});
+    _pixel[0U] = _floatingParts.data();
+    _pixel[1U] = _floatingParts.data() + 1;
+    _pixel[2U] = _floatingParts.data() + _floatingParts.size() - 3U;
+    _pixel[3U] = _floatingParts.data() + _floatingParts.size() - 2U;
+    _pixel[4U] = _floatingParts.data() + _floatingParts.size() - 1U;
+    _pixel[5U] = _floatingParts.data() + _floatingParts.size();
+}
+
+std::uint8_t Dithering::convert(BGRAPixel color) noexcept
+{
+    if (_colorReduction == nullptr)
+    {
+        return 0U;
+    }
+
+    auto const addErrorToColor = [](float error, uint8_t &color) -> float {
+        error = std::clamp(error + color, 0.0f, 255.0f);
+        color = static_cast<uint8_t>(error);
+        return error;
+    };
+
+    // Add error to current color
+    _pixel[0]->blue  = addErrorToColor(_pixel[0]->blue, color.blue);
+    _pixel[0]->green = addErrorToColor(_pixel[0]->green, color.green);
+    _pixel[0]->red   = addErrorToColor(_pixel[0]->red, color.red);
+    _pixel[0]->alpha = addErrorToColor(_pixel[0]->alpha, color.alpha);
+
+    auto const  result      = _colorReduction->convert(color);
+    auto const &resultPixel = _colorReduction->colorTable()[result];
+
+    // calculate error
+    BGRAPixelFloat const error{(_pixel[0]->blue - resultPixel.blue) / 16.0f,
+                               (_pixel[0]->green - resultPixel.green) / 16.0f,
+                               (_pixel[0]->red - resultPixel.red) / 16.0f,
+                               (_pixel[0]->alpha - resultPixel.alpha) / 16.0f};
+
+    auto const applyError = [this, &error](size_t idx, float factor) {
+        _pixel[idx]->blue += error.blue * factor;
+        _pixel[idx]->green += error.green * factor;
+        _pixel[idx]->red += error.red * factor;
+        _pixel[idx]->alpha += error.alpha * factor;
+    };
+
+    // do not apply error on the borders
+    if (_rowCounter != _width - 1)
+    {
+        applyError(1, 7.0f);
+        applyError(4, 1.0f);
+    }
+    if (_rowCounter != 0)
+    {
+        applyError(2, 3.0f);
+    }
+    applyError(3, 5.0f);
+    ++_rowCounter;
+    if (_rowCounter == _width)
+    {
+        _rowCounter = 0;
+    }
+
+    _pixel[0]->blue   = 0.0f;
+    _pixel[0]->green  = 0.0f;
+    _pixel[0]->red    = 0.0f;
+    _pixel[0]->alpha  = 0.0f;
+    auto const moveOn = [this](size_t idx) {
+        ++(_pixel[idx]);
+        if (_pixel[idx] == _pixel[5])
+        {
+            _pixel[idx] = _floatingParts.data();
+        }
+    };
+    moveOn(0);
+    moveOn(1);
+    moveOn(2);
+    moveOn(3);
+    moveOn(4);
+    return result;
 }
 
 } // namespace Internal
