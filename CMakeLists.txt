@@ -38,6 +38,7 @@ endif()
 add_subdirectory(png)
 
 add_library(${PROJECT_NAME} STATIC
+	src/analysis/basicImageMetrics.cpp
 	src/common/pixel.cpp
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
@@ -53,6 +54,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
 
+	include/THzImage/analysis/basicImageMetrics.hpp
 	include/THzImage/common/colorspaceconverter.hpp
 	include/THzImage/common/iImageReader.hpp
 	include/THzImage/common/iImageTransformer.hpp

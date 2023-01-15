@@ -1,6 +1,7 @@
 set(PROJECTNAME THzImage.Tests)
 
 add_executable(${PROJECTNAME}
+	analysis/basicImageMetrics.cpp
 	common/colorspaceconverter.cpp
 	common/image.cpp
 	common/imageView.cpp
@@ -16,7 +17,7 @@ add_executable(${PROJECTNAME}
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
 	transformation/pixelTransformer.cpp
-)
+	sandbox.cpp)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}

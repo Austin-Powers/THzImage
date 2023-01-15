@@ -1,5 +1,6 @@
 #include "THzImage/io/bmpWriter.hpp"
 
+#include "THzCommon/math/rectangle.hpp"
 #include "THzCommon/utility/fstreamhelpers.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"
 

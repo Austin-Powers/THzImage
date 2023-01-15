@@ -60,7 +60,7 @@ private:
 class Writer : public IImageWriter<BGRAPixel>
 {
 public:
-    /// @brief Initializes a nwe BMPWriter.
+    /// @brief Initializes a new BMPWriter.
     ///
     /// @param filepath The path to write the QOI-File to.
     Writer(std::string_view const filepath) noexcept;
