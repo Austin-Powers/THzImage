@@ -94,6 +94,12 @@ struct BGRAPixel
     /// @return The resulting pixel.
     /// @remarks Alpha channel will be taken from this pixel.
     BGRAPixel operator-(BGRAPixel const &other) const noexcept;
+
+    /// @brief Subtracts the smaller from the bigger number channel by channel and returns the result.
+    ///
+    /// @param other The other pixel to calculate the difference.
+    /// @return The result of the calculation.
+    BGRAPixel diffAbs(BGRAPixel const &other) const noexcept;
 };
 
 struct BGRAPixelFloat

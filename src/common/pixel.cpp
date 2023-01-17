@@ -56,6 +56,17 @@ BGRAPixel BGRAPixel::operator-(BGRAPixel const &other) const noexcept
     return result;
 }
 
+BGRAPixel BGRAPixel::diffAbs(BGRAPixel const &other) const noexcept
+{
+    auto const channelDiffAbs = [](std::uint8_t const a, std::uint8_t const b) noexcept -> std::uint8_t {
+        return a > b ? a - b : b - a;
+    };
+    return BGRAPixel{channelDiffAbs(blue, other.blue),
+                     channelDiffAbs(green, other.green),
+                     channelDiffAbs(red, other.red),
+                     channelDiffAbs(alpha, other.alpha)};
+}
+
 BGRAPixelFloat::BGRAPixelFloat(BGRAPixel const &other) noexcept
     : blue{static_cast<float>(other.blue)},
       green{static_cast<float>(other.green)},

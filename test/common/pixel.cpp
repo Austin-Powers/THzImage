@@ -298,4 +298,27 @@ TEST_F(Common_Pixel, BGRAPixelFloatClampingCorrect)
     }
 }
 
+TEST_F(Common_Pixel, BGRAPixelDiffAbsCorrect)
+{
+    auto const getDiff = [](std::uint8_t const a, std::uint8_t const b) noexcept -> std::uint8_t {
+        return a > b ? a - b : b - a;
+    };
+
+    BGRAPixel const fixedColor{128U, 100U, 156U, 123U};
+
+    auto const check = [&](std::uint8_t const value) noexcept {
+        BGRAPixel const movingColor{value, value, value, value};
+        auto const      result = fixedColor.diffAbs(movingColor);
+        EXPECT_EQ(result.blue, getDiff(fixedColor.blue, movingColor.blue));
+        EXPECT_EQ(result.green, getDiff(fixedColor.green, movingColor.green));
+        EXPECT_EQ(result.red, getDiff(fixedColor.red, movingColor.red));
+        EXPECT_EQ(result.alpha, getDiff(fixedColor.alpha, movingColor.alpha));
+    };
+
+    for (auto i = 0U; i < 256U; ++i)
+    {
+        check(i);
+    }
+}
+
 } // namespace Terrahertz::UnitTests
