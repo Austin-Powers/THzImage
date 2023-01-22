@@ -88,6 +88,11 @@ public:
     /// @brief Finalizes this instance, performing a deinit.
     ~Reader() noexcept;
 
+    /// @brief Checks if the given file can be read as a QOI file.
+    ///
+    /// @return True if the file can be read, false otherwise.
+    bool fileTypeFits() noexcept;
+
     /// @copydoc IImageReader::multipleImages
     bool multipleImages() const noexcept override;
 

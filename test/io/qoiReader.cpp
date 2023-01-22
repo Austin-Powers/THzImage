@@ -232,6 +232,7 @@ TEST_F(IO_QOIReader, ConstructionCorrect)
 TEST_F(IO_QOIReader, NonExistingFile)
 {
     QOI::Reader sut{"notThere.qoi"};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
     sut.deinit();
 }
@@ -242,6 +243,7 @@ TEST_F(IO_QOIReader, FileTooSmallForHeader)
     prepareTestFile(data);
 
     QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -251,6 +253,7 @@ TEST_F(IO_QOIReader, MagicBytesIncorrect)
     prepareTestFile();
 
     QOI::Reader sut{filepath};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -260,6 +263,7 @@ TEST_F(IO_QOIReader, WidthZero)
     prepareTestFile();
 
     QOI::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -269,6 +273,7 @@ TEST_F(IO_QOIReader, HeightZero)
     prepareTestFile();
 
     QOI::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -277,6 +282,7 @@ TEST_F(IO_QOIReader, BufferTooSmallForData)
     prepareTestFile();
 
     QOI::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     ASSERT_TRUE(sut.init());
     Rectangle const expectedDimensions{2U, 2U};
     ASSERT_EQ(sut.dimensions(), expectedDimensions);
@@ -289,6 +295,7 @@ TEST_F(IO_QOIReader, ReadingData)
     prepareTestFile();
 
     QOI::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     ASSERT_TRUE(sut.init());
     Rectangle const expectedDimensions{2U, 2U};
     ASSERT_EQ(sut.dimensions(), expectedDimensions);
