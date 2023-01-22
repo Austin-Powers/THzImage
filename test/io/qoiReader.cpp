@@ -225,7 +225,7 @@ TEST_F(IO_QOIReader, ImageBufferExhausted)
 TEST_F(IO_QOIReader, ConstructionCorrect)
 {
     QOI::Reader sut{filepath};
-    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
@@ -301,6 +301,8 @@ TEST_F(IO_QOIReader, ReadingData)
     ASSERT_EQ(sut.dimensions(), expectedDimensions);
     std::array<BGRAPixel, 4U> arr{};
     EXPECT_TRUE(sut.read(toSpan<BGRAPixel>(arr)));
+    sut.deinit();
+    EXPECT_FALSE(sut.imagePresent());
 }
 
 } // namespace Terrahertz::UnitTests

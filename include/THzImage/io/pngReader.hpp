@@ -39,8 +39,8 @@ public:
     /// @return True if the file can be read, false otherwise.
     bool fileTypeFits() noexcept;
 
-    /// @copydoc IImageReader::multipleImages
-    bool multipleImages() const noexcept override;
+    /// @copydoc IImageReader::imagePresent
+    bool imagePresent() const noexcept override;
 
     /// @copydoc IImageReader::init
     bool init() noexcept override;

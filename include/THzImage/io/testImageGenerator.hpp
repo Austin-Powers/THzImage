@@ -16,8 +16,8 @@ public:
     /// @param dimensions The dimensions of the test image.
     TestImageGenerator(Rectangle const &dimensions) noexcept;
 
-    /// @copydoc IImageReader::multipleImages
-    [[nodiscard]] bool multipleImages() const noexcept override;
+    /// @copydoc IImageReader::imagePresent
+    [[nodiscard]] bool imagePresent() const noexcept override;
 
     /// @copydoc IImageReader::init
     [[nodiscard]] bool init() noexcept override;

@@ -23,7 +23,7 @@ TEST_F(IO_ScreenReader, DefaultConstructionCorrect)
 {
     Screen::Reader sut{};
     auto const     expectedDimensions = Screen::Reader::getScreenDimensions();
-    EXPECT_TRUE(sut.multipleImages());
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), expectedDimensions);
 }
 

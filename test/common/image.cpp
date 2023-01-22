@@ -25,7 +25,7 @@ struct Common_Image : public testing::Test
     class MockReader : public IImageReader<BGRAPixel>
     {
     public:
-        MOCK_METHOD(bool, multipleImages, (), (const, noexcept, override));
+        MOCK_METHOD(bool, imagePresent, (), (const, noexcept, override));
         MOCK_METHOD(bool, init, (), (noexcept, override));
         MOCK_METHOD(Rectangle, dimensions, (), (const, noexcept, override));
         MOCK_METHOD(bool, read, (gsl::span<BGRAPixel> buffer), (noexcept, override));
@@ -176,7 +176,7 @@ TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
     struct MyMockReader : public IImageReader<BGRAPixel>
     {
         Rectangle dim{0, 0, 4U, 4U};
-        bool      multipleImages() const noexcept override { return true; }
+        bool      imagePresent() const noexcept override { return true; }
 
         bool init() noexcept override { return true; }
 

@@ -34,7 +34,7 @@ struct IO_BMPReader : public testing::Test
 TEST_F(IO_BMPReader, ConstructionCorrect)
 {
     BMP::Reader sut{filepath};
-    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
@@ -143,6 +143,7 @@ TEST_F(IO_BMPReader, ReadingDataWithTransparency)
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
     ASSERT_TRUE(actual.read(&reader));
+    EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 4U; ++i)
     {
@@ -169,6 +170,7 @@ TEST_F(IO_BMPReader, ReadingDataWithoutTransparency)
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
     ASSERT_TRUE(actual.read(&reader));
+    EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 8U; ++i)
     {
@@ -191,6 +193,7 @@ TEST_F(IO_BMPReader, ReadingDataWithoutTransparencyAndPadding)
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
     ASSERT_TRUE(actual.read(&reader));
+    EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 4U; ++i)
     {

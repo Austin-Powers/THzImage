@@ -51,8 +51,8 @@ public:
     /// @remarks The area can be retrieved via the dimensions of the reader.
     [[nodiscard]] bool setArea(Rectangle const &area) noexcept;
 
-    /// @copydoc IImageReader::multipleImages
-    [[nodiscard]] bool multipleImages() const noexcept override;
+    /// @copydoc IImageReader::imagePresent
+    [[nodiscard]] bool imagePresent() const noexcept override;
 
     /// @copydoc IImageReader::init
     [[nodiscard]] bool init() noexcept override;

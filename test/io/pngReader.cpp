@@ -41,7 +41,7 @@ TEST_F(IO_PNGReader, ConstructionCorrect)
     writer.deinit();
 
     PNG::Reader sut{filepath};
-    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
     EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_TRUE(sut.init());
@@ -50,6 +50,7 @@ TEST_F(IO_PNGReader, ConstructionCorrect)
     std::array<BGRAPixel, 100U> loadedData{};
     EXPECT_TRUE(sut.read(toSpan<BGRAPixel>(loadedData)));
     sut.deinit();
+    EXPECT_FALSE(sut.imagePresent());
 
     for (auto i = 0U; i < loadedData.size(); ++i)
     {

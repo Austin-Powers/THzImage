@@ -16,7 +16,7 @@ struct IO_TestImageGenerator : public testing::Test
 TEST_F(IO_TestImageGenerator, Construction)
 {
     TestImageGenerator sut{dimensions};
-    EXPECT_FALSE(sut.multipleImages());
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), dimensions);
 }
 

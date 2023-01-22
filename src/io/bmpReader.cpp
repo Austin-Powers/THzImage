@@ -47,7 +47,12 @@ bool Reader::fileTypeFits() noexcept
     return true;
 }
 
-bool Reader::multipleImages() const noexcept { return false; }
+bool Reader::imagePresent() const noexcept
+{
+    // stream is opened at construction and will be closed on deinit
+    // creating the desired outputs
+    return _stream.is_open();
+}
 
 bool Reader::init() noexcept
 {

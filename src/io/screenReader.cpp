@@ -175,7 +175,7 @@ Reader::~Reader() noexcept {}
 
 bool Reader::setArea(Rectangle const &area) noexcept { return _impl->setArea(area); }
 
-bool Reader::multipleImages() const noexcept { return true; }
+bool Reader::imagePresent() const noexcept { return true; }
 
 bool Reader::init() noexcept { return true; }
 

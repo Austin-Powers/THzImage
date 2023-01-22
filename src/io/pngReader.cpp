@@ -56,6 +56,13 @@ struct Reader::Impl
         return true;
     }
 
+    bool imagePresent() const noexcept
+    {
+        // stream is opened at construction and will be closed on deinit
+        // creating the desired outputs
+        return _pngFile != nullptr;
+    }
+
     bool init() noexcept
     {
         if (_pngFile == nullptr)
@@ -195,7 +202,7 @@ Reader::~Reader() noexcept { deinit(); }
 
 bool Reader::fileTypeFits() noexcept { return _impl->fileTypeFits(); }
 
-bool Reader::multipleImages() const noexcept { return false; }
+bool Reader::imagePresent() const noexcept { return _impl->imagePresent(); }
 
 bool Reader::init() noexcept { return _impl->init(); }
 

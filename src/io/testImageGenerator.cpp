@@ -14,7 +14,7 @@ struct GeneratorProject
 
 TestImageGenerator::TestImageGenerator(Rectangle const &dimensions) noexcept : _dimensions{dimensions} {}
 
-bool TestImageGenerator::multipleImages() const noexcept { return false; }
+bool TestImageGenerator::imagePresent() const noexcept { return true; }
 
 bool TestImageGenerator::init() noexcept { return true; }
 

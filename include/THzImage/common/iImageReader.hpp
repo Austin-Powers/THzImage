@@ -24,10 +24,10 @@ public:
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageReader() noexcept {}
 
-    /// @brief If true the reader will read a different image every time the read cycle is executed.
+    /// @brief Checks if executing the read cycle will return an image or if reader is already exhausted.
     ///
-    /// @return True if the read image changes for every read call, false otherwise.
-    virtual bool multipleImages() const noexcept = 0;
+    /// @return True if there is an image to read, false otherwise.
+    virtual bool imagePresent() const noexcept = 0;
 
     /// @brief Is called by the image to initalize the reading process.
     ///
