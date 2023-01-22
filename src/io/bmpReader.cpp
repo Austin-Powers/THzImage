@@ -27,6 +27,26 @@ Reader::Reader(std::string_view const filepath) noexcept
 
 Reader::~Reader() noexcept { deinit(); }
 
+bool Reader::fileTypeFits() noexcept
+{
+    if (!_stream.is_open())
+    {
+        return false;
+    }
+    Header header{};
+    if (!readFromStream(_stream, header))
+    {
+        return false;
+    }
+    // reset reader
+    _stream.seekg(0U);
+    if (header.fileHeader.magic != FileHeader::MagicBytes)
+    {
+        return false;
+    }
+    return true;
+}
+
 bool Reader::multipleImages() const noexcept { return false; }
 
 bool Reader::init() noexcept

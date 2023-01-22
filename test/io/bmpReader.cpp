@@ -41,6 +41,7 @@ TEST_F(IO_BMPReader, ConstructionCorrect)
 TEST_F(IO_BMPReader, NonExistingFile)
 {
     BMP::Reader sut{"notHere.bmp"};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -50,6 +51,7 @@ TEST_F(IO_BMPReader, FileTooSmallForHeader)
     prepareTestFile(data);
 
     BMP::Reader sut{filepath};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -59,6 +61,7 @@ TEST_F(IO_BMPReader, MagicBytesIncorrect)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -68,6 +71,7 @@ TEST_F(IO_BMPReader, BitCountIncorrect)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -77,6 +81,7 @@ TEST_F(IO_BMPReader, UnsupportedCompressionValue)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -86,6 +91,7 @@ TEST_F(IO_BMPReader, WidthZero)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -95,6 +101,7 @@ TEST_F(IO_BMPReader, HeightZero)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -104,6 +111,7 @@ TEST_F(IO_BMPReader, DimensionsDoNotMatchTheAmountOfData)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -112,6 +120,7 @@ TEST_F(IO_BMPReader, BufferTooSmallForData)
     prepareTestFile();
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.fileTypeFits());
     ASSERT_TRUE(sut.init());
     Rectangle const expectedDimensions{2U, 2U};
     ASSERT_EQ(sut.dimensions(), expectedDimensions);
