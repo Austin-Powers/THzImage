@@ -4,6 +4,7 @@
 #include "THzCommon/math/rectangle.hpp"
 #include "pixel.hpp"
 
+#include <concepts>
 #include <gsl/gsl>
 
 namespace Terrahertz {
@@ -49,6 +50,21 @@ public:
     /// @remarks This method is called regardless of success or failure of reading.
     virtual void deinit() noexcept = 0;
 };
+
+// clang-format off
+
+/// @brief Concept of a ImageReader.
+template<typename TReaderType>
+concept ImageReader = requires
+{
+    // first check if the class has a PixelType member
+    typename TReaderType::PixelType;
+
+    // now use the PixelType member to check if TReaderType implements IImageReader
+    std::is_base_of_v<IImageReader<typename TReaderType::PixelType>, TReaderType>;
+};
+
+// clang-format on
 
 } // namespace Terrahertz
 
