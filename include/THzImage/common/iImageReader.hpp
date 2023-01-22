@@ -64,6 +64,21 @@ concept ImageReader = requires
     std::is_base_of_v<IImageReader<typename TReaderType::PixelType>, TReaderType>;
 };
 
+/// @brief Concept of a FileImageReader.
+template<typename TFileReaderType>
+concept FileImageReader = requires(TFileReaderType reader)
+{
+    // check if class is an ImageReader
+    ImageReader<TFileReaderType>;
+
+    // check if ImageReader can be constructed using a string_view as a filepath
+    TFileReaderType(std::string_view{});
+
+    // check if a method for determining if can be read by the given reader is present
+    // this method should enable checking if the file can be opened without flooding the log with error messages
+    {reader.fileTypeFits()} -> std::same_as<bool>;
+};
+
 // clang-format on
 
 } // namespace Terrahertz
