@@ -16,6 +16,7 @@ struct IO_PNGReader : public testing::Test
 TEST_F(IO_PNGReader, NonExistingFile)
 {
     PNG::Reader sut{"notHere.png"};
+    EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
@@ -42,6 +43,7 @@ TEST_F(IO_PNGReader, ConstructionCorrect)
     PNG::Reader sut{filepath};
     EXPECT_FALSE(sut.multipleImages());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
+    EXPECT_TRUE(sut.fileTypeFits());
     EXPECT_TRUE(sut.init());
     EXPECT_EQ(sut.dimensions(), dimensions);
 

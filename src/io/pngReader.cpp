@@ -36,6 +36,26 @@ struct Reader::Impl
 
     ~Impl() noexcept { deinit(); }
 
+    bool fileTypeFits() noexcept
+    {
+        if (_pngFile == nullptr)
+        {
+            return false;
+        }
+        // check if png
+        png_byte buf[pngBytesToCheck];
+        if (fread(buf, 1, pngBytesToCheck, _pngFile) != pngBytesToCheck)
+        {
+            return false;
+        }
+        fseek(_pngFile, 0, SEEK_SET);
+        if (png_sig_cmp(buf, (png_size_t)0, pngBytesToCheck))
+        {
+            return false;
+        }
+        return true;
+    }
+
     bool init() noexcept
     {
         if (_pngFile == nullptr)
@@ -50,12 +70,12 @@ struct Reader::Impl
             logMessage<LogLevel::Error, ReaderProject>("PNG-file header could not be read");
             return false;
         }
+        fseek(_pngFile, 0, SEEK_SET);
         if (png_sig_cmp(buf, (png_size_t)0, pngBytesToCheck))
         {
             logMessage<LogLevel::Error, ReaderProject>("PNG-file header was incorrect");
             return false;
         }
-        fseek(_pngFile, 0, SEEK_SET);
 
         // init PNG-read
         _png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
@@ -172,6 +192,8 @@ Reader::Reader(std::string_view const filepath) noexcept
 }
 
 Reader::~Reader() noexcept { deinit(); }
+
+bool Reader::fileTypeFits() noexcept { return _impl->fileTypeFits(); }
 
 bool Reader::multipleImages() const noexcept { return false; }
 
