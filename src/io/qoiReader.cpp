@@ -129,7 +129,7 @@ size_t Decompressor::insertDataChunk(gsl::span<std::uint8_t const> const buffer)
 
 } // namespace Internal
 
-/// @brief Name provider for the THzImage.IO.QOIReader class.
+/// @brief Name provider for the THzImage.IO.QOI.Reader class.
 struct ReaderProject
 {
     static constexpr char const *name() noexcept { return "THzImage.IO.QOI.Reader"; }

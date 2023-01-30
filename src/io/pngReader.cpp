@@ -10,7 +10,7 @@
 
 namespace Terrahertz::PNG {
 
-/// @brief Name provider for the THzImage.IO.PNGReader class.
+/// @brief Name provider for the THzImage.IO.PNG.Reader class.
 struct ReaderProject
 {
     static constexpr char const *name() noexcept { return "THzImage.IO.PNG.Reader"; }

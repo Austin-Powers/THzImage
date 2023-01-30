@@ -10,7 +10,7 @@
 
 namespace Terrahertz::BMP {
 
-/// @brief Name provider for the THzImage.IO.BMPReader class.
+/// @brief Name provider for the THzImage.IO.BMP.Reader class.
 struct ReaderProject
 {
     static constexpr char const *name() noexcept { return "THzImage.IO.BMP.Reader"; }
