@@ -225,7 +225,6 @@ TEST_F(IO_QOIReader, ImageBufferExhausted)
 TEST_F(IO_QOIReader, ConstructionCorrect)
 {
     QOI::Reader sut{filepath};
-    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
@@ -243,6 +242,7 @@ TEST_F(IO_QOIReader, FileTooSmallForHeader)
     prepareTestFile(data);
 
     QOI::Reader sut{filepath};
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }

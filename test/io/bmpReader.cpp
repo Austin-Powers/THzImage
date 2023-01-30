@@ -34,7 +34,6 @@ struct IO_BMPReader : public testing::Test
 TEST_F(IO_BMPReader, ConstructionCorrect)
 {
     BMP::Reader sut{filepath};
-    EXPECT_TRUE(sut.imagePresent());
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
@@ -51,6 +50,7 @@ TEST_F(IO_BMPReader, FileTooSmallForHeader)
     prepareTestFile(data);
 
     BMP::Reader sut{filepath};
+    EXPECT_TRUE(sut.imagePresent());
     EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
