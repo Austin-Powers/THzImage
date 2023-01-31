@@ -22,15 +22,12 @@ constexpr uint8_t pngBytesToCheck{4};
 /// @brief Implementation of the PNG::Reader.
 struct Reader::Impl
 {
-    Impl(std::string_view const filepath) noexcept
+    Impl(std::filesystem::path const filepath) noexcept
     {
-        // As string_view is not zero terminated, we copy it just to be save when opening the stream.
-        std::array<char, 512U> path{};
-        std::memcpy(path.data(), filepath.data(), std::min(path.size(), filepath.size()));
 #ifdef _WIN32
-        fopen_s(&_pngFile, path.data(), "rb");
+        _wfopen_s(&_pngFile, filepath.c_str(), L"rb");
 #else
-        _pngFile = fopen(path.data(), "rb");
+        _pngFile = fopen(filepath.c_str(), "rb");
 #endif
     }
 
@@ -192,7 +189,7 @@ struct Reader::Impl
     png_infop _info_ptr{};
 };
 
-Reader::Reader(std::string_view const filepath) noexcept
+Reader::Reader(std::filesystem::path const filepath) noexcept
 {
     Logger::globalInstance().addProject<ReaderProject>();
     _impl.init(filepath);

@@ -5,9 +5,9 @@
 #include "THzImage/common/pixel.hpp"
 
 #include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <gsl/gsl>
-#include <string_view>
 
 namespace Terrahertz::QOI {
 namespace Internal {
@@ -71,7 +71,7 @@ public:
     /// @brief Initializes a new QOI::Reader.
     ///
     /// @param filepath The path of the file to read from.
-    Reader(std::string_view const filepath) noexcept;
+    Reader(std::filesystem::path const filepath) noexcept;
 
     /// @brief Explicitly deleted to prevent copy construction.
     Reader(Reader const &other) noexcept = delete;

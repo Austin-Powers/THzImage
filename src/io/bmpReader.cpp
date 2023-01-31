@@ -16,13 +16,10 @@ struct ReaderProject
     static constexpr char const *name() noexcept { return "THzImage.IO.BMP.Reader"; }
 };
 
-Reader::Reader(std::string_view const filepath) noexcept
+Reader::Reader(std::filesystem::path const filepath) noexcept
 {
     Logger::globalInstance().addProject<ReaderProject>();
-    // As string_view is not zero terminated, we copy it just to be save when opening the stream.
-    std::array<char, 512U> path{};
-    std::memcpy(path.data(), filepath.data(), std::min(path.size(), filepath.size()));
-    _stream.open(path.data(), std::ios::binary);
+    _stream.open(filepath.c_str(), std::ios::binary);
 }
 
 Reader::~Reader() noexcept { deinit(); }

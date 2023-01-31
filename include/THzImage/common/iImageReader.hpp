@@ -5,6 +5,7 @@
 #include "pixel.hpp"
 
 #include <concepts>
+#include <filesystem>
 #include <gsl/gsl>
 
 namespace Terrahertz {
@@ -71,8 +72,8 @@ concept FileImageReader = requires(TFileReaderType reader)
     // check if class is an ImageReader
     ImageReader<TFileReaderType>;
 
-    // check if ImageReader can be constructed using a string_view as a filepath
-    TFileReaderType(std::string_view{});
+    // check if ImageReader can be constructed using a std::filesystem::path
+    TFileReaderType(std::filesystem::path{});
 
     // check if a method for determining if can be read by the given reader is present
     // this method should enable checking if the file can be opened without flooding the log with error messages
