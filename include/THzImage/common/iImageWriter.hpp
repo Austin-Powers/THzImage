@@ -4,6 +4,8 @@
 #include "THzCommon/math/rectangle.hpp"
 #include "pixel.hpp"
 
+#include <concepts>
+#include <filesystem>
 #include <gsl/gsl>
 
 namespace Terrahertz {
@@ -40,6 +42,32 @@ public:
     /// @remarks This method is called regardless of success or failure of writing.
     virtual void deinit() noexcept = 0;
 };
+
+// clang-format off
+
+/// @brief Concept of a ImageWriter.
+template<typename TWriterType>
+concept ImageWriter = requires
+{
+    // first check if the class has a PixelType member
+    typename TWriterType::PixelType;
+
+    // now use the PixelType member to check if TWriterType implements IImageWriter
+    std::is_base_of_v<IImageWriter<typename TWriterType::PixelType>, TWriterType>;
+};
+
+/// @brief Concept of a FileImageWriter.
+template<typename TFileWriterType>
+concept FileImageWriter = requires(TFileWriterType reader)
+{
+    // check if class is an ImageWriter
+    ImageWriter<TFileWriterType>;
+
+    // check if ImageWriter can be constructed using a std::filesystem::path
+    TFileWriterType(std::filesystem::path{});
+};
+
+// clang-format on
 
 } // namespace Terrahertz
 
