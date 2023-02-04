@@ -38,7 +38,7 @@ public:
         }
         else
         {
-            _iter = {directoryPath};
+            _iter = std::filesystem::directory_iterator{directoryPath};
             cycleReader();
         }
     }
