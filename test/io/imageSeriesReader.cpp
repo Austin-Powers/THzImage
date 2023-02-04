@@ -21,10 +21,10 @@ struct IO_ImageSeriesReader : public testing::Test
         std::uint32_t height{};
         std::uint8_t  startValue{};
     };
-    std::array<ImageInfo const, 4U> infos{ImageInfo{".\\seriesTest0.qoi", 3U, 3U, 0U},
-                                          ImageInfo{".\\seriesTest1.qoi", 3U, 4U, 2U},
-                                          ImageInfo{".\\seriesTest2.qoi", 7U, 2U, 4U},
-                                          ImageInfo{".\\seriesTest3.qoi", 5U, 3U, 7U}};
+    std::array<ImageInfo const, 4U> infos{ImageInfo{"./seriesTest0.qoi", 3U, 3U, 0U},
+                                          ImageInfo{"./seriesTest1.qoi", 3U, 4U, 2U},
+                                          ImageInfo{"./seriesTest2.qoi", 7U, 2U, 4U},
+                                          ImageInfo{"./seriesTest3.qoi", 5U, 3U, 7U}};
 
     void createTestImages() noexcept
     {
