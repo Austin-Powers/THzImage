@@ -10,6 +10,7 @@ add_executable(${PROJECTNAME}
 	io/bmpWriter.cpp
 	io/gifReader.cpp
 	io/gifWriter.cpp
+	io/imageSeriesReader.cpp
 	io/pngReader.cpp
 	io/pngWriter.cpp
 	io/qoiReader.cpp

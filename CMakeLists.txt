@@ -66,6 +66,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/bmpWriter.hpp
 	include/THzImage/io/gifReader.hpp
 	include/THzImage/io/gifWriter.hpp
+	include/THzImage/io/imageSeriesReader.hpp
 	include/THzImage/io/pngReader.hpp
 	include/THzImage/io/pngWriter.hpp
 	include/THzImage/io/qoiReader.hpp
