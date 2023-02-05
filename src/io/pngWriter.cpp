@@ -32,7 +32,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
 #ifdef _WIN32
     _wfopen_s(&pngFile, _filepath.c_str(), L"wb");
 #else
-    pngFile = fopen(filepath.data(), "wb");
+    pngFile = fopen(_filepath.c_str(), "wb");
 #endif
     if (pngFile == NULL)
     {
