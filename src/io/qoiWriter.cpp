@@ -120,7 +120,7 @@ struct WriterProject
     static constexpr char const *name() noexcept { return "THzImage.IO.QOIWriter"; }
 };
 
-Writer::Writer(std::string_view const filepath) noexcept : _filepath{filepath} {}
+Writer::Writer(std::filesystem::path const filepath) noexcept : _filepath{filepath} {}
 
 bool Writer::init() noexcept { return true; }
 
@@ -132,11 +132,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
         return false;
     }
 
-    // As string_view is not zero terminated, we copy it just to be save when opening the stream.
-    std::array<char, 512U> filepath{};
-    std::memcpy(filepath.data(), _filepath.data(), std::min(filepath.size(), _filepath.size()));
-
-    std::ofstream stream{filepath.data(), std::ios::binary};
+    std::ofstream stream{_filepath, std::ios::binary};
     if (!stream.is_open())
     {
         logMessage<LogLevel::Error, WriterProject>("Could not open the file to write");

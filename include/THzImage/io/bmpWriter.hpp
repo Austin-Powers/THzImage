@@ -4,7 +4,7 @@
 #include "THzImage/common/iImageWriter.hpp"
 #include "THzImage/common/pixel.hpp"
 
-#include <string_view>
+#include <filesystem>
 
 namespace Terrahertz::BMP {
 
@@ -16,7 +16,7 @@ public:
     ///
     /// @param filepath The path to write the BMP-File to.
     /// @param transparency True if transparency should be saved, false otherwise.
-    Writer(std::string_view const filepath, bool const transparency = true) noexcept;
+    Writer(std::filesystem::path const filepath, bool const transparency = true) noexcept;
 
     /// @copydoc IImageWriter::init
     bool init() noexcept override;
@@ -29,7 +29,7 @@ public:
 
 private:
     /// @brief The path to write the BMP-File to.
-    std::string_view const _filepath;
+    std::filesystem::path const _filepath;
 
     /// @brief The bit count of the image (24 or 32).
     uint8_t const _bitCount;

@@ -16,7 +16,7 @@ struct WriterProject
     static constexpr char const *name() noexcept { return "THzImage.IO.BMP.Writer"; }
 };
 
-Writer::Writer(std::string_view const filepath, bool const transparency) noexcept
+Writer::Writer(std::filesystem::path const filepath, bool const transparency) noexcept
     : _filepath{filepath}, _bitCount{transparency ? std::uint8_t{32U} : std::uint8_t{24U}}
 {
     Logger::globalInstance().addProject<WriterProject>();
@@ -32,11 +32,7 @@ bool Writer::write(Rectangle const &dimensions, gsl::span<BGRAPixel const> const
         return false;
     }
 
-    // As string_view is not zero terminated, we copy it just to be save when opening the stream.
-    std::array<char, 512U> filepath{};
-    std::memcpy(filepath.data(), _filepath.data(), std::min(filepath.size(), _filepath.size()));
-
-    std::ofstream stream{filepath.data(), std::ios::binary};
+    std::ofstream stream{_filepath, std::ios::binary};
     if (!stream.is_open())
     {
         logMessage<LogLevel::Error, WriterProject>("Could not open the file to write");

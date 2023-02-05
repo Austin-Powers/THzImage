@@ -138,7 +138,7 @@ struct ReaderProject
 Reader::Reader(std::filesystem::path const filepath) noexcept
 {
     Logger::globalInstance().addProject<ReaderProject>();
-    _stream.open(filepath.c_str(), std::ios::binary);
+    _stream.open(filepath, std::ios::binary);
 }
 
 Reader::~Reader() noexcept { deinit(); }

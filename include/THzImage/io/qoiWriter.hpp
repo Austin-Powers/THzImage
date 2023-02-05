@@ -5,8 +5,8 @@
 #include "THzImage/common/pixel.hpp"
 
 #include <array>
+#include <filesystem>
 #include <gsl/gsl>
-#include <string_view>
 
 namespace Terrahertz::QOI {
 namespace Internal {
@@ -63,7 +63,7 @@ public:
     /// @brief Initializes a new BMPWriter.
     ///
     /// @param filepath The path to write the QOI-File to.
-    Writer(std::string_view const filepath) noexcept;
+    Writer(std::filesystem::path const filepath) noexcept;
 
     /// @copydoc IImageWriter::init
     bool init() noexcept override;
@@ -76,7 +76,7 @@ public:
 
 private:
     /// @brief The path to write the BMP-File to.
-    std::string_view const _filepath;
+    std::filesystem::path const _filepath;
 };
 
 } // namespace Terrahertz::QOI

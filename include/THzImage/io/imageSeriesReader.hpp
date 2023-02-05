@@ -4,7 +4,6 @@
 #include "THzCommon/logging/logging.hpp"
 #include "THzImage/common/iImageReader.hpp"
 
-#include <concepts>
 #include <filesystem>
 #include <string_view>
 

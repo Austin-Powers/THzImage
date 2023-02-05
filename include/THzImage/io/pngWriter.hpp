@@ -4,7 +4,7 @@
 #include "THzImage/common/iImageWriter.hpp"
 #include "THzImage/common/pixel.hpp"
 
-#include <string_view>
+#include <filesystem>
 
 namespace Terrahertz::PNG {
 
@@ -15,7 +15,7 @@ public:
     /// @brief Initializes a nwe PNGWriter.
     ///
     /// @param filepath The path to write the PNG-File to.
-    Writer(std::string_view const filepath) noexcept;
+    Writer(std::filesystem::path const filepath) noexcept;
 
     /// @copydoc IImageWriter::init
     bool init() noexcept override;
@@ -28,7 +28,7 @@ public:
 
 private:
     /// @brief The path to write the PNG-File to.
-    std::string_view const _filepath;
+    std::filesystem::path const _filepath;
 };
 
 } // namespace Terrahertz::PNG
