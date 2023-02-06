@@ -11,6 +11,7 @@ add_executable(${PROJECTNAME}
 	io/gifReader.cpp
 	io/gifWriter.cpp
 	io/imageSeriesReader.cpp
+	io/imageSeriesWriter.cpp
 	io/pngReader.cpp
 	io/pngWriter.cpp
 	io/qoiReader.cpp
@@ -18,7 +19,8 @@ add_executable(${PROJECTNAME}
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
 	transformation/pixelTransformer.cpp
-	sandbox.cpp)
+	sandbox.cpp
+)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}
