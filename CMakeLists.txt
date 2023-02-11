@@ -74,6 +74,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/qoiWriter.hpp
 	include/THzImage/io/screenReader.hpp
 	include/THzImage/io/testImageGenerator.hpp
+	include/THzImage/io/timedReader.hpp
 	include/THzImage/transformation/pixelTransformer.hpp
 )
 
