@@ -41,6 +41,11 @@ public:
     ///
     /// @return True if the transformer was reset, false otherwise.
     virtual bool reset() noexcept = 0;
+
+    /// @brief Skips to the next image.
+    ///
+    /// @return True if a new image was loaded, false otherwise.
+    virtual bool nextImage() noexcept = 0;
 };
 
 } // namespace Terrahertz

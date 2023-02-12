@@ -52,6 +52,9 @@ public:
     /// @copydoc IImageTransformer::reset
     bool reset() noexcept override { return _base.reset(); }
 
+    /// @copydoc IImageTransformer::nextImage
+    bool nextImage() noexcept override { return _base.nextImage(); }
+
 private:
     /// @brief The base transformer to wrap.
     IImageTransformer<TPixelType> &_base;

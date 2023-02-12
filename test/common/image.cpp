@@ -20,6 +20,7 @@ struct Common_Image : public testing::Test
         MOCK_METHOD(bool, transform, (BGRAPixel & pixel), (noexcept, override));
         MOCK_METHOD(bool, skip, (), (noexcept, override));
         MOCK_METHOD(bool, reset, (), (noexcept, override));
+        MOCK_METHOD(bool, nextImage, (), (noexcept, override));
     };
 
     class MockReader : public IImageReader<BGRAPixel>

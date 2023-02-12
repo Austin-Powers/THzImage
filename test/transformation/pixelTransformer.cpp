@@ -4,12 +4,23 @@
 #include "THzImage/common/pixel.hpp"
 #include "THzImage/io/testImageGenerator.hpp"
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 namespace Terrahertz::UnitTests {
 
 struct Transformation_PixelTransformer : public testing::Test
 {
+    class MockTransformer : public IImageTransformer<BGRAPixel>
+    {
+    public:
+        MOCK_METHOD(Rectangle, dimensions, (), (const, noexcept, override));
+        MOCK_METHOD(bool, transform, (BGRAPixel & pixel), (noexcept, override));
+        MOCK_METHOD(bool, skip, (), (noexcept, override));
+        MOCK_METHOD(bool, reset, (), (noexcept, override));
+        MOCK_METHOD(bool, nextImage, (), (noexcept, override));
+    };
+
     struct TestTransformation
     {
         BGRAPixel operator()(BGRAPixel pixel) noexcept
@@ -72,6 +83,16 @@ TEST_F(Transformation_PixelTransformer, CreateTransformerFromLambda)
         EXPECT_EQ(imageReceiver[i].green, imageBase[i].green);
         EXPECT_EQ(imageReceiver[i].red, imageBase[i].red);
     }
+}
+
+TEST_F(Transformation_PixelTransformer, NextImageCallHandedToBase)
+{
+    MockTransformer baseTransformer{};
+
+    auto transformer = createPixelTransformer<BGRAPixel>(baseTransformer, TestTransformation{});
+    EXPECT_CALL(baseTransformer, nextImage()).Times(2).WillOnce(testing::Return(true)).WillOnce(testing::Return(false));
+    EXPECT_TRUE(transformer.nextImage());
+    EXPECT_FALSE(transformer.nextImage());
 }
 
 } // namespace Terrahertz::UnitTests

@@ -111,6 +111,11 @@ public:
         return _currentPointer != _endPointer;
     }
 
+    /// @brief Skips to the next image.
+    ///
+    /// @return True if a new image was loaded, false otherwise.
+    bool nextImage() noexcept override { return false; }
+
     /// @brief Creates a sub view of this image view by intersecting the region with the given subRegion.
     ///
     /// @param subRegion The region to intersect with the region of this view.
