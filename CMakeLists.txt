@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        e92da29dcdefdd011d24d4b05340f26c3826788b # latest 28.12.22
+	GIT_TAG        f27858ef5d5e6fdb8ccd9e06f56125113fcc73e4 # latest 14.02.23
 )
 FetchContent_Declare(
 	gsl
@@ -62,6 +62,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/common/image.hpp
     include/THzImage/common/imageView.hpp
 	include/THzImage/common/pixel.hpp
+	include/THzImage/handling/imageRingBuffer.hpp
 	include/THzImage/io/bmpReader.hpp
 	include/THzImage/io/bmpWriter.hpp
 	include/THzImage/io/gifReader.hpp
