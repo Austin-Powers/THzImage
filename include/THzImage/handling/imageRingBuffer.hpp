@@ -82,6 +82,11 @@ public:
         return true;
     }
 
+    /// @brief Returns the total amount of images loaded by this buffer.
+    ///
+    /// @return The total amount of images loaded by this buffer.
+    size_t count() const noexcept { return _count; }
+
 private:
     /// @brief Sets up the map for the buffer.
     void setupMap() noexcept

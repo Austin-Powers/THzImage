@@ -50,6 +50,7 @@ struct Handling_ImageRingBuffer : public testing::Test
 TEST_F(Handling_ImageRingBuffer, ConstructionCorrect)
 {
     EXPECT_EQ(sut.slots(), 3U);
+    EXPECT_EQ(sut.count(), 0U);
 
     EXPECT_EQ(sut[0U].dimensions(), Rectangle{});
     EXPECT_EQ(sut[1U].dimensions(), Rectangle{});
@@ -74,15 +75,30 @@ TEST_F(Handling_ImageRingBuffer, NextCalledUsingReader)
 
     EXPECT_TRUE(sut.next());
     checkImage(sut[0U], reader.value);
+    EXPECT_EQ(sut.count(), 1U);
 
     EXPECT_TRUE(sut.next());
     checkImage(sut[0U], reader.value);
     checkImage(sut[1U], reader.value - 1U);
+    EXPECT_EQ(sut.count(), 2U);
 
     EXPECT_TRUE(sut.next());
     checkImage(sut[0U], reader.value);
     checkImage(sut[1U], reader.value - 1U);
     checkImage(sut[2U], reader.value - 2U);
+    EXPECT_EQ(sut.count(), 3U);
+
+    EXPECT_TRUE(sut.next());
+    checkImage(sut[0U], reader.value);
+    checkImage(sut[1U], reader.value - 1U);
+    checkImage(sut[2U], reader.value - 2U);
+    EXPECT_EQ(sut.count(), 4U);
+
+    EXPECT_TRUE(sut.next());
+    checkImage(sut[0U], reader.value);
+    checkImage(sut[1U], reader.value - 1U);
+    checkImage(sut[2U], reader.value - 2U);
+    EXPECT_EQ(sut.count(), 5U);
 
     reader.present = false;
     EXPECT_FALSE(sut.next());
@@ -134,15 +150,18 @@ TEST_F(Handling_ImageRingBuffer, NextCalledUsingTransformer)
 
     EXPECT_TRUE(sut2.next());
     checkImage(sut2[0U], transformer.value);
+    EXPECT_EQ(sut2.count(), 1U);
 
     EXPECT_TRUE(sut2.next());
     checkImage(sut2[0U], transformer.value);
     checkImage(sut2[1U], transformer.value - 1U);
+    EXPECT_EQ(sut2.count(), 2U);
 
     EXPECT_TRUE(sut2.next());
     checkImage(sut2[0U], transformer.value);
     checkImage(sut2[1U], transformer.value - 1U);
     checkImage(sut2[2U], transformer.value - 2U);
+    EXPECT_EQ(sut2.count(), 3U);
 
     transformer.next = false;
     EXPECT_FALSE(sut2.next());
