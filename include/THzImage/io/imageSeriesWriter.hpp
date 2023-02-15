@@ -29,9 +29,17 @@ public:
     /// @brief Creates a writer using the given filepath as a template.
     ///
     /// @param filepath The path for the files, has to contain a single '?' to signify where the numbering shall go.
+    /// @param startNumber The number of the first file to store.
+    /// @param increments The increments in which to increase the number of the images.
     /// @return The new writer, if filepath contained a single '?' for the numbering.
-    [[nodiscard]] static std::optional<Writer> createWriter(std::string_view const filepath) noexcept
+    [[nodiscard]] static std::optional<Writer> createWriter(std::string_view const filepath,
+                                                            std::uint32_t const    startNumber = 0U,
+                                                            std::uint32_t const    increments  = 1U) noexcept
     {
+        if (increments == 0U)
+        {
+            return {};
+        }
         // ? => %06d
         // -1 + 4 = 3
         if ((filepath.size() + 3U) > PathBufferSize)
@@ -42,7 +50,7 @@ public:
         {
             return {};
         }
-        return Writer(filepath);
+        return Writer(filepath, startNumber, increments);
     }
 
     /// @copydoc IImageWriter::init
@@ -78,7 +86,7 @@ public:
             _wrapped->deinit();
         }
         closeWriter();
-        ++_nextNumber;
+        _nextNumber += _increments;
     }
 
 private:
@@ -88,7 +96,10 @@ private:
     /// @brief Initializes a new ImageSeries::Writer using the given filepath.
     ///
     /// @param filepath The filepath template for the file to write.
-    Writer(std::string_view const filepath) noexcept
+    /// @param startNumber The number of the first file to store.
+    /// @param increments The increments in which to increase the number of the images.
+    Writer(std::string_view const filepath, std::uint32_t const startNumber, std::uint32_t const increments) noexcept
+        : _nextNumber{startNumber}, _increments{increments}
     {
         auto bufferPos = 0U;
         for (auto const c : filepath)
@@ -123,6 +134,9 @@ private:
 
     /// @brief The number of the next image to save.
     std::uint32_t _nextNumber{};
+
+    /// @brief The value in which to increment the image number.
+    std::uint32_t _increments{};
 
     /// @brief Pointer to the wrapped writer.
     TWrapped *_wrapped{};

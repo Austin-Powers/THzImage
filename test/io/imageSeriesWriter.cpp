@@ -74,4 +74,42 @@ TEST_F(IO_ImageSeriesWriter, OverallOperation)
     checkImage("./000002.qoi");
 }
 
+TEST_F(IO_ImageSeriesWriter, GivingIncrementsOfZeroFailsCreation)
+{
+    EXPECT_FALSE(ImageSeries::Writer<QOI::Writer>::createWriter("./?.qoi", 0U, 0U));
+}
+
+TEST_F(IO_ImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
+{
+    auto writer = ImageSeries::Writer<QOI::Writer>::createWriter("./32_?.qoi", 3U, 2U);
+    ASSERT_TRUE(writer);
+
+    BGRAImage  image{};
+    auto const checkImage = [&](char const *const filepath) noexcept {
+        BGRAImage   loadedImage{};
+        QOI::Reader reader{filepath};
+        ASSERT_TRUE(loadedImage.read(&reader));
+        ASSERT_EQ(image.dimensions(), loadedImage.dimensions());
+        for (auto const idx : image.dimensions().range())
+        {
+            EXPECT_EQ(image[idx], loadedImage[idx]);
+        }
+    };
+
+    EXPECT_TRUE(image.setDimensions(Rectangle{1U, 1U}));
+    image[0U] = BGRAPixel{10U, 10U, 10U};
+    EXPECT_TRUE(image.write(&(*writer)));
+    checkImage("./32_000003.qoi");
+    EXPECT_TRUE(image.setDimensions(Rectangle{2U, 3U}));
+    image[2U] = BGRAPixel{10U, 10U, 10U};
+    image[4U] = BGRAPixel{10U, 10U, 10U};
+    EXPECT_TRUE(image.write(&(*writer)));
+    checkImage("./32_000005.qoi");
+    EXPECT_TRUE(image.setDimensions(Rectangle{3U, 1U}));
+    image[0U] = BGRAPixel{10U, 10U, 10U};
+    image[1U] = BGRAPixel{12U, 12U, 12U};
+    EXPECT_TRUE(image.write(&(*writer)));
+    checkImage("./32_000007.qoi");
+}
+
 } // namespace Terrahertz::UnitTests
