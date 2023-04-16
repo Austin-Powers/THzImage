@@ -69,7 +69,8 @@ private:
         std::unique_lock lock{_mutex};
         while (!_shutdown)
         {
-            _newImage.wait(lock, [this]() { return _image != nullptr; });
+            _newImage.wait_for(
+                lock, std::chrono::milliseconds{10U}, [this]() { return (_image != nullptr) || _shutdown; });
             if (_image != nullptr)
             {
                 if (!_image->write(&_writer))
