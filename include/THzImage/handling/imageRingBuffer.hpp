@@ -7,52 +7,54 @@
 #include "THzImage/common/pixel.hpp"
 
 #include <algorithm>
-#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <vector>
 
 namespace Terrahertz {
 
 /// @brief A Ringbuffer for image handling.
 ///
 /// @tparam TPixelType The type of pixel used by the image.
-/// @tparam TSlots The amount of images this buffer holds.
-template <typename TPixelType, size_t TSlots>
+template <typename TPixelType>
 class ImageRingBuffer
 {
 public:
-    static_assert(TSlots > 0U, "ImageRingBuffer must have at least one slot");
-
-    /// @brief IImageTransformer that connects to the ImageRingBuffer.
-    class Transformer : public IImageTransformer<TPixelType>
-    {};
-
     /// @brief Initializes a new ImageRingBuffer using the given reader for retrieving new images.
     ///
     /// @param reader The reader to get new images from.
-    ImageRingBuffer(IImageReader<TPixelType> &reader) noexcept : _reader{&reader} { setupMap(); }
+    /// @param slots The amount of images this buffer holds.
+    ImageRingBuffer(IImageReader<TPixelType> &reader, size_t const slots) noexcept : _reader{&reader}, _slots{slots}
+    {
+        setup();
+    }
 
     /// @brief Initializes a new ImageRingBuffer using the given transofmer for retrieving new images.
     ///
     /// @param transformer The transformer to get new images from.
-    ImageRingBuffer(IImageTransformer<TPixelType> &transformer) noexcept : _transformer{&transformer} { setupMap(); }
+    /// @param slots The amount of images this buffer holds.
+    ImageRingBuffer(IImageTransformer<TPixelType> &transformer, size_t const slots) noexcept
+        : _transformer{&transformer}, _slots{slots}
+    {
+        setup();
+    }
 
     /// @brief Returns the number of slots of this ring buffer.
     ///
     /// @return The number of slots of this ring buffer.
-    constexpr size_t slots() const noexcept { return TSlots; }
+    [[nodiscard]] size_t slots() const noexcept { return _slots; }
 
     /// @brief Provides access to the images in the buffer.
     ///
     /// @param index The index of the image, newest images has index 0, second newest 1 and so on.
     /// @return The image at the given index.
-    Image<TPixelType> &operator[](size_t const index) noexcept { return *_map[index]; }
+    [[nodiscard]] Image<TPixelType> &operator[](size_t const index) noexcept { return *_map[index]; }
 
     /// @brief Provides access to the images in the buffer.
     ///
     /// @param index The index of the image, newest images has index 0, second newest 1 and so on.
     /// @return The image at the given index.
-    Image<TPixelType> const &operator[](size_t const index) const noexcept { return *_map[index]; }
+    [[nodiscard]] Image<TPixelType> const &operator[](size_t const index) const noexcept { return *_map[index]; }
 
     /// @brief Loads the next image either from the reader or the transformer.
     ///
@@ -61,7 +63,7 @@ public:
     {
         if (_reader != nullptr)
         {
-            if ((!_reader->imagePresent()) || (!_map[TSlots - 1U]->read(_reader)))
+            if ((!_reader->imagePresent()) || (!_map[_slots - 1U]->read(_reader)))
             {
                 return false;
             }
@@ -72,7 +74,7 @@ public:
             {
                 return false;
             }
-            if (!_map[TSlots - 1U]->storeResultOf(_transformer))
+            if (!_map[_slots - 1U]->storeResultOf(_transformer))
             {
                 return false;
             }
@@ -85,29 +87,33 @@ public:
     /// @brief Returns the total amount of images loaded by this buffer.
     ///
     /// @return The total amount of images loaded by this buffer.
-    size_t count() const noexcept { return _count; }
+    [[nodiscard]] size_t count() const noexcept { return _count; }
 
 private:
-    /// @brief Sets up the map for the buffer.
-    void setupMap() noexcept
+    /// @brief Sets up the vectors for the buffer.
+    void setup() noexcept
     {
-        for (auto i = 0U; i < TSlots; ++i)
+        _buffer.resize(_slots);
+        _map.resize(_slots);
+        for (auto i = 0U; i < _slots; ++i)
         {
             _map[i] = &_buffer[i];
         }
     }
 
     /// @brief The buffer of images.
-    std::array<Image<TPixelType>, TSlots> _buffer{};
+    std::vector<Image<TPixelType>> _buffer{};
 
     /// @brief The mapping of the buffer newest to oldest entry.
-    std::array<Image<TPixelType> *, TSlots> _map{};
+    std::vector<Image<TPixelType> *> _map{};
 
     /// @brief Pointer to the reader used to get new images.
     IImageReader<TPixelType> *_reader{};
 
     /// @brief Pointer to the transformer used to get new images.
     IImageTransformer<TPixelType> *_transformer{};
+
+    size_t _slots{};
 
     /// @brief Counter for the loaded images.
     size_t _count{};

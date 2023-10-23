@@ -40,11 +40,11 @@ struct Handling_ImageRingBuffer : public testing::Test
         std::uint8_t value{};
     };
 
-    using TestSubject = ImageRingBuffer<BGRAPixel, 3U>;
+    using TestSubject = ImageRingBuffer<BGRAPixel>;
 
     TestReader reader{};
 
-    TestSubject sut{reader};
+    TestSubject sut{reader, 3U};
 };
 
 TEST_F(Handling_ImageRingBuffer, ConstructionCorrect)
@@ -146,7 +146,7 @@ TEST_F(Handling_ImageRingBuffer, NextCalledUsingTransformer)
 
     TestTransformer transformer{};
 
-    TestSubject sut2{transformer};
+    TestSubject sut2{transformer, 3U};
 
     EXPECT_TRUE(sut2.next());
     checkImage(sut2[0U], transformer.value);
