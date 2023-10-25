@@ -39,6 +39,9 @@ public:
         setup();
     }
 
+    /// @brief Default destructor to make it virtual.
+    virtual ~ImageRingBuffer() noexcept = default;
+
     /// @brief Returns the number of slots of this ring buffer.
     ///
     /// @return The number of slots of this ring buffer.
@@ -59,11 +62,32 @@ public:
     /// @brief Loads the next image either from the reader or the transformer.
     ///
     /// @return True if the next image was loaded, false otherwise.
-    bool next() noexcept
+    virtual bool next() noexcept
+    {
+        if (nextPicture(_map[_slots - 1U]))
+        {
+            std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
+            ++_count;
+            return true;
+        }
+        return false;
+    }
+
+    /// @brief Returns the total amount of images loaded by this buffer.
+    ///
+    /// @return The total amount of images loaded by this buffer.
+    [[nodiscard]] size_t count() const noexcept { return _count; }
+
+protected:
+    /// @brief
+    ///
+    /// @param slot
+    /// @return
+    bool nextPicture(Image<TPixelType> *const slot) noexcept
     {
         if (_reader != nullptr)
         {
-            if ((!_reader->imagePresent()) || (!_map[_slots - 1U]->read(_reader)))
+            if ((!_reader->imagePresent()) || (!slot->read(_reader)))
             {
                 return false;
             }
@@ -74,20 +98,19 @@ public:
             {
                 return false;
             }
-            if (!_map[_slots - 1U]->storeResultOf(_transformer))
+            if (!slot->storeResultOf(_transformer))
             {
                 return false;
             }
         }
-        std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
-        ++_count;
         return true;
     }
 
-    /// @brief Returns the total amount of images loaded by this buffer.
-    ///
-    /// @return The total amount of images loaded by this buffer.
-    [[nodiscard]] size_t count() const noexcept { return _count; }
+    /// @brief The mapping of the buffer newest to oldest entry.
+    std::vector<Image<TPixelType> *> _map{};
+
+    /// @brief Counter for the loaded images.
+    size_t _count{};
 
 private:
     /// @brief Sets up the vectors for the buffer.
@@ -104,19 +127,14 @@ private:
     /// @brief The buffer of images.
     std::vector<Image<TPixelType>> _buffer{};
 
-    /// @brief The mapping of the buffer newest to oldest entry.
-    std::vector<Image<TPixelType> *> _map{};
-
     /// @brief Pointer to the reader used to get new images.
     IImageReader<TPixelType> *_reader{};
 
     /// @brief Pointer to the transformer used to get new images.
     IImageTransformer<TPixelType> *_transformer{};
 
+    /// @brief The amount of images this buffer holds.
     size_t _slots{};
-
-    /// @brief Counter for the loaded images.
-    size_t _count{};
 };
 
 } // namespace Terrahertz
