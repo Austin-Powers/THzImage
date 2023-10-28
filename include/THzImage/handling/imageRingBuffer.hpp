@@ -45,7 +45,7 @@ public:
     /// @brief Returns the number of slots of this ring buffer.
     ///
     /// @return The number of slots of this ring buffer.
-    [[nodiscard]] size_t slots() const noexcept { return _slots; }
+    [[nodiscard]] virtual size_t slots() const noexcept { return _slots; }
 
     /// @brief Provides access to the images in the buffer.
     ///
@@ -64,10 +64,9 @@ public:
     /// @return True if the next image was loaded, false otherwise.
     virtual bool next() noexcept
     {
-        if (nextPicture(_map[_slots - 1U]))
+        if (loadNextImage())
         {
-            std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
-            ++_count;
+            updateMap();
             return true;
         }
         return false;
@@ -79,15 +78,14 @@ public:
     [[nodiscard]] size_t count() const noexcept { return _count; }
 
 protected:
-    /// @brief
+    /// @brief Loads the next image of the reader/transformer into the last slot.
     ///
-    /// @param slot
-    /// @return
-    bool nextPicture(Image<TPixelType> *const slot) noexcept
+    /// @return True if the operation was successful, false otherwise.
+    bool loadNextImage() noexcept
     {
         if (_reader != nullptr)
         {
-            if ((!_reader->imagePresent()) || (!slot->read(_reader)))
+            if ((!_reader->imagePresent()) || (!_map[_slots - 1U]->read(_reader)))
             {
                 return false;
             }
@@ -98,7 +96,7 @@ protected:
             {
                 return false;
             }
-            if (!slot->storeResultOf(_transformer))
+            if (!_map[_slots - 1U]->storeResultOf(_transformer))
             {
                 return false;
             }
@@ -106,11 +104,12 @@ protected:
         return true;
     }
 
-    /// @brief The mapping of the buffer newest to oldest entry.
-    std::vector<Image<TPixelType> *> _map{};
-
-    /// @brief Counter for the loaded images.
-    size_t _count{};
+    /// @brief Updates the map after a successful read.
+    void updateMap() noexcept
+    {
+        std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
+        ++_count;
+    }
 
 private:
     /// @brief Sets up the vectors for the buffer.
@@ -124,6 +123,9 @@ private:
         }
     }
 
+    /// @brief The mapping of the buffer newest to oldest entry.
+    std::vector<Image<TPixelType> *> _map{};
+
     /// @brief The buffer of images.
     std::vector<Image<TPixelType>> _buffer{};
 
@@ -135,6 +137,9 @@ private:
 
     /// @brief The amount of images this buffer holds.
     size_t _slots{};
+
+    /// @brief Counter for the loaded images.
+    size_t _count{};
 };
 
 } // namespace Terrahertz

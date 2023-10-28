@@ -6,6 +6,7 @@ add_executable(${PROJECTNAME}
 	common/image.cpp
 	common/imageView.cpp
 	common/pixel.cpp
+	handling/asyncImageRingBuffer.cpp
 	handling/imageRingBuffer.cpp
 	io/asyncWriter.cpp
 	io/bmpReader.cpp
