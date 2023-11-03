@@ -90,7 +90,7 @@ TEST_F(IO_ImageSeriesReader, OperationCorrect)
     for (auto i = 0U; (i < 16U) && sut.imagePresent(); ++i)
     {
         auto const filepath = sut.currentFilepath();
-        ASSERT_TRUE(image.read(&sut));
+        ASSERT_TRUE(image.read(sut));
         for (auto const &info : infos)
         {
             if (std::filesystem::path{info.name} == filepath)

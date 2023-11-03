@@ -29,7 +29,7 @@ TEST_F(IO_GIFWriter_ColorReduction, ConversionResultCloseToOriginal)
 {
     BGRAImage          image{};
     TestImageGenerator generator{Rectangle{64U, 64U}};
-    EXPECT_TRUE(image.read(&generator));
+    EXPECT_TRUE(image.read(generator));
     sut.analyze(gsl::span<BGRAPixel const>{&image[0U], image.dimensions().area()});
     auto const colorTable = sut.colorTable();
 
@@ -65,7 +65,7 @@ TEST_F(IO_GIFWriter_Dithering, ConversionResultCloseToOriginal)
 {
     BGRAImage          image{};
     TestImageGenerator generator{Rectangle{64U, 64U}};
-    EXPECT_TRUE(image.read(&generator));
+    EXPECT_TRUE(image.read(generator));
     colorReduction.analyze(gsl::span<BGRAPixel const>{&image[0U], image.dimensions().area()});
     auto const colorTable = colorReduction.colorTable();
 

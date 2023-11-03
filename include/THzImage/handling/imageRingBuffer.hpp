@@ -85,7 +85,7 @@ protected:
     {
         if (_reader != nullptr)
         {
-            if ((!_reader->imagePresent()) || (!_map[_slots - 1U]->read(_reader)))
+            if ((!_reader->imagePresent()) || (!_map[_slots - 1U]->read(*_reader)))
             {
                 return false;
             }
@@ -96,7 +96,7 @@ protected:
             {
                 return false;
             }
-            if (!_map[_slots - 1U]->storeResultOf(_transformer))
+            if (!_map[_slots - 1U]->storeResultOf(*_transformer))
             {
                 return false;
             }

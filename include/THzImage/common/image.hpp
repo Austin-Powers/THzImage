@@ -119,19 +119,14 @@ public:
     ///
     /// @param transformer The transformer whose result to store.
     /// @return True if the image was successfully transformed, false otherwise.
-    [[nodiscard]] bool storeResultOf(IImageTransformer<TPixelType> *const transformer) noexcept
+    [[nodiscard]] bool storeResultOf(IImageTransformer<TPixelType> &transformer) noexcept
     {
-        if (transformer == nullptr)
-        {
-            logMessage<LogLevel::Error, ImageProject>("Given transformer was nullptr");
-            return false;
-        }
-        if (!transformer->reset())
+        if (!transformer.reset())
         {
             logMessage<LogLevel::Error, ImageProject>("Transformer could not be reset");
             return false;
         }
-        auto const dimensions = transformer->dimensions();
+        auto const dimensions = transformer.dimensions();
         if (dimensions.area() == 0)
         {
             logMessage<LogLevel::Error, ImageProject>("Transformer has dimensions of area 0");
@@ -146,7 +141,7 @@ public:
         auto pixel = _data.data();
         for (auto i = 0U; i < _dimensions.area(); ++i)
         {
-            if (!transformer->transform(*pixel))
+            if (!transformer.transform(*pixel))
             {
                 ++pixel;
                 break;
@@ -161,32 +156,27 @@ public:
     ///
     /// @param reader The reader to read the image data from.
     /// @return True if the image was successfully read, false otherwise.
-    [[nodiscard]] bool read(IImageReader<TPixelType> *reader) noexcept
+    [[nodiscard]] bool read(IImageReader<TPixelType> &reader) noexcept
     {
-        if (reader == nullptr)
-        {
-            logMessage<LogLevel::Error, ImageProject>("Given reader was nullptr");
-            return false;
-        }
-        if (!reader->init())
+        if (!reader.init())
         {
             logMessage<LogLevel::Error, ImageProject>("Init of reader failed");
             return false;
         }
 
         auto result = true;
-        if (!setDimensions(reader->dimensions()))
+        if (!setDimensions(reader.dimensions()))
         {
             logMessage<LogLevel::Error, ImageProject>("Could not resize to reader dimensions");
             result = false;
         }
-        else if (!reader->read(toSpan<TPixelType>(_data)))
+        else if (!reader.read(toSpan<TPixelType>(_data)))
         {
             logMessage<LogLevel::Error, ImageProject>("Reading failed");
             result = false;
         }
 
-        reader->deinit();
+        reader.deinit();
         return result;
     }
 

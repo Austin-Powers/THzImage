@@ -97,13 +97,11 @@ TEST_F(Common_Image, CreateViewOfImageRegion)
     EXPECT_EQ(view.region(), region);
 }
 
-TEST_F(Common_Image, StoreResultOfGivenNullptr) { EXPECT_FALSE(sut.storeResultOf(nullptr)); }
-
 TEST_F(Common_Image, StoreResultOfTransformerResetFalse)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1);
-    EXPECT_FALSE(sut.storeResultOf(&transformer));
+    EXPECT_FALSE(sut.storeResultOf(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
@@ -111,7 +109,7 @@ TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(transformer, dimensions()).Times(1).WillRepeatedly(testing::Return(Rectangle{}));
-    EXPECT_FALSE(sut.storeResultOf(&transformer));
+    EXPECT_FALSE(sut.storeResultOf(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
@@ -125,7 +123,7 @@ TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.storeResultOf(&transformer));
+    EXPECT_FALSE(sut.storeResultOf(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfSuccess)
@@ -139,16 +137,14 @@ TEST_F(Common_Image, StoreResultOfSuccess)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
-    EXPECT_TRUE(sut.storeResultOf(&transformer));
+    EXPECT_TRUE(sut.storeResultOf(transformer));
 }
-
-TEST_F(Common_Image, ReadGivenNullptr) { EXPECT_FALSE(sut.read(nullptr)); }
 
 TEST_F(Common_Image, ReadInitFalse)
 {
     MockReader reader{};
     EXPECT_CALL(reader, init()).WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.read(&reader));
+    EXPECT_FALSE(sut.read(reader));
 }
 
 TEST_F(Common_Image, ReadReadFalse)
@@ -158,7 +154,7 @@ TEST_F(Common_Image, ReadReadFalse)
     EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
     EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(false));
     EXPECT_CALL(reader, deinit()).Times(1);
-    EXPECT_FALSE(sut.read(&reader));
+    EXPECT_FALSE(sut.read(reader));
 }
 
 TEST_F(Common_Image, ReadReadTrue)
@@ -168,7 +164,7 @@ TEST_F(Common_Image, ReadReadTrue)
     EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
     EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(true));
     EXPECT_CALL(reader, deinit()).Times(1);
-    EXPECT_TRUE(sut.read(&reader));
+    EXPECT_TRUE(sut.read(reader));
 }
 
 TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
@@ -193,7 +189,7 @@ TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
     };
 
     MyMockReader reader{};
-    EXPECT_TRUE(sut.read(&reader));
+    EXPECT_TRUE(sut.read(reader));
 }
 
 TEST_F(Common_Image, WriteGivenNullptr) { EXPECT_FALSE(sut.write(nullptr)); }
@@ -267,7 +263,7 @@ TEST_F(Common_Image, CopyViaStoreResultOf)
     EXPECT_TRUE(orig.setDimensions(Rectangle{2U, 2U}));
     BGRAImage dest{};
     auto      view = orig.view();
-    EXPECT_TRUE(dest.storeResultOf(&view));
+    EXPECT_TRUE(dest.storeResultOf(view));
 }
 
 } // namespace Terrahertz::UnitTests

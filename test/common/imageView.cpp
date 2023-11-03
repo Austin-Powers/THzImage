@@ -1,6 +1,7 @@
 #include "THzImage/common/imageView.hpp"
 
 #include "THzCommon/math/rectangle.hpp"
+#include "THzImage/common/image.hpp"
 #include "THzImage/common/pixel.hpp"
 
 #include <array>
@@ -20,10 +21,6 @@ struct Common_ImageView : public testing::Test
     static_assert(std::bidirectional_iterator<HSVAView>, "ImageView<HSVAPixel> is not a bidirectional_iterator");
     static_assert(std::totally_ordered<BGRAView>, "ImageView<BGRAPixel> is not totally_ordered");
     static_assert(std::totally_ordered<HSVAView>, "ImageView<HSVAPixel> is not totally_ordered");
-    // static_assert(std::sized_sentinel_for<BGRAView, BGRAView>,
-    //               "ImageView<BGRAPixel> is not sized_sentinel_for BRGAView");
-    // static_assert(std::sized_sentinel_for<HSVAView, HSVAView>,
-    //               "ImageView<HSVAPixel> is not sized_sentinel_for HSVAView");
 
     static constexpr std::uint32_t const width{16};
     static constexpr std::uint32_t const height{9};
@@ -98,7 +95,7 @@ TEST_F(Common_ImageView, Increment)
         ASSERT_EQ(a.operator->(), b.operator->());
     };
 
-    auto sut2 = sut;
+    BGRAView sut2 = sut;
     for (auto y = 0U; y < region.height; ++y)
     {
         for (auto x = 0U; x < region.width; ++x)
@@ -109,7 +106,7 @@ TEST_F(Common_ImageView, Increment)
             auto const pos = expectedPosition.x + (expectedPosition.y * dimensions.width);
             ASSERT_EQ(&(*sut), imageBuffer.data() + pos);
 
-            auto const before = sut2;
+            BGRAView const before = sut2;
             compareViews(sut2++, before);
             ASSERT_EQ(&(++sut), &sut);
             compareViews(sut, sut2);
@@ -119,7 +116,7 @@ TEST_F(Common_ImageView, Increment)
 
 TEST_F(Common_ImageView, Reset)
 {
-    auto const start = sut;
+    BGRAView const start = sut;
     ++sut;
     ++sut;
     ++sut;
@@ -134,7 +131,7 @@ TEST_F(Common_ImageView, ComparissonOperators)
     EXPECT_GE(sut, sut);
     EXPECT_LE(sut, sut);
 
-    auto const sutCopy = sut;
+    BGRAView const sutCopy = sut;
     EXPECT_EQ(sutCopy, sut);
     EXPECT_GE(sutCopy, sut);
     EXPECT_LE(sutCopy, sut);
@@ -176,11 +173,11 @@ TEST_F(Common_ImageView, Decrement)
 
     auto postDec = sut.end();
     auto preDec  = sut.end();
-    for (auto y = region.height - 1U; y < region.height; --y)
+    for (auto y = region.height - 1U; y != std::numeric_limits<std::uint32_t>::max(); --y)
     {
-        for (auto x = region.width - 1U; x < region.width; --x)
+        for (auto x = region.width - 1U; x != std::numeric_limits<std::uint32_t>::max(); --x)
         {
-            auto const before = postDec;
+            BGRAView const before = postDec;
             compareViews(postDec--, before);
             ASSERT_EQ(&(--preDec), &preDec);
             compareViews(preDec, postDec);
@@ -257,6 +254,13 @@ TEST_F(Common_ImageView, ForeachLoopCompatibility)
             }
         }
     }
+}
+
+TEST_F(Common_ImageView, DefaultConstructedViewDoesNotThrowIfUsedByImage)
+{
+    BGRAView  view{};
+    BGRAImage image{};
+    EXPECT_FALSE(image.storeResultOf(view));
 }
 
 } // namespace Terrahertz::UnitTests

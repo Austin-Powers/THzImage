@@ -50,7 +50,7 @@ TEST_F(IO_ImageSeriesWriter, OverallOperation)
     auto const checkImage = [&](char const *const filepath) noexcept {
         BGRAImage   loadedImage{};
         QOI::Reader reader{filepath};
-        ASSERT_TRUE(loadedImage.read(&reader));
+        ASSERT_TRUE(loadedImage.read(reader));
         ASSERT_EQ(image.dimensions(), loadedImage.dimensions());
         for (auto const idx : image.dimensions().range())
         {
@@ -88,7 +88,7 @@ TEST_F(IO_ImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
     auto const checkImage = [&](char const *const filepath) noexcept {
         BGRAImage   loadedImage{};
         QOI::Reader reader{filepath};
-        ASSERT_TRUE(loadedImage.read(&reader));
+        ASSERT_TRUE(loadedImage.read(reader));
         ASSERT_EQ(image.dimensions(), loadedImage.dimensions());
         for (auto const idx : image.dimensions().range())
         {
