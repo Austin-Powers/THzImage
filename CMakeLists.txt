@@ -63,6 +63,7 @@ add_library(${PROJECT_NAME} STATIC
     include/THzImage/common/imageView.hpp
 	include/THzImage/common/pixel.hpp
 	include/THzImage/handling/asyncImageRingBuffer.hpp
+	include/THzImage/handling/bufferTransformer.hpp
 	include/THzImage/handling/imageRingBuffer.hpp
 	include/THzImage/io/asyncWriter.hpp
 	include/THzImage/io/bmpReader.hpp
