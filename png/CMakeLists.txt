@@ -11,12 +11,12 @@ project(png VERSION 1.0)
 FetchContent_Declare(
 	zlib
 	GIT_REPOSITORY https://github.com/madler/zlib.git
-	GIT_TAG        04f42ceca40f73e2978b50e93806c2a18c1281fc # release-v1.2.13
+	GIT_TAG        09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851 # release-v1.3
 )
 FetchContent_Declare(
 	libpng
 	GIT_REPOSITORY https://github.com/glennrp/libpng.git
-	GIT_TAG        07b8803110da160b158ebfef872627da6c85cbdf # release-v1.6.39
+	GIT_TAG        f135775ad4e5d4408d2e12ffcc71bb36e6b48551 # release-v1.6.40
 )
 
 FetchContent_MakeAvailable(zlib)
