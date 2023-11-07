@@ -23,6 +23,7 @@ add_executable(${PROJECTNAME}
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
+	transformation/convolutionTransformer.cpp
 	transformation/pixelTransformer.cpp
 	sandbox.cpp
 )

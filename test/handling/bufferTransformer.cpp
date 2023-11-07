@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <gtest/gtest.h>
 
-namespace Terrahertz::UnitsTests {
+namespace Terrahertz::UnitTests {
 
 struct Handling_BufferTransformer : public testing::Test
 {
@@ -61,4 +61,4 @@ TEST_F(Handling_BufferTransformer, NextImageCallingNextOnTheBuffer)
     EXPECT_EQ(buffer.count(), 2U);
 }
 
-} // namespace Terrahertz::UnitsTests
+} // namespace Terrahertz::UnitTests
