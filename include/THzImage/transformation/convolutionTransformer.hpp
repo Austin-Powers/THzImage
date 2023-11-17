@@ -124,7 +124,79 @@ concept ConvolutionTransformation = requires(TType t, TPixelType **matrix)
 /// @tparam TTransformation The type of transformation of the class.
 template <typename TPixelType, ConvolutionTransformation<TPixelType> TTransformation>
 class ConvolutionTransformer : public IImageTransformer<TPixelType>
-{};
+{
+public:
+    /// @brief Initializes a new ConvolutionTransformer using the given values.
+    ///
+    /// @param base The base transformer to wrap.
+    /// @param transformation The instance encapsulating the transformation algorithm.
+    ConvolutionTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
+        : _base{base}, _transformation{transformation}
+    {
+        selfReset();
+    }
+
+    /// @copydoc IImageTransformer::dimensions
+    Rectangle dimensions() const noexcept override { return _resultDimensions; }
+
+    /// @copydoc IImageTransformer::transform
+    bool transform(TPixelType &pixel) noexcept override { return skip(); }
+
+    /// @copydoc IImageTransformer::skip
+    bool skip() noexcept override { return false; }
+
+    /// @copydoc IImageTransformer::reset
+    bool reset() noexcept override
+    {
+        if (!_base.reset())
+        {
+            return false;
+        }
+        selfReset();
+        return true;
+    }
+
+    /// @copydoc IImageTransformer::nextImage
+    bool nextImage() noexcept override
+    {
+        if (!_base.nextImage())
+        {
+            return false;
+        }
+        selfReset();
+        return true;
+    }
+
+private:
+    /// @brief Resets this transformer calling reset() on the base.
+    void selfReset() noexcept
+    {
+        auto const transformDimension = [](std::uint32_t const base,
+                                           std::uint16_t const size,
+                                           std::uint16_t const shift) noexcept -> std::uint32_t {
+            if (base == size)
+            {
+                return 1U;
+            }
+            return base / shift;
+        };
+
+        auto const parameters     = _transformation.parameters();
+        auto const baseDimensions = _base.dimensions();
+
+        _resultDimensions.width  = transformDimension(baseDimensions.width, parameters.sizeX(), parameters.shiftX());
+        _resultDimensions.height = transformDimension(baseDimensions.height, parameters.sizeY(), parameters.shiftY());
+    }
+
+    /// @brief The base transformer to wrap.
+    IImageTransformer<TPixelType> &_base;
+
+    /// @brief The transformation to use.
+    TTransformation _transformation;
+
+    /// @brief The dimensions of the resulting image.
+    Rectangle _resultDimensions{};
+};
 
 } // namespace Terrahertz
 

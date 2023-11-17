@@ -45,6 +45,7 @@ public:
     /// @brief Skips to the next image.
     ///
     /// @return True if a new image was loaded, false otherwise.
+    /// @remark All callers should expect that no additional reset() call is required after this call.
     virtual bool nextImage() noexcept = 0;
 };
 
