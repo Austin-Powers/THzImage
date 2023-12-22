@@ -92,7 +92,7 @@ public:
     ///
     /// @param pixel Output: The pixel of the result image.
     /// @return True of there are still more pixels, false otherwise.
-    bool transform(TValueType &pixel) noexcept override
+    bool transform(pixel_type &pixel) noexcept override
     {
         pixel = *_currentPointer;
         return skip();

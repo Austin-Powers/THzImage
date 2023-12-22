@@ -31,7 +31,7 @@ struct BGRAPixel
     /// @param g Green.
     /// @param r Red.
     /// @param a Alpha.
-    BGRAPixel(std::uint8_t b, std::uint8_t g, std::uint8_t r, std::uint8_t a = 0xFFU) noexcept
+    constexpr BGRAPixel(std::uint8_t b, std::uint8_t g, std::uint8_t r, std::uint8_t a = 0xFFU) noexcept
         : blue{b}, green{g}, red{r}, alpha{a}
     {}
 

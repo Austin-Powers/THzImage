@@ -4,6 +4,8 @@
 #include "THzCommon/math/rectangle.hpp"
 #include "pixel.hpp"
 
+#include <type_traits>
+
 namespace Terrahertz {
 
 /// @brief Interface for all classes performing transformations on image data.
@@ -13,10 +15,10 @@ template <typename TPixelType>
 class IImageTransformer
 {
 public:
-    static_assert(is_pixel_type<TPixelType>::value, "TPixelType is not a known pixel type");
+    static_assert(is_pixel_type<std::remove_cv_t<TPixelType>>::value, "TPixelType is not a known pixel type");
 
     /// @brief Shortcut to the used pixel type.
-    using PixelType = TPixelType;
+    using MyPixelType = std::remove_cv_t<TPixelType>;
 
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageTransformer() noexcept {}
@@ -30,7 +32,7 @@ public:
     ///
     /// @param pixel Output: The pixel of the result image.
     /// @return True of there are still more pixels, false otherwise.
-    virtual bool transform(TPixelType &pixel) noexcept = 0;
+    virtual bool transform(MyPixelType &pixel) noexcept = 0;
 
     /// @brief Skips to the next pixel.
     ///

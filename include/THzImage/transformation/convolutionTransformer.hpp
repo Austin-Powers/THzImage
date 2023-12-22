@@ -7,6 +7,7 @@
 #include <concepts>
 #include <cstdint>
 #include <stdexcept>
+#include <vector>
 
 namespace Terrahertz {
 
@@ -108,10 +109,11 @@ private:
 // clang-format off
 
 template <typename TType, typename TPixelType>
-concept ConvolutionTransformation = requires(TType t, TPixelType **matrix)
+concept ConvolutionTransformation = requires(TType t, TPixelType const **matrix)
 {
 	{t.parameters()} -> std::same_as<ConvolutionParameters<TPixelType>>;
 
+    // [y][x]
 	{t(matrix)} -> std::same_as<TPixelType>;
 };
 
@@ -171,21 +173,28 @@ private:
     /// @brief Resets this transformer calling reset() on the base.
     void selfReset() noexcept
     {
-        auto const transformDimension = [](std::uint32_t const base,
-                                           std::uint16_t const size,
-                                           std::uint16_t const shift) noexcept -> std::uint32_t {
-            if (base == size)
+        auto const transformDim = [](std::uint32_t const base,
+                                     std::uint16_t const size,
+                                     std::uint16_t const shift,
+                                     bool const          border) noexcept -> std::uint32_t {
+            if (shift == 1U)
             {
-                return 1U;
+                return border ? base : (base - size + 1U);
             }
-            return base / shift;
+            if (base < size)
+
+            {
+                return border ? 1U : 0U;
+            }
+            auto const remaining = base - size + (border ? (size - 1U) : 0U);
+            return 1U + (remaining / shift);
         };
 
-        auto const parameters     = _transformation.parameters();
-        auto const baseDimensions = _base.dimensions();
+        auto const params   = _transformation.parameters();
+        auto const baseDims = _base.dimensions();
 
-        _resultDimensions.width  = transformDimension(baseDimensions.width, parameters.sizeX(), parameters.shiftX());
-        _resultDimensions.height = transformDimension(baseDimensions.height, parameters.sizeY(), parameters.shiftY());
+        _resultDimensions.width  = transformDim(baseDims.width, params.sizeX(), params.shiftX(), params.border());
+        _resultDimensions.height = transformDim(baseDims.height, params.sizeY(), params.shiftY(), params.border());
     }
 
     /// @brief The base transformer to wrap.
@@ -196,6 +205,12 @@ private:
 
     /// @brief The dimensions of the resulting image.
     Rectangle _resultDimensions{};
+
+    /// @brief The buffer for the pixels to transform.
+    std::vector<TPixelType> _buffer{};
+
+    /// @brief The
+    std::vector<TPixelType *> _lines{};
 };
 
 } // namespace Terrahertz

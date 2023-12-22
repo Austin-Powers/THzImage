@@ -4,13 +4,14 @@
 #include "THzImage/common/pixel.hpp"
 #include "THzImage/io/testImageGenerator.hpp"
 
+#include <array>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <vector>
 
 namespace Terrahertz::UnitTests {
 
-struct Transformation_ConvolutionTransformer : public testing::Test
+struct Transformation_ConvolutionTransformerBasics : public testing::Test
 {
     using BGRACParameters = ConvolutionParameters<BGRAPixel>;
 
@@ -42,7 +43,7 @@ struct Transformation_ConvolutionTransformer : public testing::Test
             return data->parameters;
         }
 
-        BGRAPixel operator()(BGRAPixel **const matrix) noexcept { return matrix[0U][0U]; }
+        BGRAPixel operator()(BGRAPixel const **const matrix) noexcept { return matrix[0U][0U]; }
 
         Data *data{};
     };
@@ -95,9 +96,41 @@ struct Transformation_ConvolutionTransformer : public testing::Test
             }
         }
     }
+
+    std::uint32_t expectedDimension(std::uint16_t const image,
+                                    std::uint16_t const matrix,
+                                    std::uint16_t const stepSize,
+                                    bool const          border) noexcept
+    {
+        if (stepSize == 1U)
+        {
+            if (border)
+            {
+                return image;
+            }
+            return image - matrix + 1U;
+        }
+
+        std::uint32_t result{};
+        for (auto start = 0U; start < image; start += stepSize)
+        {
+            if (!border)
+            {
+                for (auto pos = 0U; pos < matrix; ++pos)
+                {
+                    if ((start + pos) >= image)
+                    {
+                        return result;
+                    }
+                }
+            }
+            ++result;
+        }
+        return result;
+    };
 };
 
-TEST_F(Transformation_ConvolutionTransformer, ParameterConstructionThrowIfGivenInvalidValues)
+TEST_F(Transformation_ConvolutionTransformerBasics, ParameterConstructionThrowIfGivenInvalidValues)
 {
     BGRAPixel const pixel{};
     EXPECT_THROW(BGRACParameters wrongSizeX(0U, 1U, 1U, 1U, false, pixel), std::invalid_argument);
@@ -106,7 +139,7 @@ TEST_F(Transformation_ConvolutionTransformer, ParameterConstructionThrowIfGivenI
     EXPECT_THROW(BGRACParameters wrongSizeX(1U, 1U, 1U, 0U, false, pixel), std::invalid_argument);
 }
 
-TEST_F(Transformation_ConvolutionTransformer, ParametersReturnCorrectValues)
+TEST_F(Transformation_ConvolutionTransformerBasics, ParametersReturnCorrectValues)
 {
     std::uint16_t const sizeX{7U};
     std::uint16_t const sizeY{5U};
@@ -123,7 +156,7 @@ TEST_F(Transformation_ConvolutionTransformer, ParametersReturnCorrectValues)
     EXPECT_EQ(parameters.borderFill(), borderFill);
 }
 
-TEST_F(Transformation_ConvolutionTransformer, NextImageIsPassedThroughCorrectly)
+TEST_F(Transformation_ConvolutionTransformerBasics, NextImageIsPassedThroughCorrectly)
 {
     Rectangle const testDimensions{160U, 128U};
     // called once construction and when next image is successful
@@ -134,7 +167,7 @@ TEST_F(Transformation_ConvolutionTransformer, NextImageIsPassedThroughCorrectly)
     EXPECT_FALSE(sut.nextImage());
 }
 
-TEST_F(Transformation_ConvolutionTransformer, ResetIsPassedThroughCorrectly)
+TEST_F(Transformation_ConvolutionTransformerBasics, ResetIsPassedThroughCorrectly)
 {
     Rectangle const testDimensions{160U, 128U};
     // called once construction and when next image is successful
@@ -145,38 +178,9 @@ TEST_F(Transformation_ConvolutionTransformer, ResetIsPassedThroughCorrectly)
     EXPECT_FALSE(sut.reset());
 }
 
-TEST_F(Transformation_ConvolutionTransformer, DISABLED_DimensionsReturnsExpectedResults)
+TEST_F(Transformation_ConvolutionTransformerBasics, DimensionsReturnsExpectedResults)
 {
-    auto const expectedDimension = [](std::uint16_t const image,
-                                      std::uint16_t const matrix,
-                                      std::uint16_t const stepSize,
-                                      bool const          border) noexcept -> std::uint32_t {
-        std::uint32_t result{};
-
-        auto remainingImage = image;
-        if (border && (stepSize == 1U))
-        {
-            remainingImage += (matrix - 1U);
-        }
-
-        if (remainingImage >= matrix)
-        {
-            ++result;
-            remainingImage -= matrix;
-        }
-        while (remainingImage >= stepSize)
-        {
-            ++result;
-            remainingImage -= stepSize;
-        }
-
-        if (border && (stepSize != 1U) && (remainingImage != 0))
-        {
-            ++result;
-        }
-        return result;
-    };
-
+    auto errorCount = 0U;
     for (auto const &setup : setups)
     {
         transformationData.parametersCalled = false;
@@ -186,18 +190,149 @@ TEST_F(Transformation_ConvolutionTransformer, DISABLED_DimensionsReturnsExpected
         EXPECT_CALL(baseTransformer, dimensions()).Times(1).WillOnce(testing::Return(imageDimensions));
         ClassUnderTest sut{baseTransformer, transformation};
 
-        auto const result = sut.dimensions();
-        ASSERT_EQ(result.width, expectedDimension(setup.imageSizeX, setup.sizeX, setup.shiftX, setup.border))
-            << "imageSizeX: " << setup.imageSizeX << " sizeX: " << setup.sizeX << " shiftX: " << setup.shiftX
-            << " border " << setup.border;
-        ASSERT_EQ(result.height, expectedDimension(setup.imageSizeY, setup.sizeY, setup.shiftY, setup.border))
-            << "imageSizeY: " << setup.imageSizeY << " sizeY: " << setup.sizeY << " shiftY: " << setup.shiftY
-            << " border " << setup.border;
+        auto const result         = sut.dimensions();
+        auto const expectedWidth  = expectedDimension(setup.imageSizeX, setup.sizeX, setup.shiftX, setup.border);
+        auto const expectedHeight = expectedDimension(setup.imageSizeY, setup.sizeY, setup.shiftY, setup.border);
+        if (result.width != expectedWidth)
+        {
+            ++errorCount;
+        }
+        if (result.height != expectedHeight)
+        {
+            ++errorCount;
+        }
+
+        EXPECT_EQ(result.width, expectedWidth) << "imageSizeX: " << setup.imageSizeX << " sizeX: " << setup.sizeX
+                                               << " shiftX: " << setup.shiftX << " border " << setup.border;
+        EXPECT_EQ(result.height, expectedHeight) << "imageSizeY: " << setup.imageSizeY << " sizeY: " << setup.sizeY
+                                                 << " shiftY: " << setup.shiftY << " border " << setup.border;
         EXPECT_TRUE(transformationData.parametersCalled);
     }
+    EXPECT_EQ(errorCount, 0U);
 }
 
-// test transform
+struct Transformation_ConvolutionTransformerTransformation : public testing::Test
+{
+    static constexpr BGRAPixel const BorderColor{0x0U, 0x0U, 0x0U, 0xFFU};
+
+    template <std::uint16_t TWidth, std::uint16_t THeight, std::uint16_t TShiftX, std::uint16_t TShiftY, bool TBorder>
+    struct TransformationTemplate
+    {
+        ConvolutionParameters<BGRAPixel> parameters() const noexcept
+        {
+            return ConvolutionParameters<BGRAPixel>{TWidth, THeight, TShiftX, TShiftY, TBorder, BorderColor};
+        }
+
+        BGRAPixel operator()(BGRAPixel const **const matrix)
+        {
+            std::uint32_t r{};
+            std::uint32_t g{};
+            std::uint32_t b{};
+            for (auto y = 0U; y < THeight; ++y)
+            {
+                for (auto x = 0U; x < TWidth; ++x)
+                {
+                    b += matrix[y][x].blue;
+                    g += matrix[y][x].green;
+                    r += matrix[y][x].red;
+                }
+            }
+            auto const area = TWidth * THeight;
+            return BGRAPixel{static_cast<std::uint8_t>(b / area),
+                             static_cast<std::uint8_t>(g / area),
+                             static_cast<std::uint8_t>(r / area)};
+        }
+    };
+
+    void SetUp() override
+    {
+        TestImageGenerator generator{Rectangle{12U, 12U}};
+        EXPECT_TRUE(image.read(generator));
+        view = image.view();
+    }
+
+    std::vector<BGRAPixel> prepareData(std::uint16_t const width, std::uint16_t const height) const noexcept
+    {
+        auto const xBorderSize  = (width - 1U);
+        auto const yBorderSize  = (height - 1U);
+        auto const leftBorder   = xBorderSize / 2U;
+        auto const topBorder    = yBorderSize / 2U;
+        auto const rightBorder  = xBorderSize - leftBorder;
+        auto const bottomBorder = yBorderSize - topBorder;
+
+        auto const dataWidth  = image.dimensions().width + leftBorder + rightBorder;
+        auto const dataHeight = image.dimensions().height + topBorder + bottomBorder;
+
+        auto myView = image.view();
+
+        std::vector<BGRAPixel> data{};
+
+        auto const addEmptyLine = [&]() noexcept -> void {
+            for (auto i = 0U; i < dataWidth; ++i)
+            {
+                data.push_back(BorderColor);
+            }
+        };
+        auto const addRegularLine = [&]() noexcept -> void {
+            for (auto i = 0U; i < leftBorder; ++i)
+            {
+                data.push_back(BorderColor);
+            }
+            for (auto i = 0U; i < image.dimensions().width; ++i)
+            {
+                data.push_back(*myView);
+                ++myView;
+            }
+            for (auto i = 0U; i < rightBorder; ++i)
+            {
+                data.push_back(BorderColor);
+            }
+        };
+
+        for (auto i = 0U; i < topBorder; ++i)
+        {
+            addEmptyLine();
+        }
+        for (auto i = 0U; i < image.dimensions().height; ++i)
+        {
+            addRegularLine();
+        }
+        for (auto i = 0U; i < bottomBorder; ++i)
+        {
+            addEmptyLine();
+        }
+        return data;
+    };
+
+    Image<BGRAPixel>     image{};
+    ImageView<BGRAPixel> view{};
+};
+
+TEST_F(Transformation_ConvolutionTransformerTransformation, BorderTrueAndShiftOne)
+{
+    using TestTransformation = TransformationTemplate<3U, 3U, 1U, 1U, true>;
+
+    TestTransformation transformation{};
+
+    ConvolutionTransformer<BGRAPixel, TestTransformation> transformer{view, transformation};
+    EXPECT_EQ(view.dimensions(), transformer.dimensions());
+
+    auto const params = transformation.parameters();
+    auto const data   = prepareData(params.sizeX(), params.sizeY());
+
+    std::array<BGRAPixel const *, 3U> lines{};
+
+    auto const totalLineWidth = image.dimensions().width + params.sizeX() - 1U;
+
+    lines[0U] = &data[0U];
+    lines[1U] = &data[totalLineWidth];
+    lines[2U] = &data[totalLineWidth * 2U];
+
+    BGRAPixel pixel;
+    // EXPECT_TRUE(transformer.transform(pixel));
+    // EXPECT_EQ(transformation(lines.data()), pixel);
+}
+
 // test transforming mutliple images with changing sizes
 
 } // namespace Terrahertz::UnitTests
