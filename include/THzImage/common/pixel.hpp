@@ -36,10 +36,10 @@ struct BGRAPixel
     {}
 
     /// @brief Default initializes a new BGRAPixel.
-    BGRAPixel() noexcept = default;
+    constexpr BGRAPixel() noexcept = default;
 
     /// @brief Explicitly default the constructor so all special methods are defined.
-    BGRAPixel(BGRAPixel const &) noexcept = default;
+    constexpr BGRAPixel(BGRAPixel const &) noexcept = default;
 
     /// @brief Copy-Constructor to convert from a HSVAPixel.
     ///
@@ -47,7 +47,7 @@ struct BGRAPixel
     BGRAPixel(HSVAPixel const &other) noexcept;
 
     /// @brief Explicitly default the constructor so all special methods are defined.
-    BGRAPixel(BGRAPixel &&) noexcept = default;
+    constexpr BGRAPixel(BGRAPixel &&) noexcept = default;
 
     /// @brief Explicitly default the operator so all special methods are defined.
     BGRAPixel &operator=(BGRAPixel const &) noexcept = default;

@@ -15,10 +15,10 @@ template <typename TPixelType>
 class IImageTransformer
 {
 public:
-    static_assert(is_pixel_type<std::remove_cv_t<TPixelType>>::value, "TPixelType is not a known pixel type");
-
     /// @brief Shortcut to the used pixel type.
     using MyPixelType = std::remove_cv_t<TPixelType>;
+
+    static_assert(is_pixel_type<MyPixelType>::value, "TPixelType is not a known pixel type");
 
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageTransformer() noexcept {}
