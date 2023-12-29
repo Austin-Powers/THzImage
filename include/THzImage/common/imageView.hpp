@@ -74,7 +74,7 @@ public:
         _currentPosition = _region.upperLeftPoint;
         _currentPointer =
             _basePointer + (static_cast<ptrdiff_t>(_currentPosition.y) * _imageDimensions.width) + _currentPosition.x;
-        _endPointer = _currentPointer + (_imageDimensions.width * _region.height);
+        _endPointer = _currentPointer + (_imageDimensions.width * _region.height) + 1U;
         return true;
     }
 
@@ -91,7 +91,7 @@ public:
     /// @brief Transform the next pixel from the underlying image.
     ///
     /// @param pixel Output: The pixel of the result image.
-    /// @return True of there are still more pixels, false otherwise.
+    /// @return True if the operation was successful, false otherwise.
     bool transform(pixel_type &pixel) noexcept override
     {
         pixel = *_currentPointer;
@@ -100,7 +100,7 @@ public:
 
     /// @brief Skips to the next pixel.
     ///
-    /// @return True if there are still more pixels, false otherwise.
+    /// @return True if the operation was successful, false otherwise.
     bool skip() noexcept override
     {
         if (_currentPointer == _endPointer)
@@ -298,6 +298,12 @@ private:
     /// @brief Pointer to the first pixel after the region of this view.
     pointer _endPointer{};
 };
+
+/// @brief Using declaration for an image view using BGRAPixel.
+using BGRAImageView = ImageView<BGRAPixel>;
+
+/// @brief Using declaration for an image view using HSVAPixel.
+using BGRAImageView = ImageView<BGRAPixel>;
 
 } // namespace Terrahertz
 

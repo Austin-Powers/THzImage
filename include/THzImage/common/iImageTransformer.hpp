@@ -31,12 +31,12 @@ public:
     /// @brief Transform the next pixel from the underlying image.
     ///
     /// @param pixel Output: The pixel of the result image.
-    /// @return True of there are still more pixels, false otherwise.
+    /// @return True if the operation was successful, false otherwise.
     virtual bool transform(MyPixelType &pixel) noexcept = 0;
 
     /// @brief Skips to the next pixel.
     ///
-    /// @return True if there are still more pixels, false otherwise.
+    /// @return True if the operation was successful, false otherwise.
     virtual bool skip() noexcept = 0;
 
     /// @brief Resets the transformer to restart the transformation, if the underlying data has changed.

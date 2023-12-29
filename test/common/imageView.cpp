@@ -206,20 +206,20 @@ TEST_F(Common_ImageView, ImageTransformerImplementation)
             FAIL();
         }
     }
-    EXPECT_EQ(count, expectedDimensions.area() - 1U);
+    EXPECT_EQ(count, expectedDimensions.area());
 
     count = 0U;
     sut.reset();
-    for (auto i = 0U; i < 60U; ++i)
+    for (auto i = 0U; i < 61U; ++i)
     {
         BGRAPixel expectation{};
         expectation.blue = i;
         BGRAPixel  pixel{};
         auto const res = sut.transform(pixel);
-        EXPECT_EQ(expectation, pixel);
-        if (i < 59U)
+        if (i < 60U)
         {
             EXPECT_TRUE(res);
+            EXPECT_EQ(expectation, pixel);
         }
         else
         {
