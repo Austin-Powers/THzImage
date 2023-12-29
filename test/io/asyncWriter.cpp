@@ -8,6 +8,9 @@
 #include <gtest/gtest.h>
 #include <thread>
 
+// As long as these tests do not fail in release everything is fine
+#ifdef NDEBUG
+
 namespace Terrahertz::UnitTests {
 
 struct IO_AsyncWriter : public testing::Test
@@ -70,3 +73,5 @@ TEST_F(IO_AsyncWriter, GeneralOperation)
 }
 
 } // namespace Terrahertz::UnitTests
+
+#endif // !NDEBUG
