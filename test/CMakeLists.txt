@@ -25,6 +25,7 @@ add_executable(${PROJECTNAME}
 	io/timedReader.cpp
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformer.cpp
+	transformation/nullTransformer.cpp
 	transformation/pixelTransformer.cpp
 	sandbox.cpp
 )
