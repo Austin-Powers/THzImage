@@ -48,6 +48,19 @@ TEST_F(Transformation_BorderTransformer, BordersConstructsCorrectly)
     EXPECT_EQ(borders.left, 4U);
 }
 
+TEST_F(Transformation_BorderTransformer, DefaultConstructionCorrect)
+{
+    BorderTransformer<BGRAPixel> sut{};
+    EXPECT_EQ(sut.dimensions(), Rectangle{});
+    BGRAPixel const expectedPixel{0x34U, 0x11U, 0xBAU, 0xFEU};
+    BGRAPixel       pixel{expectedPixel};
+    EXPECT_FALSE(sut.transform(pixel));
+    EXPECT_EQ(pixel, expectedPixel);
+    EXPECT_FALSE(sut.skip());
+    EXPECT_FALSE(sut.reset());
+    EXPECT_FALSE(sut.nextImage());
+}
+
 TEST_F(Transformation_BorderTransformer, DimensionsCorrectAfterConstruction)
 {
     BorderTransformer<BGRAPixel> sut{view, borders, color};
@@ -72,6 +85,14 @@ TEST_F(Transformation_BorderTransformer, CallsRelayedCorrectly)
     EXPECT_FALSE(sut.reset());
     EXPECT_TRUE(sut.nextImage());
     EXPECT_FALSE(sut.nextImage());
+}
+
+TEST_F(Transformation_BorderTransformer, CopyWorksOnTransformer)
+{
+    BorderTransformer<BGRAPixel> sut{};
+    sut = BorderTransformer<BGRAPixel>(view, borders, color);
+    EXPECT_EQ(sut.dimensions().width, baseDimensions.width + borders.left + borders.right);
+    EXPECT_EQ(sut.dimensions().height, baseDimensions.height + borders.top + borders.bottom);
 }
 
 TEST_F(Transformation_BorderTransformer, TransformCallsCorrect)

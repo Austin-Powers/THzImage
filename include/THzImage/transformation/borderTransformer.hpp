@@ -3,6 +3,7 @@
 
 #include "THzCommon/math/rectangle.hpp"
 #include "THzImage/common/iImageTransformer.hpp"
+#include "THzImage/transformation/nullTransformer.hpp"
 
 #include <cstdint>
 #include <limits>
@@ -32,13 +33,16 @@ template <typename TPixelType>
 class BorderTransformer : public IImageTransformer<TPixelType>
 {
 public:
+    /// @brief Default initializes a new BorderTransformer.
+    BorderTransformer() noexcept : _base{&NullTransformer<TPixelType>::instance()} {}
+
     /// @brief Initializes a new BorderTransformer using the given values.
     ///
     /// @param base The base transformer to wrap.
     /// @param borders The borders to add to the image.
     /// @param color The color of the borders.
     BorderTransformer(IImageTransformer<TPixelType> &base, Borders const borders, TPixelType const color) noexcept
-        : _base{base}, _borders{borders}, _color{color}
+        : _base{&base}, _borders{borders}, _color{color}
     {
         setup();
     }
@@ -52,7 +56,7 @@ public:
         if (_nextFlip > 0)
         {
             --_nextFlip;
-            return _base.transform(pixel);
+            return _base->transform(pixel);
         }
         if (_nextFlip < 0)
         {
@@ -71,7 +75,7 @@ public:
         if (_nextFlip > 0)
         {
             --_nextFlip;
-            return _base.skip();
+            return _base->skip();
         }
         if (_nextFlip < 0)
         {
@@ -86,7 +90,7 @@ public:
     /// @copydoc IImageTransformer::reset
     bool reset() noexcept override
     {
-        if (!_base.reset())
+        if (!_base->reset())
         {
             return false;
         }
@@ -97,7 +101,7 @@ public:
     /// @copydoc IImageTransformer::nextImage
     bool nextImage() noexcept override
     {
-        if (!_base.nextImage())
+        if (!_base->nextImage())
         {
             return false;
         }
@@ -109,7 +113,7 @@ private:
     /// @brief Sets up the transformer.
     void setup() noexcept
     {
-        _baseDimensions    = _base.dimensions();
+        _baseDimensions    = _base->dimensions();
         _dimensions.width  = _baseDimensions.width + _borders.left + _borders.right;
         _dimensions.height = _baseDimensions.height + _borders.top + _borders.bottom;
         _stage             = 0U;
@@ -160,13 +164,13 @@ private:
     }
 
     /// @brief The base transformer to wrap.
-    IImageTransformer<TPixelType> &_base;
+    IImageTransformer<TPixelType> *_base;
 
     /// @brief The borders to add to the image.
-    Borders _borders;
+    Borders _borders{};
 
     /// @brief The color of the borders.
-    TPixelType _color;
+    TPixelType _color{};
 
     /// @brief The dimensions of the base image.
     Rectangle _baseDimensions{};
