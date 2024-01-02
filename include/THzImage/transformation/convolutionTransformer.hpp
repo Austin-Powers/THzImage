@@ -12,9 +12,6 @@
 namespace Terrahertz {
 
 /// @brief Checks and stores the paramters of convolution transformation.
-///
-/// @tparam TPixelType The pixel type of the transformation.
-template <typename TPixelType>
 class ConvolutionParameters
 {
 public:
@@ -24,19 +21,12 @@ public:
     /// @param pSizeY The size of the matrix on the y-axis.
     /// @param pShiftX The amount of pixels on the x-axis the matrix is shifted each step.
     /// @param pShiftY The amount of pixels on the y-axis the matrix is shifted each step.
-    /// @param pBorder True if the transformer shall add a border, false otherwise.
-    /// @param pBorderFill The color the border should be filled with, ignored if border is false.
-    /// @remark The added border will:
-    ///           - help to preserve the original size if shift is 1
-    ///           - round up the number of steps of shift is greater than 1
     /// @throws invalid_argument In case sizeX, sizeY, shiftX or shiftY is zero.
     ConvolutionParameters(std::uint16_t const pSizeX,
                           std::uint16_t const pSizeY,
                           std::uint16_t const pShiftX,
-                          std::uint16_t const pShiftY,
-                          bool const          pBorder,
-                          TPixelType const    pBorderFill) noexcept(false)
-        : _sizeX{pSizeX}, _sizeY{pSizeY}, _shiftX{pShiftX}, _shiftY{pShiftY}, _border{pBorder}, _borderFill{pBorderFill}
+                          std::uint16_t const pShiftY) noexcept(false)
+        : _sizeX{pSizeX}, _sizeY{pSizeY}, _shiftX{pShiftX}, _shiftY{pShiftY}
     {
         if (_sizeX == 0U)
         {
@@ -76,16 +66,6 @@ public:
     /// @return The amount of pixels on the y-axis the matrix is shifted each step.
     inline std::uint16_t shiftY() const noexcept { return _shiftY; }
 
-    /// @brief Returns true if the transformer shall add a border, false otherwise.
-    ///
-    /// @return True if the transformer shall add a border, false otherwise.
-    inline bool border() const noexcept { return _border; }
-
-    /// @brief Returns the color the border should be filled with, ignored if border is false.
-    ///
-    /// @return The color the border should be filled with, ignored if border is false.
-    inline TPixelType borderFill() const noexcept { return _borderFill; }
-
 private:
     /// @brief The size of the matrix on the x-axis.
     std::uint16_t _sizeX{};
@@ -98,12 +78,6 @@ private:
 
     /// @brief The amount of pixels on the y-axis the matrix is shifted each step.
     std::uint16_t _shiftY{};
-
-    /// @brief True if the transformer shall add a border, false otherwise.
-    bool _border{};
-
-    /// @brief The color the border should be filled with, ignored if border is false.
-    TPixelType _borderFill{};
 };
 
 // clang-format off
@@ -111,7 +85,7 @@ private:
 template <typename TType, typename TPixelType>
 concept ConvolutionTransformation = requires(TType t, TPixelType const **matrix)
 {
-	{t.parameters()} -> std::same_as<ConvolutionParameters<TPixelType>>;
+	{t.parameters()} -> std::same_as<ConvolutionParameters>;
 
     // [y][x]
 	{t(matrix)} -> std::same_as<TPixelType>;
@@ -133,16 +107,16 @@ public:
     /// @param base The base transformer to wrap.
     /// @param transformation The instance encapsulating the transformation algorithm.
     ConvolutionTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
-        : _base{base}, _transformation{transformation}
+        : _base{&base}, _transformation{transformation}, _parameters{transformation.parameters()}
     {
-        selfReset();
+        setup();
     }
 
     /// @copydoc IImageTransformer::dimensions
     Rectangle dimensions() const noexcept override { return _resultDimensions; }
 
     /// @copydoc IImageTransformer::transform
-    bool transform(TPixelType &pixel) noexcept override { return skip(); }
+    bool transform(TPixelType &pixel) noexcept override { return false; }
 
     /// @copydoc IImageTransformer::skip
     bool skip() noexcept override { return false; }
@@ -150,67 +124,58 @@ public:
     /// @copydoc IImageTransformer::reset
     bool reset() noexcept override
     {
-        if (!_base.reset())
+        if (_base->reset())
         {
-            return false;
+            setup();
+            return true;
         }
-        selfReset();
-        return true;
+        return false;
     }
 
     /// @copydoc IImageTransformer::nextImage
     bool nextImage() noexcept override
     {
-        if (!_base.nextImage())
+        if (_base->nextImage())
         {
-            return false;
+            setup();
+            return true;
         }
-        selfReset();
-        return true;
+        return false;
     }
 
 private:
-    /// @brief Resets this transformer calling reset() on the base.
-    void selfReset() noexcept
+    /// @brief Performs the setup of the transformer, after construction, reset or nextImage.
+    void setup() noexcept
     {
-        auto const transformDim = [](std::uint32_t const base,
-                                     std::uint16_t const size,
-                                     std::uint16_t const shift,
-                                     bool const          border) noexcept -> std::uint32_t {
-            if (shift == 1U)
+        auto const calcDim = [](std::uint32_t const image,
+                                std::uint16_t const matrix,
+                                std::uint16_t const shift) noexcept -> std::uint32_t {
+            if (image < matrix)
             {
-                return border ? base : (base - size + 1U);
+                return 0U;
             }
-            if (base < size)
-
-            {
-                return border ? 1U : 0U;
-            }
-            auto const remaining = base - size + (border ? (size - 1U) : 0U);
-            return 1U + (remaining / shift);
+            return ((image - matrix) / shift) + 1U;
         };
 
-        auto const params   = _transformation.parameters();
-        auto const baseDims = _base.dimensions();
-
-        _resultDimensions.width  = transformDim(baseDims.width, params.sizeX(), params.shiftX(), params.border());
-        _resultDimensions.height = transformDim(baseDims.height, params.sizeY(), params.shiftY(), params.border());
+        _baseDimensions          = _base->dimensions();
+        _resultDimensions.width  = calcDim(_baseDimensions.width, _parameters.sizeX(), _parameters.shiftX());
+        _resultDimensions.height = calcDim(_baseDimensions.height, _parameters.sizeY(), _parameters.shiftY());
     }
 
     /// @brief The base transformer to wrap.
-    IImageTransformer<TPixelType> &_base;
+    IImageTransformer<TPixelType> *_base{};
 
-    /// @brief The transformation to use.
+    /// @brief The transformation to wrap.
     TTransformation _transformation;
+
+    /// @brief The parameters of the transformation.
+    ConvolutionParameters _parameters;
+
+    /// @brief The dimensions of the base image.
+    Rectangle _baseDimensions{};
 
     /// @brief The dimensions of the resulting image.
     Rectangle _resultDimensions{};
-
-    /// @brief The buffer for the pixels to transform.
-    std::vector<TPixelType> _buffer{};
-
-    /// @brief The
-    std::vector<TPixelType *> _lines{};
 };
 
 } // namespace Terrahertz
