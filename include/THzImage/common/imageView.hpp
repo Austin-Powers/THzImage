@@ -12,6 +12,7 @@
 namespace Terrahertz {
 
 /// @brief A view into a certain region of an image or pixel buffer.
+/// Doubles as the starting point of a IImageTransformer chain.
 ///
 /// @tparam TValueType The type of pixel value for this view.
 template <typename TValueType>

@@ -63,12 +63,12 @@ private:
     TTransformation _transformation;
 };
 
-/// @brief
+/// @brief Helper method to ease the creation of PixelTransformers.
 ///
-/// @tparam TPixelType
-/// @tparam TTransformation
-/// @param transformation
-/// @return
+/// @tparam TPixelType The pixel type used by the transformer.
+/// @tparam TTransformation The type of transformation.
+/// @param transformation The transformation instance.
+/// @return The created transformer.
 template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
 auto createPixelTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
     -> PixelTransformer<TPixelType, TTransformation>
@@ -76,11 +76,12 @@ auto createPixelTransformer(IImageTransformer<TPixelType> &base, TTransformation
     return PixelTransformer<TPixelType, TTransformation>{base, transformation};
 }
 
-/// @brief
+/// @brief Helper method to ease the creation of PixelTransformer.
+/// This will call the default constructor.
 ///
-/// @tparam TPixelType
-/// @tparam TTransformation
-/// @return
+/// @tparam TPixelType The pixel type used by the transformer.
+/// @tparam TTransformation The type of transformation.
+/// @return The created transformer.
 template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
 auto createPixelTransformer(IImageTransformer<TPixelType> &base) noexcept
     -> PixelTransformer<TPixelType, TTransformation>

@@ -40,7 +40,7 @@ TEST_F(Handling_BufferTransformer, UpdateWithValidValuesInteractsWithGivenBuffer
     EXPECT_EQ(buffer.count(), 1U);
     EXPECT_TRUE(sut.update(buffer, 0U, false));
     BGRAImage target{};
-    EXPECT_TRUE(target.storeResultOf(sut));
+    EXPECT_TRUE(target.executeAndIngest(sut));
 
     for (auto i = 0U; i < buffer[0U].dimensions().area(); ++i)
     {

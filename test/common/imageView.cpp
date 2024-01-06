@@ -260,7 +260,7 @@ TEST_F(Common_ImageView, DefaultConstructedViewDoesNotThrowIfUsedByImage)
 {
     BGRAView  view{};
     BGRAImage image{};
-    EXPECT_FALSE(image.storeResultOf(view));
+    EXPECT_FALSE(image.executeAndIngest(view));
 }
 
 } // namespace Terrahertz::UnitTests

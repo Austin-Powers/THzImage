@@ -115,11 +115,11 @@ public:
         return ImageView<TPixelType const>{_data.data(), _dimensions, region};
     }
 
-    /// @brief Calls the given transformer and stores the result in this image.
+    /// @brief Executes the given transformer and collects the resulting data.
     ///
-    /// @param transformer The transformer whose result to store.
-    /// @return True if the image was successfully transformed, false otherwise.
-    [[nodiscard]] bool storeResultOf(IImageTransformer<TPixelType> &transformer) noexcept
+    /// @param transformer The transformer whose result to collect.
+    /// @return True if execution was successful, false otherwise.
+    [[nodiscard]] bool executeAndIngest(IImageTransformer<TPixelType> &transformer) noexcept
     {
         if (!transformer.reset())
         {

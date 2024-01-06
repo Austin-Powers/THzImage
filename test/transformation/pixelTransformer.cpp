@@ -47,7 +47,7 @@ struct Transformation_PixelTransformer : public testing::Test
 TEST_F(Transformation_PixelTransformer, DefaultCreateTransformerFromInstance)
 {
     auto transformer = createPixelTransformer<BGRAPixel, TestTransformation>(baseTransformer);
-    EXPECT_TRUE(imageReceiver.storeResultOf(transformer));
+    EXPECT_TRUE(imageReceiver.executeAndIngest(transformer));
     for (auto i : imageBase.dimensions().range())
     {
         EXPECT_EQ(imageReceiver[i].blue, imageBase[i].blue);
@@ -59,7 +59,7 @@ TEST_F(Transformation_PixelTransformer, DefaultCreateTransformerFromInstance)
 TEST_F(Transformation_PixelTransformer, CreateTransformerFromInstance)
 {
     auto transformer = createPixelTransformer<BGRAPixel>(baseTransformer, TestTransformation{});
-    EXPECT_TRUE(imageReceiver.storeResultOf(transformer));
+    EXPECT_TRUE(imageReceiver.executeAndIngest(transformer));
     for (auto i : imageBase.dimensions().range())
     {
         EXPECT_EQ(imageReceiver[i].blue, imageBase[i].blue);
@@ -76,7 +76,7 @@ TEST_F(Transformation_PixelTransformer, CreateTransformerFromLambda)
             p.blue = 0U;
             return p;
         });
-    EXPECT_TRUE(imageReceiver.storeResultOf(transformer));
+    EXPECT_TRUE(imageReceiver.executeAndIngest(transformer));
     for (auto i : imageBase.dimensions().range())
     {
         EXPECT_EQ(imageReceiver[i].blue, 0U);

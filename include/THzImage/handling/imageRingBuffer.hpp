@@ -96,7 +96,7 @@ protected:
             {
                 return false;
             }
-            if (!_map[_slots - 1U]->storeResultOf(*_transformer))
+            if (!_map[_slots - 1U]->executeAndIngest(*_transformer))
             {
                 return false;
             }

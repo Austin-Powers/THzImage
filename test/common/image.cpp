@@ -101,7 +101,7 @@ TEST_F(Common_Image, StoreResultOfTransformerResetFalse)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1);
-    EXPECT_FALSE(sut.storeResultOf(transformer));
+    EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
@@ -109,7 +109,7 @@ TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
     EXPECT_CALL(transformer, dimensions()).Times(1).WillRepeatedly(testing::Return(Rectangle{}));
-    EXPECT_FALSE(sut.storeResultOf(transformer));
+    EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
@@ -123,7 +123,7 @@ TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.storeResultOf(transformer));
+    EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
 TEST_F(Common_Image, StoreResultOfSuccess)
@@ -137,7 +137,7 @@ TEST_F(Common_Image, StoreResultOfSuccess)
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(true))
         .WillOnce(testing::Return(false));
-    EXPECT_TRUE(sut.storeResultOf(transformer));
+    EXPECT_TRUE(sut.executeAndIngest(transformer));
 }
 
 TEST_F(Common_Image, ReadInitFalse)
@@ -263,7 +263,7 @@ TEST_F(Common_Image, CopyViaStoreResultOf)
     EXPECT_TRUE(orig.setDimensions(Rectangle{2U, 2U}));
     BGRAImage dest{};
     auto      view = orig.view();
-    EXPECT_TRUE(dest.storeResultOf(view));
+    EXPECT_TRUE(dest.executeAndIngest(view));
 }
 
 } // namespace Terrahertz::UnitTests
