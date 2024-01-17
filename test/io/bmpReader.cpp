@@ -9,7 +9,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_BMPReader : public testing::Test
+struct IOBMPReader : public testing::Test
 {
     std::string filepath{"test.bmp"};
 
@@ -31,20 +31,20 @@ struct IO_BMPReader : public testing::Test
     void prepareTestFile() noexcept { prepareTestFile(testFilecontent); }
 };
 
-TEST_F(IO_BMPReader, ConstructionCorrect)
+TEST_F(IOBMPReader, ConstructionCorrect)
 {
     BMP::Reader sut{filepath};
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
-TEST_F(IO_BMPReader, NonExistingFile)
+TEST_F(IOBMPReader, NonExistingFile)
 {
     BMP::Reader sut{"notHere.bmp"};
     EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, FileTooSmallForHeader)
+TEST_F(IOBMPReader, FileTooSmallForHeader)
 {
     std::array<std::uint8_t, 32U> data{};
     prepareTestFile(data);
@@ -55,7 +55,7 @@ TEST_F(IO_BMPReader, FileTooSmallForHeader)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, MagicBytesIncorrect)
+TEST_F(IOBMPReader, MagicBytesIncorrect)
 {
     testFilecontent[0U] = 0x33U;
     prepareTestFile();
@@ -65,7 +65,7 @@ TEST_F(IO_BMPReader, MagicBytesIncorrect)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, BitCountIncorrect)
+TEST_F(IOBMPReader, BitCountIncorrect)
 {
     testFilecontent[28U] = 0x8U;
     prepareTestFile();
@@ -75,7 +75,7 @@ TEST_F(IO_BMPReader, BitCountIncorrect)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, UnsupportedCompressionValue)
+TEST_F(IOBMPReader, UnsupportedCompressionValue)
 {
     testFilecontent[30U] = 0x8U;
     prepareTestFile();
@@ -85,7 +85,7 @@ TEST_F(IO_BMPReader, UnsupportedCompressionValue)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, WidthZero)
+TEST_F(IOBMPReader, WidthZero)
 {
     testFilecontent[18U] = 0x0U;
     prepareTestFile();
@@ -95,7 +95,7 @@ TEST_F(IO_BMPReader, WidthZero)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, HeightZero)
+TEST_F(IOBMPReader, HeightZero)
 {
     testFilecontent[22U] = 0x0U;
     prepareTestFile();
@@ -105,7 +105,7 @@ TEST_F(IO_BMPReader, HeightZero)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, DimensionsDoNotMatchTheAmountOfData)
+TEST_F(IOBMPReader, DimensionsDoNotMatchTheAmountOfData)
 {
     testFilecontent[34U] = 0xFFU;
     prepareTestFile();
@@ -115,7 +115,7 @@ TEST_F(IO_BMPReader, DimensionsDoNotMatchTheAmountOfData)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_BMPReader, BufferTooSmallForData)
+TEST_F(IOBMPReader, BufferTooSmallForData)
 {
     prepareTestFile();
 
@@ -128,7 +128,7 @@ TEST_F(IO_BMPReader, BufferTooSmallForData)
     EXPECT_FALSE(sut.read(toSpan<BGRAPixel>(arr)));
 }
 
-TEST_F(IO_BMPReader, ReadingDataWithTransparency)
+TEST_F(IOBMPReader, ReadingDataWithTransparency)
 {
     BGRAImage expected{};
     ASSERT_TRUE(expected.setDimensions(Rectangle{2U, 2U}));
@@ -151,7 +151,7 @@ TEST_F(IO_BMPReader, ReadingDataWithTransparency)
     }
 }
 
-TEST_F(IO_BMPReader, ReadingDataWithoutTransparency)
+TEST_F(IOBMPReader, ReadingDataWithoutTransparency)
 {
     BGRAImage expected{};
     ASSERT_TRUE(expected.setDimensions(Rectangle{4U, 2U}));
@@ -178,7 +178,7 @@ TEST_F(IO_BMPReader, ReadingDataWithoutTransparency)
     }
 }
 
-TEST_F(IO_BMPReader, ReadingDataWithoutTransparencyAndPadding)
+TEST_F(IOBMPReader, ReadingDataWithoutTransparencyAndPadding)
 {
     BGRAImage expected{};
     ASSERT_TRUE(expected.setDimensions(Rectangle{2U, 2U}));
@@ -201,7 +201,7 @@ TEST_F(IO_BMPReader, ReadingDataWithoutTransparencyAndPadding)
     }
 }
 
-TEST_F(IO_BMPReader, OffBitsDiffersFrom54)
+TEST_F(IOBMPReader, OffBitsDiffersFrom54)
 {
     // increase offset
     testFilecontent[10U] += 8U;
@@ -212,7 +212,7 @@ TEST_F(IO_BMPReader, OffBitsDiffersFrom54)
     EXPECT_FALSE(image.read(sut));
 }
 
-TEST_F(IO_BMPReader, HeightNegative)
+TEST_F(IOBMPReader, HeightNegative)
 {
     // set height to negative value
     (*std::bit_cast<std::int32_t *>(&testFilecontent[22U])) = -2;
@@ -228,7 +228,7 @@ TEST_F(IO_BMPReader, HeightNegative)
     EXPECT_EQ(image[3U], (BGRAPixel{0x01U, 0x44U, 0xFFU, 0x17U}));
 }
 
-TEST_F(IO_BMPReader, FileTooSmall)
+TEST_F(IOBMPReader, FileTooSmall)
 {
     prepareTestFile(toSpan<std::uint8_t>(testFilecontent).subspan(0U, 64U));
 

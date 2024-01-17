@@ -11,12 +11,12 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Analysis_BasicImageMetrics : public testing::Test
+struct AnalysisBasicImageMetrics : public testing::Test
 {
     std::string filepath{"test.txt"};
 };
 
-TEST_F(Analysis_BasicImageMetrics, DimensionsDoNotFitTheBuffer)
+TEST_F(AnalysisBasicImageMetrics, DimensionsDoNotFitTheBuffer)
 {
     BasicImageMetrics sut{filepath};
     EXPECT_TRUE(sut.init());

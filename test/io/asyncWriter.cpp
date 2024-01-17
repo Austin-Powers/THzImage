@@ -13,7 +13,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_AsyncWriter : public testing::Test
+struct IOAsyncWriter : public testing::Test
 {
     struct MockWriter : public IImageWriter<BGRAPixel>
     {
@@ -39,7 +39,7 @@ struct IO_AsyncWriter : public testing::Test
     MockWriter writer{};
 };
 
-TEST_F(IO_AsyncWriter, GeneralOperation)
+TEST_F(IOAsyncWriter, GeneralOperation)
 {
     std::chrono::milliseconds interval{4U};
     BGRAImage                 image{};

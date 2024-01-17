@@ -8,12 +8,12 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_TestImageGenerator : public testing::Test
+struct IOTestImageGenerator : public testing::Test
 {
     Rectangle const dimensions{768U, 512U};
 };
 
-TEST_F(IO_TestImageGenerator, Construction)
+TEST_F(IOTestImageGenerator, Construction)
 {
     TestImageGenerator sut{dimensions};
     EXPECT_TRUE(sut.imagePresent());

@@ -11,7 +11,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Common_Image : public testing::Test
+struct CommonImage : public testing::Test
 {
     class MockTransformer : public IImageTransformer<BGRAPixel>
     {
@@ -48,19 +48,19 @@ struct Common_Image : public testing::Test
     BGRAImage sut{};
 };
 
-TEST_F(Common_Image, ImageConstructionCorrect)
+TEST_F(CommonImage, ImageConstructionCorrect)
 {
     Rectangle const expectedDimensions{};
     EXPECT_EQ(sut.dimensions(), expectedDimensions);
 }
 
-TEST_F(Common_Image, SetDimensions)
+TEST_F(CommonImage, SetDimensions)
 {
     EXPECT_TRUE(sut.setDimensions(testDimensions));
     EXPECT_EQ(sut.dimensions(), testDimensions);
 }
 
-TEST_F(Common_Image, IndexAccess)
+TEST_F(CommonImage, IndexAccess)
 {
     EXPECT_TRUE(sut.setDimensions(testDimensions));
     BGRAPixel const expectedDefaultColor{};
@@ -74,7 +74,7 @@ TEST_F(Common_Image, IndexAccess)
     EXPECT_EQ(sut[4U], testColor);
 }
 
-TEST_F(Common_Image, CreateViewOfEntireImage)
+TEST_F(CommonImage, CreateViewOfEntireImage)
 {
     EXPECT_TRUE(sut.setDimensions(testDimensions));
     auto const view = sut.view();
@@ -85,7 +85,7 @@ TEST_F(Common_Image, CreateViewOfEntireImage)
     EXPECT_EQ(view.region(), testDimensions);
 }
 
-TEST_F(Common_Image, CreateViewOfImageRegion)
+TEST_F(CommonImage, CreateViewOfImageRegion)
 {
     EXPECT_TRUE(sut.setDimensions(testDimensions));
     Rectangle const region{2, 2, 4U, 4U};
@@ -97,14 +97,14 @@ TEST_F(Common_Image, CreateViewOfImageRegion)
     EXPECT_EQ(view.region(), region);
 }
 
-TEST_F(Common_Image, StoreResultOfTransformerResetFalse)
+TEST_F(CommonImage, StoreResultOfTransformerResetFalse)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1);
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
+TEST_F(CommonImage, StoreResultOfTransformerWithDimensionsOfAreaNull)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
@@ -112,7 +112,7 @@ TEST_F(Common_Image, StoreResultOfTransformerWithDimensionsOfAreaNull)
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
+TEST_F(CommonImage, StoreResultOfTransformingTooFewPixels)
 {
     BGRAPixel       pix{};
     MockTransformer transformer{};
@@ -126,7 +126,7 @@ TEST_F(Common_Image, StoreResultOfTransformingTooFewPixels)
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(Common_Image, StoreResultOfSuccess)
+TEST_F(CommonImage, StoreResultOfSuccess)
 {
     BGRAPixel       pix{};
     MockTransformer transformer{};
@@ -140,14 +140,14 @@ TEST_F(Common_Image, StoreResultOfSuccess)
     EXPECT_TRUE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(Common_Image, ReadInitFalse)
+TEST_F(CommonImage, ReadInitFalse)
 {
     MockReader reader{};
     EXPECT_CALL(reader, init()).WillOnce(testing::Return(false));
     EXPECT_FALSE(sut.read(reader));
 }
 
-TEST_F(Common_Image, ReadReadFalse)
+TEST_F(CommonImage, ReadReadFalse)
 {
     MockReader reader{};
     EXPECT_CALL(reader, init()).WillOnce(testing::Return(true));
@@ -157,7 +157,7 @@ TEST_F(Common_Image, ReadReadFalse)
     EXPECT_FALSE(sut.read(reader));
 }
 
-TEST_F(Common_Image, ReadReadTrue)
+TEST_F(CommonImage, ReadReadTrue)
 {
     MockReader reader{};
     EXPECT_CALL(reader, init()).WillOnce(testing::Return(true));
@@ -167,7 +167,7 @@ TEST_F(Common_Image, ReadReadTrue)
     EXPECT_TRUE(sut.read(reader));
 }
 
-TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
+TEST_F(CommonImage, ReadGivenBufferHasCorrectSize)
 {
     // As gmock has problems creating a MATCHER once templates get involved we do this by hand
     struct MyMockReader : public IImageReader<BGRAPixel>
@@ -192,15 +192,15 @@ TEST_F(Common_Image, ReadGivenBufferHasCorrectSize)
     EXPECT_TRUE(sut.read(reader));
 }
 
-TEST_F(Common_Image, WriteGivenNullptr) { EXPECT_FALSE(sut.write(nullptr)); }
+TEST_F(CommonImage, WriteGivenNullptr) { EXPECT_FALSE(sut.write(nullptr)); }
 
-TEST_F(Common_Image, WriteWithNoDataInTheImage)
+TEST_F(CommonImage, WriteWithNoDataInTheImage)
 {
     MockWriter writer{};
     EXPECT_FALSE(sut.write(&writer));
 }
 
-TEST_F(Common_Image, WriteInitFalse)
+TEST_F(CommonImage, WriteInitFalse)
 {
     EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
     MockWriter writer{};
@@ -208,7 +208,7 @@ TEST_F(Common_Image, WriteInitFalse)
     EXPECT_FALSE(sut.write(&writer));
 }
 
-TEST_F(Common_Image, WriteWriteFalse)
+TEST_F(CommonImage, WriteWriteFalse)
 {
     EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
     MockWriter writer{};
@@ -218,7 +218,7 @@ TEST_F(Common_Image, WriteWriteFalse)
     EXPECT_FALSE(sut.write(&writer));
 }
 
-TEST_F(Common_Image, WriteWriteTrue)
+TEST_F(CommonImage, WriteWriteTrue)
 {
     EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
     MockWriter writer{};
@@ -228,7 +228,7 @@ TEST_F(Common_Image, WriteWriteTrue)
     EXPECT_TRUE(sut.write(&writer));
 }
 
-TEST_F(Common_Image, WriteGivenDataCorrect)
+TEST_F(CommonImage, WriteGivenDataCorrect)
 {
     // As gmock has problems creating a MATCHER once templates get involved we do this by hand
     struct MyMockWriter : public IImageWriter<BGRAPixel>
@@ -257,7 +257,7 @@ TEST_F(Common_Image, WriteGivenDataCorrect)
     EXPECT_TRUE(sut.write(&writer));
 }
 
-TEST_F(Common_Image, CopyViaStoreResultOf)
+TEST_F(CommonImage, CopyViaStoreResultOf)
 {
     BGRAImage orig{};
     EXPECT_TRUE(orig.setDimensions(Rectangle{2U, 2U}));

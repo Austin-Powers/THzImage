@@ -4,7 +4,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Handling_ImageRingBuffer : public testing::Test
+struct HandlingImageRingBuffer : public testing::Test
 {
     struct TestReader : public IImageReader<BGRAPixel>
     {
@@ -47,7 +47,7 @@ struct Handling_ImageRingBuffer : public testing::Test
     TestSubject sut{reader, 3U};
 };
 
-TEST_F(Handling_ImageRingBuffer, ConstructionCorrect)
+TEST_F(HandlingImageRingBuffer, ConstructionCorrect)
 {
     EXPECT_EQ(sut.slots(), 3U);
     EXPECT_EQ(sut.count(), 0U);
@@ -62,7 +62,7 @@ TEST_F(Handling_ImageRingBuffer, ConstructionCorrect)
     EXPECT_NE(&sut[1U], &sut[2U]);
 }
 
-TEST_F(Handling_ImageRingBuffer, NextCalledUsingReader)
+TEST_F(HandlingImageRingBuffer, NextCalledUsingReader)
 {
     auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
         for (auto idx : image.dimensions().range())
@@ -104,7 +104,7 @@ TEST_F(Handling_ImageRingBuffer, NextCalledUsingReader)
     EXPECT_FALSE(sut.next());
 }
 
-TEST_F(Handling_ImageRingBuffer, NextCalledUsingTransformer)
+TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformer)
 {
     auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
         for (auto idx : image.dimensions().range())

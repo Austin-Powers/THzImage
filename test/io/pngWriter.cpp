@@ -10,14 +10,14 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_PNGWriter : public testing::Test
+struct IOPNGWriter : public testing::Test
 {
     std::string filepath{"testWrite.png"};
 
     void TearDown() noexcept override { std::remove(filepath.c_str()); }
 };
 
-TEST_F(IO_PNGWriter, DimensionsDoNotFitTheBufferSize)
+TEST_F(IOPNGWriter, DimensionsDoNotFitTheBufferSize)
 {
     PNG::Writer sut{filepath};
     EXPECT_TRUE(sut.init());
@@ -28,7 +28,7 @@ TEST_F(IO_PNGWriter, DimensionsDoNotFitTheBufferSize)
     sut.deinit();
 }
 
-TEST_F(IO_PNGWriter, WritingCreatesFile)
+TEST_F(IOPNGWriter, WritingCreatesFile)
 {
     PNG::Writer sut{filepath};
     EXPECT_TRUE(sut.init());

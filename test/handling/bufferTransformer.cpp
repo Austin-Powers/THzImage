@@ -9,7 +9,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Handling_BufferTransformer : public testing::Test
+struct HandlingBufferTransformer : public testing::Test
 {
     TestImageGenerator generator{Rectangle{4U, 4U}};
 
@@ -18,7 +18,7 @@ struct Handling_BufferTransformer : public testing::Test
     BufferTransformer<BGRAPixel> sut{};
 };
 
-TEST_F(Handling_BufferTransformer, DefaultConstructedBehavesLikeDefaultView)
+TEST_F(HandlingBufferTransformer, DefaultConstructedBehavesLikeDefaultView)
 {
     BGRAPixel pixel{};
 
@@ -28,13 +28,13 @@ TEST_F(Handling_BufferTransformer, DefaultConstructedBehavesLikeDefaultView)
     EXPECT_EQ(sut.nextImage(), defaultView.nextImage());
 }
 
-TEST_F(Handling_BufferTransformer, UpdateRejectsInvalidValues)
+TEST_F(HandlingBufferTransformer, UpdateRejectsInvalidValues)
 {
     EXPECT_FALSE(sut.update(buffer, 3U, true));
     EXPECT_FALSE(sut.update(buffer, 4U, false));
 }
 
-TEST_F(Handling_BufferTransformer, UpdateWithValidValuesInteractsWithGivenBuffer)
+TEST_F(HandlingBufferTransformer, UpdateWithValidValuesInteractsWithGivenBuffer)
 {
     EXPECT_TRUE(buffer.next());
     EXPECT_EQ(buffer.count(), 1U);
@@ -49,7 +49,7 @@ TEST_F(Handling_BufferTransformer, UpdateWithValidValuesInteractsWithGivenBuffer
     EXPECT_EQ(buffer.count(), 1U);
 }
 
-TEST_F(Handling_BufferTransformer, NextImageCallingNextOnTheBuffer)
+TEST_F(HandlingBufferTransformer, NextImageCallingNextOnTheBuffer)
 {
     EXPECT_TRUE(buffer.next());
     EXPECT_EQ(buffer.count(), 1U);

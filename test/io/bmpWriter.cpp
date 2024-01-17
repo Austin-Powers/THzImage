@@ -10,12 +10,12 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_BMPWriter : public testing::Test
+struct IOBMPWriter : public testing::Test
 {
     std::string filepath{"test.bmp"};
 };
 
-TEST_F(IO_BMPWriter, DimensionsDoNotFitTheBufferSize)
+TEST_F(IOBMPWriter, DimensionsDoNotFitTheBufferSize)
 {
     BMP::Writer sut{filepath, true};
     EXPECT_TRUE(sut.init());
@@ -26,7 +26,7 @@ TEST_F(IO_BMPWriter, DimensionsDoNotFitTheBufferSize)
     sut.deinit();
 }
 
-TEST_F(IO_BMPWriter, WritingWithTransparency)
+TEST_F(IOBMPWriter, WritingWithTransparency)
 {
     BMP::Writer sut{filepath, true};
     EXPECT_TRUE(sut.init());
@@ -58,7 +58,7 @@ TEST_F(IO_BMPWriter, WritingWithTransparency)
     }
 }
 
-TEST_F(IO_BMPWriter, WritingWithoutTransparency)
+TEST_F(IOBMPWriter, WritingWithoutTransparency)
 {
     BMP::Writer sut{filepath, false};
     EXPECT_TRUE(sut.init());
@@ -94,7 +94,7 @@ TEST_F(IO_BMPWriter, WritingWithoutTransparency)
     }
 }
 
-TEST_F(IO_BMPWriter, WritingWithoutTransparencyPadding)
+TEST_F(IOBMPWriter, WritingWithoutTransparencyPadding)
 {
     BMP::Writer sut{filepath, false};
     EXPECT_TRUE(sut.init());

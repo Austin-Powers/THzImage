@@ -9,7 +9,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_QOIReader : public testing::Test
+struct IOQOIReader : public testing::Test
 {
     /// @brief Code for index block: 0b00xxxxxx
     static constexpr std::uint8_t OpIndex{0x00U};
@@ -94,15 +94,15 @@ struct IO_QOIReader : public testing::Test
     void prepareTestFile() noexcept { prepareTestFile(testFilecontent); }
 };
 
-TEST_F(IO_QOIReader, EmptyDataBufferGiven) { EXPECT_EQ(decompressor.insertDataChunk(gsl::span<std::uint8_t>{}), 0U); }
+TEST_F(IOQOIReader, EmptyDataBufferGiven) { EXPECT_EQ(decompressor.insertDataChunk(gsl::span<std::uint8_t>{}), 0U); }
 
-TEST_F(IO_QOIReader, OpRGBA)
+TEST_F(IOQOIReader, OpRGBA)
 {
     BGRAPixel const expectedColor{0x12U, 0x16U, 0x1AU, 0x4BU};
     addRGBAColor(expectedColor);
 }
 
-TEST_F(IO_QOIReader, OpRGB)
+TEST_F(IOQOIReader, OpRGB)
 {
     BGRAPixel const expectedColor{0x16U, 0x1AU, 0x4BU};
     dataArray[0U]    = OpRGB;
@@ -114,7 +114,7 @@ TEST_F(IO_QOIReader, OpRGB)
     EXPECT_EQ(imageArray[0U], expectedColor);
 }
 
-TEST_F(IO_QOIReader, OpIndex)
+TEST_F(IOQOIReader, OpIndex)
 {
     BGRAPixel const expectedColor{0x14U, 0x15U, 0x32U, 0x4BU};
     addRGBAColor(expectedColor);
@@ -124,7 +124,7 @@ TEST_F(IO_QOIReader, OpIndex)
     EXPECT_EQ(imageArray[1U], expectedColor);
 }
 
-TEST_F(IO_QOIReader, OpDiff)
+TEST_F(IOQOIReader, OpDiff)
 {
     BGRAPixel const expectedColor0{0x15U, 0x32U, 0x4BU, 0x14U};
     addRGBAColor(expectedColor0);
@@ -142,7 +142,7 @@ TEST_F(IO_QOIReader, OpDiff)
     EXPECT_EQ(imageArray[1U], expectedColor1);
 }
 
-TEST_F(IO_QOIReader, OpLuma)
+TEST_F(IOQOIReader, OpLuma)
 {
     BGRAPixel const expectedColor0{0x32U, 0x4BU, 0x14U, 0x15U};
     addRGBAColor(expectedColor0);
@@ -161,7 +161,7 @@ TEST_F(IO_QOIReader, OpLuma)
     EXPECT_EQ(imageArray[1U], expectedColor1);
 }
 
-TEST_F(IO_QOIReader, OpRun)
+TEST_F(IOQOIReader, OpRun)
 {
     BGRAPixel const expectedColor{0x4BU, 0x14U, 0x15U, 0x32U};
     addRGBAColor(expectedColor);
@@ -176,7 +176,7 @@ TEST_F(IO_QOIReader, OpRun)
     EXPECT_EQ(imageArray[runLength + 1U], BGRAPixel{});
 }
 
-TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers)
+TEST_F(IOQOIReader, CodeSplitOverMultipleDataBuffers)
 {
     auto const writeByte = [this](std::uint8_t const byte) noexcept {
         dataArray[0U] = byte;
@@ -209,7 +209,7 @@ TEST_F(IO_QOIReader, CodeSplitOverMultipleDataBuffers)
     EXPECT_EQ(imageArray[2U], expectedLuma);
 }
 
-TEST_F(IO_QOIReader, ImageBufferExhausted)
+TEST_F(IOQOIReader, ImageBufferExhausted)
 {
     BGRAPixel const expectedColor{0x14U, 0x15U, 0x4BU, 0x32U};
     addRGBAColor(expectedColor);
@@ -222,13 +222,13 @@ TEST_F(IO_QOIReader, ImageBufferExhausted)
     EXPECT_EQ(imageArray[imageArray.size() - 1U], expectedColor);
 }
 
-TEST_F(IO_QOIReader, ConstructionCorrect)
+TEST_F(IOQOIReader, ConstructionCorrect)
 {
     QOI::Reader sut{filepath};
     EXPECT_EQ(sut.dimensions(), Rectangle{});
 }
 
-TEST_F(IO_QOIReader, NonExistingFile)
+TEST_F(IOQOIReader, NonExistingFile)
 {
     QOI::Reader sut{"notThere.qoi"};
     EXPECT_FALSE(sut.fileTypeFits());
@@ -236,7 +236,7 @@ TEST_F(IO_QOIReader, NonExistingFile)
     sut.deinit();
 }
 
-TEST_F(IO_QOIReader, FileTooSmallForHeader)
+TEST_F(IOQOIReader, FileTooSmallForHeader)
 {
     std::array<std::uint8_t, 10U> data{};
     prepareTestFile(data);
@@ -247,7 +247,7 @@ TEST_F(IO_QOIReader, FileTooSmallForHeader)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_QOIReader, MagicBytesIncorrect)
+TEST_F(IOQOIReader, MagicBytesIncorrect)
 {
     testFilecontent[0U] = 0x33U;
     prepareTestFile();
@@ -257,7 +257,7 @@ TEST_F(IO_QOIReader, MagicBytesIncorrect)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_QOIReader, WidthZero)
+TEST_F(IOQOIReader, WidthZero)
 {
     testFilecontent[7U] = 0x0U;
     prepareTestFile();
@@ -267,7 +267,7 @@ TEST_F(IO_QOIReader, WidthZero)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_QOIReader, HeightZero)
+TEST_F(IOQOIReader, HeightZero)
 {
     testFilecontent[11U] = 0x0U;
     prepareTestFile();
@@ -277,7 +277,7 @@ TEST_F(IO_QOIReader, HeightZero)
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_QOIReader, BufferTooSmallForData)
+TEST_F(IOQOIReader, BufferTooSmallForData)
 {
     prepareTestFile();
 
@@ -290,7 +290,7 @@ TEST_F(IO_QOIReader, BufferTooSmallForData)
     EXPECT_FALSE(sut.read(toSpan<BGRAPixel>(arr)));
 }
 
-TEST_F(IO_QOIReader, ReadingData)
+TEST_F(IOQOIReader, ReadingData)
 {
     prepareTestFile();
 

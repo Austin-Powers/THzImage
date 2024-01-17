@@ -12,7 +12,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Common_ImageView : public testing::Test
+struct CommonImageView : public testing::Test
 {
     using BGRAView = ImageView<BGRAPixel>;
     using HSVAView = ImageView<HSVAPixel>;
@@ -33,7 +33,7 @@ struct Common_ImageView : public testing::Test
     BGRAView sut{imageBuffer.data(), dimensions, region};
 };
 
-TEST_F(Common_ImageView, DefaultConstruction)
+TEST_F(CommonImageView, DefaultConstruction)
 {
     BGRAView view{};
     EXPECT_EQ(view.basePointer(), nullptr);
@@ -43,7 +43,7 @@ TEST_F(Common_ImageView, DefaultConstruction)
     EXPECT_EQ(view.operator->(), nullptr);
 }
 
-TEST_F(Common_ImageView, Construction)
+TEST_F(CommonImageView, Construction)
 {
     EXPECT_EQ(sut.basePointer(), imageBuffer.data());
     EXPECT_EQ(sut.imageDimensions(), dimensions);
@@ -54,7 +54,7 @@ TEST_F(Common_ImageView, Construction)
     EXPECT_EQ(&(*sut), (imageBuffer.data() + pos));
 }
 
-TEST_F(Common_ImageView, ConstructionWidthUpperLeftPointInDimensions)
+TEST_F(CommonImageView, ConstructionWidthUpperLeftPointInDimensions)
 {
     Rectangle const dimensions{-2, 2, 20U, 20U};
     BGRAView const  view{imageBuffer.data(), dimensions};
@@ -63,7 +63,7 @@ TEST_F(Common_ImageView, ConstructionWidthUpperLeftPointInDimensions)
     EXPECT_EQ(view.region(), expectation);
 }
 
-TEST_F(Common_ImageView, ConstructionWithRegionOutsideImageDimensions)
+TEST_F(CommonImageView, ConstructionWithRegionOutsideImageDimensions)
 {
     Rectangle const dimensions{-2, 2, 20U, 20U};
     for (auto i = -23; i < 20; ++i)
@@ -76,7 +76,7 @@ TEST_F(Common_ImageView, ConstructionWithRegionOutsideImageDimensions)
     }
 }
 
-TEST_F(Common_ImageView, SubView)
+TEST_F(CommonImageView, SubView)
 {
     for (auto i = -20; i < 20; ++i)
     {
@@ -88,7 +88,7 @@ TEST_F(Common_ImageView, SubView)
     }
 }
 
-TEST_F(Common_ImageView, Increment)
+TEST_F(CommonImageView, Increment)
 {
     auto const compareViews = [](BGRAView const &a, BGRAView const &b) {
         ASSERT_EQ(a.currentPosition(), b.currentPosition());
@@ -114,7 +114,7 @@ TEST_F(Common_ImageView, Increment)
     }
 }
 
-TEST_F(Common_ImageView, Reset)
+TEST_F(CommonImageView, Reset)
 {
     BGRAView const start = sut;
     ++sut;
@@ -125,7 +125,7 @@ TEST_F(Common_ImageView, Reset)
     EXPECT_EQ(start.operator->(), sut.operator->());
 }
 
-TEST_F(Common_ImageView, ComparissonOperators)
+TEST_F(CommonImageView, ComparissonOperators)
 {
     EXPECT_EQ(sut, sut);
     EXPECT_GE(sut, sut);
@@ -145,7 +145,7 @@ TEST_F(Common_ImageView, ComparissonOperators)
     EXPECT_NE(sut, sutCopy);
 }
 
-TEST_F(Common_ImageView, EndReturnsCorrectResult)
+TEST_F(CommonImageView, EndReturnsCorrectResult)
 {
     auto       count = 0U;
     auto const end   = sut.end();
@@ -164,7 +164,7 @@ TEST_F(Common_ImageView, EndReturnsCorrectResult)
     EXPECT_EQ(sut.currentPosition(), end.currentPosition());
 }
 
-TEST_F(Common_ImageView, Decrement)
+TEST_F(CommonImageView, Decrement)
 {
     auto const compareViews = [](BGRAView const &a, BGRAView const &b) {
         ASSERT_EQ(a.currentPosition(), b.currentPosition());
@@ -191,7 +191,7 @@ TEST_F(Common_ImageView, Decrement)
     }
 }
 
-TEST_F(Common_ImageView, ImageTransformerImplementation)
+TEST_F(CommonImageView, ImageTransformerImplementation)
 {
     Rectangle const expectedDimensions{0, 0, region.width, region.height};
     EXPECT_EQ(sut.dimensions(), expectedDimensions);
@@ -228,7 +228,7 @@ TEST_F(Common_ImageView, ImageTransformerImplementation)
     }
 }
 
-TEST_F(Common_ImageView, ForeachLoopCompatibility)
+TEST_F(CommonImageView, ForeachLoopCompatibility)
 {
     auto count = 0U;
     for (auto &pixel : sut)
@@ -256,7 +256,7 @@ TEST_F(Common_ImageView, ForeachLoopCompatibility)
     }
 }
 
-TEST_F(Common_ImageView, DefaultConstructedViewDoesNotThrowIfUsedByImage)
+TEST_F(CommonImageView, DefaultConstructedViewDoesNotThrowIfUsedByImage)
 {
     BGRAView  view{};
     BGRAImage image{};

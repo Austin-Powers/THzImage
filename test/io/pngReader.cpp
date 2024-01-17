@@ -8,19 +8,19 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_PNGReader : public testing::Test
+struct IOPNGReader : public testing::Test
 {
     std::string filepath{"testRead.png"};
 };
 
-TEST_F(IO_PNGReader, NonExistingFile)
+TEST_F(IOPNGReader, NonExistingFile)
 {
     PNG::Reader sut{"notHere.png"};
     EXPECT_FALSE(sut.fileTypeFits());
     EXPECT_FALSE(sut.init());
 }
 
-TEST_F(IO_PNGReader, ConstructionCorrect)
+TEST_F(IOPNGReader, ConstructionCorrect)
 {
     std::array<BGRAPixel, 100U> imageData{};
 

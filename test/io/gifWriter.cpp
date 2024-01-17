@@ -7,12 +7,12 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_GIFWriter_ColorReduction : public testing::Test
+struct IOGIFWriterColorReduction : public testing::Test
 {
     GIF::Internal::ColorReduction sut{};
 };
 
-TEST_F(IO_GIFWriter_ColorReduction, InitialStateCorrect)
+TEST_F(IOGIFWriterColorReduction, InitialStateCorrect)
 {
     auto const colorTable = sut.colorTable();
     ASSERT_EQ(colorTable.size(), 2U);
@@ -25,7 +25,7 @@ TEST_F(IO_GIFWriter_ColorReduction, InitialStateCorrect)
     }
 }
 
-TEST_F(IO_GIFWriter_ColorReduction, ConversionResultCloseToOriginal)
+TEST_F(IOGIFWriterColorReduction, ConversionResultCloseToOriginal)
 {
     BGRAImage          image{};
     TestImageGenerator generator{Rectangle{64U, 64U}};
@@ -44,7 +44,7 @@ TEST_F(IO_GIFWriter_ColorReduction, ConversionResultCloseToOriginal)
     EXPECT_NEAR(accumulatedDeviations, 268.63, 0.05);
 }
 
-TEST_F(IO_GIFWriter_ColorReduction, ReductionGivenDataWithLessThan255Colors) {}
+TEST_F(IOGIFWriterColorReduction, ReductionGivenDataWithLessThan255Colors) {}
 
 struct IO_GIFWriter_Dithering : public testing::Test
 {

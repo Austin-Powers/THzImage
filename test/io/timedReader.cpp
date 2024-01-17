@@ -8,14 +8,14 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_TimedReader : public testing::Test
+struct IOTimedReader : public testing::Test
 {
     using BaseReader = TestImageGenerator;
     using TestReader = TimedReader<BaseReader>;
     using millisecs  = std::chrono::milliseconds;
 };
 
-TEST_F(IO_TimedReader, NewlyConstructedInstanceCorrect)
+TEST_F(IOTimedReader, NewlyConstructedInstanceCorrect)
 {
     Rectangle const dimensions{10U, 10U};
     millisecs const interval{10U};
@@ -29,13 +29,13 @@ TEST_F(IO_TimedReader, NewlyConstructedInstanceCorrect)
     EXPECT_EQ(sut.info().totalTimeSlots, 0U);
 }
 
-TEST_F(IO_TimedReader, ConstructionWithZeroInterval)
+TEST_F(IOTimedReader, ConstructionWithZeroInterval)
 {
     TestReader sut{millisecs{0U}, Rectangle{2U, 2U}};
     EXPECT_EQ(sut.interval(), millisecs{1000U});
 }
 
-TEST_F(IO_TimedReader, UpdatingInterval)
+TEST_F(IOTimedReader, UpdatingInterval)
 {
     millisecs const interval{10U};
 
@@ -53,7 +53,7 @@ TEST_F(IO_TimedReader, UpdatingInterval)
 // As long as these tests do not fail in release everything is fine
 #ifdef NDEBUG
 
-TEST_F(IO_TimedReader, DelayReadingAsExpected)
+TEST_F(IOTimedReader, DelayReadingAsExpected)
 {
     millisecs const    interval{16U};
     Rectangle const    dimensions{2U, 2U};
@@ -87,7 +87,7 @@ TEST_F(IO_TimedReader, DelayReadingAsExpected)
     EXPECT_EQ(sut.info().totalTimeSlots, targetCount);
 }
 
-TEST_F(IO_TimedReader, ReaderDelaysToFixTimePoints)
+TEST_F(IOTimedReader, ReaderDelaysToFixTimePoints)
 {
     millisecs const interval{20U};
     millisecs const sleepInterval{interval.count() + 2U};

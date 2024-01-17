@@ -12,10 +12,10 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_ImageSeriesWriter : public testing::Test
+struct IOImageSeriesWriter : public testing::Test
 {};
 
-TEST_F(IO_ImageSeriesWriter, CreationPossible)
+TEST_F(IOImageSeriesWriter, CreationPossible)
 {
     // mainly checks if the available file writers conform to the concepts
     EXPECT_TRUE(ImageSeries::Writer<BMP::Writer>::createWriter("./?.bmp"));
@@ -23,7 +23,7 @@ TEST_F(IO_ImageSeriesWriter, CreationPossible)
     EXPECT_TRUE(ImageSeries::Writer<QOI::Writer>::createWriter("./?.qoi"));
 }
 
-TEST_F(IO_ImageSeriesWriter, CreationFailsIfFilepathDoesNotFit)
+TEST_F(IOImageSeriesWriter, CreationFailsIfFilepathDoesNotFit)
 {
     auto writer = ImageSeries::Writer<QOI::Writer>::createWriter("./test.qoi");
     EXPECT_FALSE(writer);
@@ -33,7 +33,7 @@ TEST_F(IO_ImageSeriesWriter, CreationFailsIfFilepathDoesNotFit)
     EXPECT_FALSE(writer);
 }
 
-TEST_F(IO_ImageSeriesWriter, CreationSucceedsIfFilepathDoesFit)
+TEST_F(IOImageSeriesWriter, CreationSucceedsIfFilepathDoesFit)
 {
     auto writer = ImageSeries::Writer<QOI::Writer>::createWriter("./?.qoi");
     EXPECT_TRUE(writer);
@@ -41,7 +41,7 @@ TEST_F(IO_ImageSeriesWriter, CreationSucceedsIfFilepathDoesFit)
     EXPECT_TRUE(writer);
 }
 
-TEST_F(IO_ImageSeriesWriter, OverallOperation)
+TEST_F(IOImageSeriesWriter, OverallOperation)
 {
     auto writer = ImageSeries::Writer<QOI::Writer>::createWriter("./?.qoi");
     ASSERT_TRUE(writer);
@@ -74,12 +74,12 @@ TEST_F(IO_ImageSeriesWriter, OverallOperation)
     checkImage("./000002.qoi");
 }
 
-TEST_F(IO_ImageSeriesWriter, GivingIncrementsOfZeroFailsCreation)
+TEST_F(IOImageSeriesWriter, GivingIncrementsOfZeroFailsCreation)
 {
     EXPECT_FALSE(ImageSeries::Writer<QOI::Writer>::createWriter("./?.qoi", 0U, 0U));
 }
 
-TEST_F(IO_ImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
+TEST_F(IOImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
 {
     auto writer = ImageSeries::Writer<QOI::Writer>::createWriter("./32_?.qoi", 3U, 2U);
     ASSERT_TRUE(writer);

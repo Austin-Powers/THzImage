@@ -9,7 +9,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Transformation_PixelTransformer : public testing::Test
+struct TransformationPixelTransformer : public testing::Test
 {
     class MockTransformer : public IImageTransformer<BGRAPixel>
     {
@@ -44,7 +44,7 @@ struct Transformation_PixelTransformer : public testing::Test
     ImageView<BGRAPixel> baseTransformer{};
 };
 
-TEST_F(Transformation_PixelTransformer, DefaultCreateTransformerFromInstance)
+TEST_F(TransformationPixelTransformer, DefaultCreateTransformerFromInstance)
 {
     auto transformer = createPixelTransformer<BGRAPixel, TestTransformation>(baseTransformer);
     EXPECT_TRUE(imageReceiver.executeAndIngest(transformer));
@@ -56,7 +56,7 @@ TEST_F(Transformation_PixelTransformer, DefaultCreateTransformerFromInstance)
     }
 }
 
-TEST_F(Transformation_PixelTransformer, CreateTransformerFromInstance)
+TEST_F(TransformationPixelTransformer, CreateTransformerFromInstance)
 {
     auto transformer = createPixelTransformer<BGRAPixel>(baseTransformer, TestTransformation{});
     EXPECT_TRUE(imageReceiver.executeAndIngest(transformer));
@@ -68,7 +68,7 @@ TEST_F(Transformation_PixelTransformer, CreateTransformerFromInstance)
     }
 }
 
-TEST_F(Transformation_PixelTransformer, CreateTransformerFromLambda)
+TEST_F(TransformationPixelTransformer, CreateTransformerFromLambda)
 {
     auto transformer =
         createPixelTransformer<BGRAPixel>(baseTransformer, [](BGRAPixel const &pixel) noexcept -> BGRAPixel {
@@ -85,7 +85,7 @@ TEST_F(Transformation_PixelTransformer, CreateTransformerFromLambda)
     }
 }
 
-TEST_F(Transformation_PixelTransformer, NextImageCallHandedToBase)
+TEST_F(TransformationPixelTransformer, NextImageCallHandedToBase)
 {
     MockTransformer baseTransformer{};
 

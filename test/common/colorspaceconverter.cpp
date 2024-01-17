@@ -4,10 +4,10 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Common_ColorSpaceConverter : public testing::Test
+struct CommonColorSpaceConverter : public testing::Test
 {};
 
-TEST_F(Common_ColorSpaceConverter, BGRtoHSVConversion)
+TEST_F(CommonColorSpaceConverter, BGRtoHSVConversion)
 {
     auto const checkConversion = [](std::uint8_t const b,
                                     std::uint8_t const g,
@@ -25,7 +25,7 @@ TEST_F(Common_ColorSpaceConverter, BGRtoHSVConversion)
     };
 }
 
-TEST_F(Common_ColorSpaceConverter, BGRtoHSVtoBGRConversion)
+TEST_F(CommonColorSpaceConverter, BGRtoHSVtoBGRConversion)
 {
     auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {
         float        h{};
@@ -53,7 +53,7 @@ TEST_F(Common_ColorSpaceConverter, BGRtoHSVtoBGRConversion)
     }
 }
 
-TEST_F(Common_ColorSpaceConverter, BGRtoGrayConversion)
+TEST_F(CommonColorSpaceConverter, BGRtoGrayConversion)
 {
     auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {
         auto const expectedValue = static_cast<std::uint8_t>((0.0722F * b) + (0.7152F * g) + (0.2126F * r));

@@ -9,17 +9,17 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_ScreenReader : public testing::Test
+struct IOScreenReader : public testing::Test
 {};
 
-TEST_F(IO_ScreenReader, GetScreenDimensions)
+TEST_F(IOScreenReader, GetScreenDimensions)
 {
     auto const screenDimensions = Screen::Reader::getScreenDimensions();
     EXPECT_EQ(screenDimensions.width, GetSystemMetrics(SM_CXSCREEN));
     EXPECT_EQ(screenDimensions.height, GetSystemMetrics(SM_CYSCREEN));
 }
 
-TEST_F(IO_ScreenReader, DefaultConstructionCorrect)
+TEST_F(IOScreenReader, DefaultConstructionCorrect)
 {
     Screen::Reader sut{};
     auto const     expectedDimensions = Screen::Reader::getScreenDimensions();
@@ -27,7 +27,7 @@ TEST_F(IO_ScreenReader, DefaultConstructionCorrect)
     EXPECT_EQ(sut.dimensions(), expectedDimensions);
 }
 
-TEST_F(IO_ScreenReader, DimensionsReturnsValueGivenToSetArea)
+TEST_F(IOScreenReader, DimensionsReturnsValueGivenToSetArea)
 {
     Screen::Reader            sut{};
     std::array<Rectangle, 3U> testValues{
@@ -40,7 +40,7 @@ TEST_F(IO_ScreenReader, DimensionsReturnsValueGivenToSetArea)
     }
 }
 
-TEST_F(IO_ScreenReader, SetAreaRejectsValuesOutsideTheScreen)
+TEST_F(IOScreenReader, SetAreaRejectsValuesOutsideTheScreen)
 {
     Screen::Reader sut{};
     auto const     screenDimensions = Screen::Reader::getScreenDimensions();
@@ -67,7 +67,7 @@ TEST_F(IO_ScreenReader, SetAreaRejectsValuesOutsideTheScreen)
     }
 }
 
-TEST_F(IO_ScreenReader, ConstructionUsingAreaOutsideScreenDefaultsToScreenDimensions)
+TEST_F(IOScreenReader, ConstructionUsingAreaOutsideScreenDefaultsToScreenDimensions)
 {
     auto const screenDimensions = Screen::Reader::getScreenDimensions();
     for (auto i = 0U; i < 4U; ++i)
@@ -93,7 +93,7 @@ TEST_F(IO_ScreenReader, ConstructionUsingAreaOutsideScreenDefaultsToScreenDimens
     }
 }
 
-TEST_F(IO_ScreenReader, TakeScreenshot)
+TEST_F(IOScreenReader, TakeScreenshot)
 {
     BGRAPixel const startColor{0xFFU, 0x00F, 0xFFU};
     Rectangle const dimensions{100, 100, 32U, 32U};
@@ -119,7 +119,7 @@ TEST_F(IO_ScreenReader, TakeScreenshot)
     EXPECT_GE(changedPixels, (dimensions.area() - dimensions.width));
 }
 
-TEST_F(IO_ScreenReader, ChangeAreaBetweenScreenshots)
+TEST_F(IOScreenReader, ChangeAreaBetweenScreenshots)
 {
     Rectangle const dimensions{100, 100, 32U, 32U};
     BGRAImage       image0{};

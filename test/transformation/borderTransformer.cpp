@@ -10,7 +10,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Transformation_BorderTransformer : public testing::Test
+struct TransformationBorderTransformer : public testing::Test
 {
     class MockTransformer : public IImageTransformer<BGRAPixel>
     {
@@ -40,7 +40,7 @@ struct Transformation_BorderTransformer : public testing::Test
     BGRAPixel color{0xFE, 0xAB, 0x12, 0x45};
 };
 
-TEST_F(Transformation_BorderTransformer, BordersConstructsCorrectly)
+TEST_F(TransformationBorderTransformer, BordersConstructsCorrectly)
 {
     EXPECT_EQ(borders.top, 1U);
     EXPECT_EQ(borders.right, 2U);
@@ -48,7 +48,7 @@ TEST_F(Transformation_BorderTransformer, BordersConstructsCorrectly)
     EXPECT_EQ(borders.left, 4U);
 }
 
-TEST_F(Transformation_BorderTransformer, DefaultConstructionCorrect)
+TEST_F(TransformationBorderTransformer, DefaultConstructionCorrect)
 {
     BorderTransformer<BGRAPixel> sut{};
     EXPECT_EQ(sut.dimensions(), Rectangle{});
@@ -61,7 +61,7 @@ TEST_F(Transformation_BorderTransformer, DefaultConstructionCorrect)
     EXPECT_FALSE(sut.nextImage());
 }
 
-TEST_F(Transformation_BorderTransformer, DimensionsCorrectAfterConstruction)
+TEST_F(TransformationBorderTransformer, DimensionsCorrectAfterConstruction)
 {
     BorderTransformer<BGRAPixel> sut{view, borders, color};
     EXPECT_EQ(sut.dimensions().upperLeftPoint.x, 0U);
@@ -70,7 +70,7 @@ TEST_F(Transformation_BorderTransformer, DimensionsCorrectAfterConstruction)
     EXPECT_EQ(sut.dimensions().height, baseDimensions.height + borders.top + borders.bottom);
 }
 
-TEST_F(Transformation_BorderTransformer, CallsRelayedCorrectly)
+TEST_F(TransformationBorderTransformer, CallsRelayedCorrectly)
 {
     MockTransformer baseTransformer{};
     Borders const   b{0U, 0U, 2U, 1U};
@@ -87,7 +87,7 @@ TEST_F(Transformation_BorderTransformer, CallsRelayedCorrectly)
     EXPECT_FALSE(sut.nextImage());
 }
 
-TEST_F(Transformation_BorderTransformer, CopyWorksOnTransformer)
+TEST_F(TransformationBorderTransformer, CopyWorksOnTransformer)
 {
     BorderTransformer<BGRAPixel> sut{};
     sut = BorderTransformer<BGRAPixel>(view, borders, color);
@@ -95,7 +95,7 @@ TEST_F(Transformation_BorderTransformer, CopyWorksOnTransformer)
     EXPECT_EQ(sut.dimensions().height, baseDimensions.height + borders.top + borders.bottom);
 }
 
-TEST_F(Transformation_BorderTransformer, TransformCallsCorrect)
+TEST_F(TransformationBorderTransformer, TransformCallsCorrect)
 {
     BorderTransformer<BGRAPixel> sut{view, borders, color};
 
@@ -138,7 +138,7 @@ TEST_F(Transformation_BorderTransformer, TransformCallsCorrect)
     EXPECT_FALSE(sut.transform(pixel));
 }
 
-TEST_F(Transformation_BorderTransformer, TransformAndSkipCallsCorrect)
+TEST_F(TransformationBorderTransformer, TransformAndSkipCallsCorrect)
 {
     BorderTransformer<BGRAPixel> sut{view, borders, color};
 

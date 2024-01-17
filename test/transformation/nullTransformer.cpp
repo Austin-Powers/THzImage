@@ -4,10 +4,10 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Transformation_NullTransformer : public testing::Test
+struct TransformationNullTransformer : public testing::Test
 {};
 
-TEST_F(Transformation_NullTransformer, ReturnValuesAsExpected)
+TEST_F(TransformationNullTransformer, ReturnValuesAsExpected)
 {
     auto &instance = NullTransformer<BGRAPixel>::instance();
     EXPECT_EQ(instance.dimensions(), Rectangle{});

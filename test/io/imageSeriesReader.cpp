@@ -12,7 +12,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_ImageSeriesReader : public testing::Test
+struct IOImageSeriesReader : public testing::Test
 {
     struct ImageInfo
     {
@@ -51,7 +51,7 @@ struct IO_ImageSeriesReader : public testing::Test
     }
 };
 
-TEST_F(IO_ImageSeriesReader, ConstructionPossible)
+TEST_F(IOImageSeriesReader, ConstructionPossible)
 {
     // mainly checks if the available file readers conform to the concepts
     ImageSeries::Reader<BMP::Reader> testBMP{"."};
@@ -59,14 +59,14 @@ TEST_F(IO_ImageSeriesReader, ConstructionPossible)
     ImageSeries::Reader<QOI::Reader> testQOI{"."};
 }
 
-TEST_F(IO_ImageSeriesReader, ConstructionUsingNonExistingDirectory)
+TEST_F(IOImageSeriesReader, ConstructionUsingNonExistingDirectory)
 {
     ImageSeries::Reader<QOI::Reader> sut{"/folder"};
     EXPECT_FALSE(sut.imagePresent());
     EXPECT_TRUE(sut.currentFilepath().empty());
 }
 
-TEST_F(IO_ImageSeriesReader, ConstructionUsingPathToAFile)
+TEST_F(IOImageSeriesReader, ConstructionUsingPathToAFile)
 {
     auto const filepath = "test.txt";
 
@@ -79,7 +79,7 @@ TEST_F(IO_ImageSeriesReader, ConstructionUsingPathToAFile)
     EXPECT_TRUE(sut.currentFilepath().empty());
 }
 
-TEST_F(IO_ImageSeriesReader, OperationCorrect)
+TEST_F(IOImageSeriesReader, OperationCorrect)
 {
     createTestImages();
     ImageSeries::Reader<QOI::Reader> sut{"."};

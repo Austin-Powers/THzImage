@@ -8,7 +8,7 @@
 
 namespace Terrahertz::UnitTests {
 
-struct IO_QOIWriter : public testing::Test
+struct IOQOIWriter : public testing::Test
 {
     /// @brief Code for index block: 0b00xxxxxx
     static constexpr std::uint8_t OpIndex{0x00U};
@@ -61,7 +61,7 @@ struct IO_QOIWriter : public testing::Test
     std::string filepath{"testWrite.qoi"};
 };
 
-TEST_F(IO_QOIWriter, OpBGRA)
+TEST_F(IOQOIWriter, OpBGRA)
 {
     auto const checkCode = [this](BGRAPixel const &pixel) noexcept {
         auto const code = compressor.nextPixel(pixel);
@@ -83,7 +83,7 @@ TEST_F(IO_QOIWriter, OpBGRA)
     checkCode(pixel);
 }
 
-TEST_F(IO_QOIWriter, OpRGB)
+TEST_F(IOQOIWriter, OpRGB)
 {
     auto const checkCode = [this](BGRAPixel const &pixel) noexcept {
         auto const code = compressor.nextPixel(pixel);
@@ -103,9 +103,9 @@ TEST_F(IO_QOIWriter, OpRGB)
     checkCode(pixel);
 }
 
-TEST_F(IO_QOIWriter, OpRunHasHighestPriority) { EXPECT_TRUE(compressor.nextPixel(startColor).empty()); }
+TEST_F(IOQOIWriter, OpRunHasHighestPriority) { EXPECT_TRUE(compressor.nextPixel(startColor).empty()); }
 
-TEST_F(IO_QOIWriter, OpIndex)
+TEST_F(IOQOIWriter, OpIndex)
 {
     auto const firstColor  = BGRAPixel{30U, 0U, 0U};
     auto const secondColor = BGRAPixel{30U, 50U, 0U};
@@ -133,7 +133,7 @@ TEST_F(IO_QOIWriter, OpIndex)
     EXPECT_EQ(code[0], hash(firstColor));
 }
 
-TEST_F(IO_QOIWriter, OpDiff)
+TEST_F(IOQOIWriter, OpDiff)
 {
     for (auto r = -2; r < 2; ++r)
     {
@@ -163,7 +163,7 @@ TEST_F(IO_QOIWriter, OpDiff)
     }
 }
 
-TEST_F(IO_QOIWriter, OpLuma)
+TEST_F(IOQOIWriter, OpLuma)
 {
     auto const inDiffRange = [](std::int32_t const value) noexcept -> bool { return -2 <= value && value <= 1; };
 
@@ -195,7 +195,7 @@ TEST_F(IO_QOIWriter, OpLuma)
     }
 }
 
-TEST_F(IO_QOIWriter, OpRunOnRunLongerThan61)
+TEST_F(IOQOIWriter, OpRunOnRunLongerThan61)
 {
     auto pixel = startColor;
     for (auto i = 0U; i < 61U; i++)
@@ -214,7 +214,7 @@ TEST_F(IO_QOIWriter, OpRunOnRunLongerThan61)
     EXPECT_EQ(code[0U], OpRun | 61U);
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOpDiff)
+TEST_F(IOQOIWriter, OpRunFollowedByOpDiff)
 {
     insertRun();
     auto color = startColor;
@@ -227,7 +227,7 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpDiff)
     EXPECT_EQ(code[1U], (OpDiff | 0b111111));
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOpIndex)
+TEST_F(IOQOIWriter, OpRunFollowedByOpIndex)
 {
     BGRAPixel const otherColor{0x3F, 0x3F, 0x3F};
     EXPECT_EQ(compressor.nextPixel(otherColor).size(), 4U);
@@ -239,7 +239,7 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpIndex)
     EXPECT_EQ(code[1U], (OpIndex | hash(otherColor)));
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOpLuma)
+TEST_F(IOQOIWriter, OpRunFollowedByOpLuma)
 {
     insertRun();
     auto color = startColor;
@@ -253,7 +253,7 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpLuma)
     EXPECT_EQ(code[2U], 0U);
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOpRGB)
+TEST_F(IOQOIWriter, OpRunFollowedByOpRGB)
 {
     insertRun();
     auto color = startColor;
@@ -269,7 +269,7 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpRGB)
     EXPECT_EQ(code[4U], 60U);
 }
 
-TEST_F(IO_QOIWriter, OpRunFollowedByOpRGBA)
+TEST_F(IOQOIWriter, OpRunFollowedByOpRGBA)
 {
     insertRun();
     auto color      = startColor;
@@ -284,7 +284,7 @@ TEST_F(IO_QOIWriter, OpRunFollowedByOpRGBA)
     EXPECT_EQ(code[5U], 60U);
 }
 
-TEST_F(IO_QOIWriter, FlushReturnsEmptyAfterNotOpRunCode)
+TEST_F(IOQOIWriter, FlushReturnsEmptyAfterNotOpRunCode)
 {
     auto const checkCase = [this](size_t const      expectedCodeLength,
                                   std::int8_t const dRed,
@@ -319,7 +319,7 @@ TEST_F(IO_QOIWriter, FlushReturnsEmptyAfterNotOpRunCode)
     checkCase(1U, delta, delta, delta);
 }
 
-TEST_F(IO_QOIWriter, FlushReturnsOpRunCodeIfPresent)
+TEST_F(IOQOIWriter, FlushReturnsOpRunCodeIfPresent)
 {
     for (auto i = 0U; i < 8U; ++i)
     {
@@ -330,7 +330,7 @@ TEST_F(IO_QOIWriter, FlushReturnsOpRunCodeIfPresent)
     EXPECT_EQ(code[0U], (OpRun | 7U));
 }
 
-TEST_F(IO_QOIWriter, DimensionsDoNotFitBufferSize)
+TEST_F(IOQOIWriter, DimensionsDoNotFitBufferSize)
 {
     QOI::Writer sut{filepath};
     EXPECT_TRUE(sut.init());
@@ -341,7 +341,7 @@ TEST_F(IO_QOIWriter, DimensionsDoNotFitBufferSize)
     sut.deinit();
 }
 
-TEST_F(IO_QOIWriter, Writing)
+TEST_F(IOQOIWriter, Writing)
 {
     QOI::Writer sut{filepath};
     EXPECT_TRUE(sut.init());

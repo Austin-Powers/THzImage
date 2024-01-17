@@ -7,12 +7,12 @@
 
 namespace Terrahertz::UnitTests {
 
-struct Common_Pixel : public testing::Test
+struct CommonPixel : public testing::Test
 {
     double epsilon{1e-6};
 };
 
-TEST_F(Common_Pixel, BGRADefaultConstruction)
+TEST_F(CommonPixel, BGRADefaultConstruction)
 {
     BGRAPixel bgraDefault{};
     EXPECT_EQ(bgraDefault.blue, std::uint8_t{});
@@ -21,7 +21,7 @@ TEST_F(Common_Pixel, BGRADefaultConstruction)
     EXPECT_EQ(bgraDefault.alpha, 0xFFU);
 }
 
-TEST_F(Common_Pixel, BGRAConstruction)
+TEST_F(CommonPixel, BGRAConstruction)
 {
     BGRAPixel bgr{1U, 2U, 3U};
     EXPECT_EQ(bgr.blue, 1U);
@@ -36,7 +36,7 @@ TEST_F(Common_Pixel, BGRAConstruction)
     EXPECT_EQ(bgra.alpha, 5U);
 }
 
-TEST_F(Common_Pixel, HSVADefaultConstruction)
+TEST_F(CommonPixel, HSVADefaultConstruction)
 {
     HSVAPixel hsvaDefault{};
     EXPECT_EQ(hsvaDefault.hue, float{});
@@ -45,7 +45,7 @@ TEST_F(Common_Pixel, HSVADefaultConstruction)
     EXPECT_EQ(hsvaDefault.alpha, 0xFFU);
 }
 
-TEST_F(Common_Pixel, HSVAConstruction)
+TEST_F(CommonPixel, HSVAConstruction)
 {
     HSVAPixel hsv{1.4F, 2U, 3U};
     EXPECT_EQ(hsv.hue, 1.4F);
@@ -60,7 +60,7 @@ TEST_F(Common_Pixel, HSVAConstruction)
     EXPECT_EQ(hsva.alpha, 5U);
 }
 
-TEST_F(Common_Pixel, BGRAFromHSVA)
+TEST_F(CommonPixel, BGRAFromHSVA)
 {
     HSVAPixel    hsva{3.4F, 100U, 128U};
     std::uint8_t expectedBlue{};
@@ -81,7 +81,7 @@ TEST_F(Common_Pixel, BGRAFromHSVA)
     EXPECT_EQ(hsva.alpha, bgra2.alpha);
 }
 
-TEST_F(Common_Pixel, HSVAFromBGRA)
+TEST_F(CommonPixel, HSVAFromBGRA)
 {
     BGRAPixel    bgra{123U, 34U, 111U};
     float        expectedHue{};
@@ -102,7 +102,7 @@ TEST_F(Common_Pixel, HSVAFromBGRA)
     EXPECT_EQ(bgra.alpha, hsva2.alpha);
 }
 
-TEST_F(Common_Pixel, BGRAComparison)
+TEST_F(CommonPixel, BGRAComparison)
 {
     BGRAPixel base{12U, 14U, 56U, 128U};
     EXPECT_EQ(base, base);
@@ -117,7 +117,7 @@ TEST_F(Common_Pixel, BGRAComparison)
     }
 }
 
-TEST_F(Common_Pixel, HSVAComparison)
+TEST_F(CommonPixel, HSVAComparison)
 {
     HSVAPixel base{2.31F, 14U, 56U, 128U};
     EXPECT_EQ(base, base);
@@ -132,7 +132,7 @@ TEST_F(Common_Pixel, HSVAComparison)
     }
 }
 
-TEST_F(Common_Pixel, BGRADistanceSquared)
+TEST_F(CommonPixel, BGRADistanceSquared)
 {
     BGRAPixel pivot{12U, 27U, 56U};
     EXPECT_EQ(pivot.distanceSquared(pivot), 0U);
@@ -149,7 +149,7 @@ TEST_F(Common_Pixel, BGRADistanceSquared)
     }
 }
 
-TEST_F(Common_Pixel, BGRASubtraction)
+TEST_F(CommonPixel, BGRASubtraction)
 {
     BGRAPixel base{40U, 32U, 45U, 192U};
     for (auto i = 0U; i < 240U; i += 42U)
@@ -166,7 +166,7 @@ TEST_F(Common_Pixel, BGRASubtraction)
     }
 }
 
-TEST_F(Common_Pixel, BGRAAddition)
+TEST_F(CommonPixel, BGRAAddition)
 {
     BGRAPixel base{40U, 32U, 45U, 192U};
     for (auto i = 0U; i < 240U; i += 42U)
@@ -182,7 +182,7 @@ TEST_F(Common_Pixel, BGRAAddition)
     }
 }
 
-TEST_F(Common_Pixel, BGRALerp)
+TEST_F(CommonPixel, BGRALerp)
 {
     BGRAPixel a{23U, 34U, 55U, 192U};
     BGRAPixel b{240U, 134U, 0U, 64U};
@@ -200,7 +200,7 @@ TEST_F(Common_Pixel, BGRALerp)
     }
 }
 
-TEST_F(Common_Pixel, HSVALerp)
+TEST_F(CommonPixel, HSVALerp)
 {
     auto const compareHSVA = [&](HSVAPixel const &expectation, HSVAPixel const &reality) {
         EXPECT_NEAR(expectation.hue, reality.hue, epsilon);
@@ -239,7 +239,7 @@ TEST_F(Common_Pixel, HSVALerp)
     }
 }
 
-TEST_F(Common_Pixel, BGRAPixelFloatConstruction)
+TEST_F(CommonPixel, BGRAPixelFloatConstruction)
 {
     BGRAPixelFloat sut{};
     EXPECT_EQ(sut.blue, 0.0F);
@@ -248,7 +248,7 @@ TEST_F(Common_Pixel, BGRAPixelFloatConstruction)
     EXPECT_EQ(sut.alpha, 255.0F);
 }
 
-TEST_F(Common_Pixel, BGRAPixelFloatConversion)
+TEST_F(CommonPixel, BGRAPixelFloatConversion)
 {
     BGRAPixel      base{14U, 56U, 21U};
     BGRAPixelFloat sut{base};
@@ -273,7 +273,7 @@ TEST_F(Common_Pixel, BGRAPixelFloatConversion)
     EXPECT_EQ(base, base2);
 }
 
-TEST_F(Common_Pixel, BGRAPixelFloatClampingCorrect)
+TEST_F(CommonPixel, BGRAPixelFloatClampingCorrect)
 {
     auto const check0 = [](BGRAPixel const &pixel) {
         EXPECT_EQ(pixel.blue, 0U);
@@ -298,7 +298,7 @@ TEST_F(Common_Pixel, BGRAPixelFloatClampingCorrect)
     }
 }
 
-TEST_F(Common_Pixel, BGRAPixelDiffAbsCorrect)
+TEST_F(CommonPixel, BGRAPixelDiffAbsCorrect)
 {
     auto const getDiff = [](std::uint8_t const a, std::uint8_t const b) noexcept -> std::uint8_t {
         return a > b ? a - b : b - a;
