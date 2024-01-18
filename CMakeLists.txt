@@ -80,7 +80,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/io/timedReader.hpp
 	include/THzImage/transformation/borderTransformer.hpp
-	include/THzImage/transformation/convolutionTransformer.hpp
+	include/THzImage/transformation/convolutionTransformerBase.hpp
 	include/THzImage/transformation/nullTransformer.hpp
 	include/THzImage/transformation/pixelTransformer.hpp
 )

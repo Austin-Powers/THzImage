@@ -24,11 +24,11 @@ add_executable(${PROJECTNAME}
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
 	transformation/borderTransformer.cpp
-	transformation/convolutionTransformer.cpp
+	transformation/convolutionTransformerBase.cpp
+	transformation/mockTransformer.hpp
 	transformation/nullTransformer.cpp
 	transformation/pixelTransformer.cpp
-	sandbox.cpp
-)
+	sandbox.cpp)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}
