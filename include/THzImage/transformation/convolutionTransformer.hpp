@@ -388,6 +388,10 @@ private:
         auto const  baseDimensions = _base->dimensions();
         _resultDimensions.width    = calcDim(baseDimensions.width, params.sizeX(), params.shiftX());
         _resultDimensions.height   = calcDim(baseDimensions.height, params.sizeY(), params.shiftY());
+        if (_resultDimensions.area() == 0U)
+        {
+            return false;
+        }
 
         auto const lineLength   = params.sizeX() + ((_resultDimensions.width - 1U) * params.shiftX());
         auto const pixelsToSkip = baseDimensions.width - lineLength;

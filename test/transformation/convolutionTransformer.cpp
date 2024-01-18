@@ -430,6 +430,11 @@ TEST_F(TransformationConvolutionTransformer, DimensionsAndSetupCallsToBaseCorrec
             {
                 finalVerdict = (stage == Stage::Dimensions);
                 stage        = Stage::Transform;
+                currentCalls = transformCalls;
+                if (!finalVerdict)
+                {
+                    std::cout << "dimensions() called at the wrong stage\n";
+                }
             }
             return _dimensions;
         }
@@ -439,15 +444,67 @@ TEST_F(TransformationConvolutionTransformer, DimensionsAndSetupCallsToBaseCorrec
             if (finalVerdict)
             {
                 finalVerdict = (stage == Stage::Transform);
+                --currentCalls;
+                if (currentCalls == 0U)
+                {
+                    if (skipCalls != 0U)
+                    {
+                        stage        = Stage::Skip;
+                        currentCalls = skipCalls;
+                    }
+                    else
+                    {
+                        currentCalls = transformCalls;
+                    }
+                }
+                if (!finalVerdict)
+                {
+                    std::cout << "transform() called at the wrong stage\n";
+                }
             }
-            return true;
+            return finalVerdict;
         }
 
-        bool skip() noexcept override { return false; }
+        bool skip() noexcept override
+        {
+            if (finalVerdict)
+            {
+                finalVerdict = (stage == Stage::Skip);
+                --currentCalls;
+                if (currentCalls == 0U)
+                {
+                    --remainingLines;
+                    if (remainingLines == 0U)
+                    {
+                        stage = Stage::Finish;
+                    }
+                    else
+                    {
+                        stage        = Stage::Transform;
+                        currentCalls = transformCalls;
+                    }
+                }
+                if (!finalVerdict)
+                {
+                    std::cout << "skip() called at the wrong stage\n";
+                }
+            }
+            return finalVerdict;
+        }
 
-        bool reset() noexcept override { return true; }
+        bool reset() noexcept override
+        {
+            finalVerdict = false;
+            std::cout << "reset() called\n";
+            return finalVerdict;
+        }
 
-        bool nextImage() noexcept override { return true; }
+        bool nextImage() noexcept override
+        {
+            finalVerdict = false;
+            std::cout << "nextImage() called\n";
+            return finalVerdict;
+        }
 
         void setup(Scenario const &scenario) noexcept
         {
@@ -461,15 +518,14 @@ TEST_F(TransformationConvolutionTransformer, DimensionsAndSetupCallsToBaseCorrec
                 return ((image - matrix) / shift) + 1U;
             };
 
-            _dimensions         = Rectangle{scenario.imageX, scenario.imageY};
-            expectedWidth       = expectedValue(scenario.imageX, scenario.matrixX, scenario.shiftX);
-            expectedHeight      = expectedValue(scenario.imageY, scenario.matrixY, scenario.shiftY);
-            stage               = Stage::Dimensions;
-            finalVerdict        = true;
-            auto transformCalls = scenario.matrixX + ((expectedWidth - 1U) * scenario.shiftX);
-            auto skipCalls      = scenario.imageX - transformCalls;
-            transformCalls *= scenario.matrixY;
-            skipCalls *= scenario.matrixY;
+            _dimensions    = Rectangle{scenario.imageX, scenario.imageY};
+            expectedWidth  = expectedValue(scenario.imageX, scenario.matrixX, scenario.shiftX);
+            expectedHeight = expectedValue(scenario.imageY, scenario.matrixY, scenario.shiftY);
+            stage          = Stage::Dimensions;
+            finalVerdict   = true;
+            transformCalls = scenario.matrixX + ((expectedWidth - 1U) * scenario.shiftX);
+            skipCalls      = scenario.imageX - transformCalls;
+            remainingLines = scenario.matrixY;
         }
 
         bool callsReceivedAsExpected() noexcept { return finalVerdict; }
@@ -494,13 +550,15 @@ TEST_F(TransformationConvolutionTransformer, DimensionsAndSetupCallsToBaseCorrec
 
         std::uint32_t skipCalls{};
 
-        std::uint32_t currentCalls{};
+        std::uint32_t mutable currentCalls{};
 
         std::uint32_t remainingLines{};
 
     } myBaseTransformer;
 
     Scenario scenario{};
+    scenario.imageY  = 2U;
+    scenario.matrixY = 2U;
     do
     {
         myBaseTransformer.setup(scenario);
