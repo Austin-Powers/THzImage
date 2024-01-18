@@ -140,16 +140,15 @@ public:
     /// @return True if another matrix can be read from the current location, false otherwise.
     bool next() noexcept
     {
-        if (_exhausted)
+        if (!_exhausted)
         {
-            return false;
-        }
-        for (auto &row : _rows)
-        {
-            row += _matrixShift;
-            if (row == _end)
+            for (auto &row : _rows)
             {
-                _exhausted = true;
+                row += _matrixShift;
+                if (row == _end)
+                {
+                    _exhausted = true;
+                }
             }
         }
         return !_exhausted;
@@ -160,23 +159,13 @@ public:
     /// @param additionalLines The number of additional lines to skip.
     void lineFeed(std::uint32_t const additionalLines) noexcept
     {
+        auto const toAdd = _lineEndSkip + (_lineLength * additionalLines);
         for (auto &row : _rows)
         {
-            row += _lineEndSkip;
-            if (row == _bufferEnd)
+            row += toAdd;
+            while (row >= _bufferEnd)
             {
                 row -= _bufferLength;
-            }
-        }
-        for (auto i = 0U; i < additionalLines; ++i)
-        {
-            for (auto &row : _rows)
-            {
-                row += _lineLength;
-                if (row == _bufferEnd)
-                {
-                    row -= _bufferLength;
-                }
             }
         }
         _exhausted = false;
