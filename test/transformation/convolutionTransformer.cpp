@@ -251,6 +251,19 @@ TEST_P(MatrixHelper, CallingSetupResetsHelper)
     }
 }
 
+TEST_P(MatrixHelper, UsingMatrixOfExhaustedHelperDoesNotCauseAnError)
+{
+    // through this behavior we can omit any checks in the transform method of the ConvolutionTransformer
+    exhaustNextCalls();
+    for (auto y = 0U; y < bufferDimensions.height; ++y)
+    {
+        for (auto x = 0U; x < matrixWidth; ++x)
+        {
+            EXPECT_EQ(sut()[y][x], BGRAPixel{});
+        }
+    }
+}
+
 INSTANTIATE_TEST_SUITE_P(TransformationMatrixHelper, MatrixHelper, testing::Values(1U, 2U, 3U));
 
 struct TransformationConvolutionTransformer : public testing::Test

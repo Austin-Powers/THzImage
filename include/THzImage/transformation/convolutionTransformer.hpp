@@ -29,7 +29,9 @@ public:
     /// @param pixelsToSkip The pixels at the end of each line in the base.
     void setup(std::uint32_t const size, std::uint32_t const lineLength, std::uint32_t const pixelsToSkip) noexcept
     {
-        _memory.resize(size);
+        // add an additional line to the memory to prevent access violations once the MatrixHelper reached the end of
+        // the line, which removes the need to check this in the transform method of the ConvolutionTransformer
+        _memory.resize(size + lineLength);
         _lineLength   = lineLength;
         _pixelsToSkip = pixelsToSkip;
         _curPtr       = _memory.data();
