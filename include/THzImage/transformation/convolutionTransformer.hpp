@@ -4,6 +4,7 @@
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/math/rectangle.hpp"
 #include "THzImage/common/iImageTransformer.hpp"
+#include "THzImage/transformation/nullTransformer.hpp"
 
 #include <concepts>
 #include <cstdint>
@@ -325,15 +326,21 @@ public:
         {
             return true;
         }
-        bool result{};
 
         auto const feed = _parameters.shiftY();
         for (auto i = 0U; i < feed; ++i)
         {
-            if (!_lineBuffer.readNextLine(*_base))
+            if (!_lineBuffer.readNextLine(*_usedBase))
             {
+                // return true once at the end
+                if (_linesRemaining == 0U)
+                {
+                    _linesRemaining = 1U;
+                    return true;
+                }
                 return false;
             }
+            --_linesRemaining;
         }
         _matrixHelper.lineFeed(feed - 1U);
         return true;
@@ -365,6 +372,7 @@ private:
     /// @return True if setup was successful, false otherwise.
     bool setup() noexcept
     {
+        _usedBase          = _base;
         auto const calcDim = [](std::uint32_t const image,
                                 std::uint16_t const matrix,
                                 std::uint16_t const shift) noexcept -> std::uint32_t {
@@ -377,10 +385,19 @@ private:
 
         auto const &params         = _parameters;
         auto const  baseDimensions = _base->dimensions();
+        _linesRemaining            = baseDimensions.height;
         _resultDimensions.width    = calcDim(baseDimensions.width, params.sizeX(), params.shiftX());
         _resultDimensions.height   = calcDim(baseDimensions.height, params.sizeY(), params.shiftY());
         if (_resultDimensions.area() == 0U)
         {
+            _usedBase = &NullTransformer<TPixelType>::instance();
+            // make sure all calls to transform or skip return false and do not cause an error
+            _lineBuffer.setup(params.sizeX() * params.sizeY(), params.sizeX(), 0U);
+            _matrixHelper.setup(_lineBuffer.data(), params.sizeX(), params.sizeY(), params.sizeX(), params.shiftX());
+            while (_matrixHelper.next())
+            {
+                // exhaust the helper so transform and skip return false
+            }
             return false;
         }
 
@@ -389,18 +406,26 @@ private:
         auto const bufferSize   = lineLength * params.sizeY();
         _lineBuffer.setup(bufferSize, lineLength, pixelsToSkip);
         _matrixHelper.setup(_lineBuffer.data(), lineLength, params.sizeY(), params.sizeX(), params.shiftX());
+
         for (auto i = 0U; i < params.sizeY(); ++i)
         {
-            if (!_lineBuffer.readNextLine(*_base))
+            if (!_lineBuffer.readNextLine(*_usedBase))
             {
+                while (_matrixHelper.next())
+                {
+                    // exhaust the helper so transform and skip return false
+                }
                 return false;
             }
+            --_linesRemaining;
         }
         return true;
     }
 
     /// @brief The base transformer to wrap.
     IImageTransformer<TPixelType> *_base{};
+
+    IImageTransformer<TPixelType> *_usedBase{};
 
     /// @brief The transformation to wrap.
     TTransformation _transformation;
@@ -411,8 +436,14 @@ private:
     /// @brief The dimensions of the resulting image.
     Rectangle _resultDimensions{};
 
+    /// @brief The remaining lines to load from the base.
+    std::uint32_t _linesRemaining{};
+
+    /// @brief A ringbuffer for the lines of the base transformer.
     Internal::LineBuffer<TPixelType> _lineBuffer;
 
+    /// @brief Helps divide the line buffer into the pointer types representing the matrizes given to the
+    /// transformation.
     Internal::MatrixHelper<TPixelType> _matrixHelper;
 };
 

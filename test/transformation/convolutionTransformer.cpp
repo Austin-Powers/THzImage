@@ -600,12 +600,10 @@ TEST_F(TransformationConvolutionTransformer, DISABLED_TransformAndSkip)
         base = image.view();
     };
 
+    scenario.imageY  = 2U;
+    scenario.matrixX = 2U;
     do
     {
-        if (scenario.imageY > 1U)
-        {
-            printf("here\n");
-        }
         setupLambda();
         TestClass  sut{base, transformation};
         auto const pixelCount = sut.dimensions().area();
