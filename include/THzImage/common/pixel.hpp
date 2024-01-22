@@ -1,6 +1,7 @@
 #ifndef THZ_IMAGE_COMMON_PIXEL_HPP
 #define THZ_IMAGE_COMMON_PIXEL_HPP
 
+#include <algorithm>
 #include <cstddef>
 #include <cstdint>
 #include <type_traits>
@@ -10,7 +11,7 @@ namespace Terrahertz {
 // Predeclare the other pixel type
 struct HSVAPixel;
 
-/// @brief Struct for a BGRA pixel.
+/// @brief Struct for a blue green read alpha pixel using 8 bits per channel.
 struct BGRAPixel
 {
     /// @brief Blue value of the pixel.
@@ -102,19 +103,29 @@ struct BGRAPixel
     BGRAPixel diffAbs(BGRAPixel const &other) const noexcept;
 };
 
-struct BGRAPixelFloat
+/// @brief Struct for a blue green read alpha pixel using a custom data type for the channels.
+///
+/// This struct offers operators for doing math with the regular BGRAPixel,
+/// to for instance calculate the average color of a set of pixels.
+/// @tparam T The data type for each channel.
+template <typename T>
+struct TemplatedBGRAPixel
 {
+    static_assert(!std::is_same_v<std::uint8_t, T>, "Use standard BGRAPixel instead");
+
+    static_assert(std::is_arithmetic_v<T>, "Only available for arithmetic types");
+
     /// @brief Blue value of the pixel.
-    float blue{};
+    T blue{};
 
     /// @brief Green value of the pixel.
-    float green{};
+    T green{};
 
     /// @brief Red value of the pixel.
-    float red{};
+    T red{};
 
     /// @brief Alpha value of the pixel.
-    float alpha{0xFFU};
+    T alpha{0xFFU};
 
     /// @brief Initializes a new pixel using the BGRA color space.
     ///
@@ -122,40 +133,87 @@ struct BGRAPixelFloat
     /// @param g Green.
     /// @param r Red.
     /// @param a Alpha.
-    BGRAPixelFloat(float b, float g, float r, float a = 0xFFU) noexcept : blue{b}, green{g}, red{r}, alpha{a} {}
+    TemplatedBGRAPixel(T b, T g, T r, T a = 0xFFU) noexcept : blue{b}, green{g}, red{r}, alpha{a} {}
 
     /// @brief Default initializes a new BGRAPixel.
-    BGRAPixelFloat() noexcept = default;
+    TemplatedBGRAPixel() noexcept = default;
 
     /// @brief Explicitly default the constructor so all special methods are defined.
-    BGRAPixelFloat(BGRAPixelFloat const &) noexcept = default;
+    TemplatedBGRAPixel(TemplatedBGRAPixel const &) noexcept = default;
 
     /// @brief Copy-Constructor to convert from a BGRAPixel.
     ///
     /// @param other The pixel to convert.
-    BGRAPixelFloat(BGRAPixel const &other) noexcept;
+    TemplatedBGRAPixel(BGRAPixel const &other) noexcept
+        : blue{static_cast<T>(other.blue)},
+          green{static_cast<T>(other.green)},
+          red{static_cast<T>(other.red)},
+          alpha{static_cast<T>(other.alpha)}
+    {}
 
     /// @brief Explicitly default the constructor so all special methods are defined.
-    BGRAPixelFloat(BGRAPixelFloat &&) noexcept = default;
+    TemplatedBGRAPixel(TemplatedBGRAPixel &&) noexcept = default;
 
     /// @brief Explicitly default the operator so all special methods are defined.
-    BGRAPixelFloat &operator=(BGRAPixelFloat const &) noexcept = default;
+    TemplatedBGRAPixel &operator=(TemplatedBGRAPixel const &) noexcept = default;
 
     /// @brief Assignment operator to convert from a BGRAPixel.
     ///
     /// @param other The pixel to convert.
-    BGRAPixelFloat &operator=(BGRAPixel const &other) noexcept;
+    TemplatedBGRAPixel &operator=(BGRAPixel const &other) noexcept
+    {
+        blue  = other.blue;
+        green = other.green;
+        red   = other.red;
+        alpha = other.alpha;
+        return *this;
+    }
 
     /// @brief Explicitly default the operator so all special methods are defined.
-    BGRAPixelFloat &operator=(BGRAPixelFloat &&) noexcept = default;
+    TemplatedBGRAPixel &operator=(TemplatedBGRAPixel &&) noexcept = default;
 
     /// @brief Explicitly default the destructor so all special methods are defined.
-    ~BGRAPixelFloat() noexcept = default;
+    ~TemplatedBGRAPixel() noexcept = default;
 
     /// @brief Cast operator to convert this instance into a regular BGRAPixel.
     ///
-    /// @return A BGRAPixel, the float value will be clamped to the std::uint8_t range.
-    operator BGRAPixel() const noexcept;
+    /// @return A BGRAPixel, the Ting point value will be clamped to the std::uint8_t range.
+    operator BGRAPixel() const noexcept
+    {
+        auto const convert = [](T value) noexcept -> std::uint8_t {
+            return static_cast<std::uint8_t>(std::clamp(value + 0.01F, 0.0F, 255.0F));
+        };
+        return BGRAPixel{convert(blue), convert(green), convert(red), convert(alpha)};
+    }
+
+    /// @brief Adds a BGRAPixel to this one.
+    ///
+    /// @param addend The pixel to add.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator+=(BGRAPixel const &addend) noexcept
+    {
+        blue += addend.blue;
+        green += addend.green;
+        red += addend.red;
+        alpha += addend.alpha;
+        return *this;
+    }
+
+    /// @brief Adds a TemplatedBGRAPixel using the same T to this one.
+    ///
+    /// @param addend The pixel to add.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator+=(TemplatedBGRAPixel const &addend) noexcept
+    {
+        blue += addend.blue;
+        green += addend.green;
+        red += addend.red;
+        alpha += addend.alpha;
+        return *this;
+    }
+    // -=
+    // *=
+    // /=
 };
 
 /// @brief Struct for HSVA pixel.
@@ -240,6 +298,12 @@ BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept;
 /// @returns The interpolated color value.
 HSVAPixel lerp(HSVAPixel const &a, HSVAPixel const &b, float const t) noexcept;
 
+/// @brief Shortcut to a templated BGRAPixel class using float.
+using BGRAPixelFloat = TemplatedBGRAPixel<float>;
+
+/// @brief Shortcut to a templated BGRAPixel class using std::uint32_t.
+using BGRAPixel32 = TemplatedBGRAPixel<std::uint32_t>;
+
 /// @brief Checks if the given type is a pixel type.
 ///
 /// @tparam TPixelType The pixel type to check.
@@ -250,6 +314,16 @@ struct is_pixel_type : std::false_type
 /// @brief Check for the BGRAPixel type.
 template <>
 struct is_pixel_type<BGRAPixel> : std::true_type
+{};
+
+/// @brief Check for the BGRAPixelFloat type.
+template <>
+struct is_pixel_type<BGRAPixelFloat> : std::true_type
+{};
+
+/// @brief Check for the BGRAPixel32 type.
+template <>
+struct is_pixel_type<BGRAPixel32> : std::true_type
 {};
 
 /// @brief Check for the HSVAPixel type.
