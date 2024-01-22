@@ -97,14 +97,14 @@ TEST_F(CommonImage, CreateViewOfImageRegion)
     EXPECT_EQ(view.region(), region);
 }
 
-TEST_F(CommonImage, StoreResultOfTransformerResetFalse)
+TEST_F(CommonImage, ExecuteAndIngestTransformerResetFalse)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1);
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(CommonImage, StoreResultOfTransformerWithDimensionsOfAreaNull)
+TEST_F(CommonImage, ExecuteAndIngestTransformerWithDimensionsOfAreaNull)
 {
     MockTransformer transformer{};
     EXPECT_CALL(transformer, reset()).Times(1).WillRepeatedly(testing::Return(true));
@@ -112,7 +112,7 @@ TEST_F(CommonImage, StoreResultOfTransformerWithDimensionsOfAreaNull)
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(CommonImage, StoreResultOfTransformingTooFewPixels)
+TEST_F(CommonImage, ExecuteAndIngestTransformingTooFewPixels)
 {
     BGRAPixel       pix{};
     MockTransformer transformer{};
@@ -126,7 +126,7 @@ TEST_F(CommonImage, StoreResultOfTransformingTooFewPixels)
     EXPECT_FALSE(sut.executeAndIngest(transformer));
 }
 
-TEST_F(CommonImage, StoreResultOfSuccess)
+TEST_F(CommonImage, ExecuteAndIngestSuccess)
 {
     BGRAPixel       pix{};
     MockTransformer transformer{};
@@ -257,7 +257,7 @@ TEST_F(CommonImage, WriteGivenDataCorrect)
     EXPECT_TRUE(sut.write(&writer));
 }
 
-TEST_F(CommonImage, CopyViaStoreResultOf)
+TEST_F(CommonImage, CopyViaExecuteAndIngest)
 {
     BGRAImage orig{};
     EXPECT_TRUE(orig.setDimensions(Rectangle{2U, 2U}));
