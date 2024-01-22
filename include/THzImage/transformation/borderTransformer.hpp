@@ -34,15 +34,15 @@ class BorderTransformer : public IImageTransformer<TPixelType>
 {
 public:
     /// @brief Default initializes a new BorderTransformer.
-    BorderTransformer() noexcept : _base{&NullTransformer<TPixelType>::instance()} {}
+    BorderTransformer() noexcept : _wrapped{&NullTransformer<TPixelType>::instance()} {}
 
     /// @brief Initializes a new BorderTransformer using the given values.
     ///
-    /// @param base The base transformer to wrap.
+    /// @param wrapped The previous transformer in the chain to wrap.
     /// @param borders The borders to add to the image.
     /// @param color The color of the borders.
-    BorderTransformer(IImageTransformer<TPixelType> &base, Borders const borders, TPixelType const color) noexcept
-        : _base{&base}, _borders{borders}, _color{color}
+    BorderTransformer(IImageTransformer<TPixelType> &wrapped, Borders const borders, TPixelType const color) noexcept
+        : _wrapped{&wrapped}, _borders{borders}, _color{color}
     {
         setup();
     }
@@ -56,7 +56,7 @@ public:
         if (_nextFlip > 0)
         {
             --_nextFlip;
-            return _base->transform(pixel);
+            return _wrapped->transform(pixel);
         }
         if (_nextFlip < 0)
         {
@@ -75,7 +75,7 @@ public:
         if (_nextFlip > 0)
         {
             --_nextFlip;
-            return _base->skip();
+            return _wrapped->skip();
         }
         if (_nextFlip < 0)
         {
@@ -90,7 +90,7 @@ public:
     /// @copydoc IImageTransformer::reset
     bool reset() noexcept override
     {
-        if (!_base->reset())
+        if (!_wrapped->reset())
         {
             return false;
         }
@@ -101,7 +101,7 @@ public:
     /// @copydoc IImageTransformer::nextImage
     bool nextImage() noexcept override
     {
-        if (!_base->nextImage())
+        if (!_wrapped->nextImage())
         {
             return false;
         }
@@ -113,9 +113,9 @@ private:
     /// @brief Sets up the transformer.
     void setup() noexcept
     {
-        _baseDimensions    = _base->dimensions();
-        _dimensions.width  = _baseDimensions.width + _borders.left + _borders.right;
-        _dimensions.height = _baseDimensions.height + _borders.top + _borders.bottom;
+        _wrappedDimensions = _wrapped->dimensions();
+        _dimensions.width  = _wrappedDimensions.width + _borders.left + _borders.right;
+        _dimensions.height = _wrappedDimensions.height + _borders.top + _borders.bottom;
         _stage             = 0U;
         _y                 = 0U;
         flip();
@@ -135,14 +135,14 @@ private:
         }
         case 1U: // image
         {
-            _nextFlip = _baseDimensions.width;
+            _nextFlip = _wrappedDimensions.width;
             _stage    = 2U;
             break;
         }
         case 2U: // right/left/bottom
         {
             ++_y;
-            if (_y < _baseDimensions.height)
+            if (_y < _wrappedDimensions.height)
             {
                 _nextFlip = (_borders.left + _borders.right);
                 _stage    = 1U;
@@ -163,8 +163,8 @@ private:
         }
     }
 
-    /// @brief The base transformer to wrap.
-    IImageTransformer<TPixelType> *_base;
+    /// @brief The previous transformer in the chain to wrap.
+    IImageTransformer<TPixelType> *_wrapped;
 
     /// @brief The borders to add to the image.
     Borders _borders{};
@@ -172,8 +172,8 @@ private:
     /// @brief The color of the borders.
     TPixelType _color{};
 
-    /// @brief The dimensions of the base image.
-    Rectangle _baseDimensions{};
+    /// @brief The dimensions of the wrapped transformer.
+    Rectangle _wrappedDimensions{};
 
     /// @brief The dimensions of the resulting image.
     Rectangle _dimensions{};

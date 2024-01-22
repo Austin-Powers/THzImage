@@ -29,35 +29,35 @@ class PixelTransformer : public IImageTransformer<TPixelType>
 public:
     /// @brief Initializes a new PixelTransformer using the given values.
     ///
-    /// @param base The base transformer to wrap.
+    /// @param wrapped The previous transformer in the chain to wrap.
     /// @param transformation The instance encapsulating the transformation algorithm.
-    PixelTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
-        : _base{base}, _transformation{transformation}
+    PixelTransformer(IImageTransformer<TPixelType> &wrapped, TTransformation transformation) noexcept
+        : _wrapped{wrapped}, _transformation{transformation}
     {}
 
     /// @copydoc IImageTransformer::dimensions
-    Rectangle dimensions() const noexcept override { return _base.dimensions(); }
+    Rectangle dimensions() const noexcept override { return _wrapped.dimensions(); }
 
     /// @copydoc IImageTransformer::transform
     bool transform(TPixelType &pixel) noexcept override
     {
-        auto const result = _base.transform(pixel);
+        auto const result = _wrapped.transform(pixel);
         pixel             = _transformation(pixel);
         return result;
     }
 
     /// @copydoc IImageTransformer::skip
-    bool skip() noexcept override { return _base.skip(); }
+    bool skip() noexcept override { return _wrapped.skip(); }
 
     /// @copydoc IImageTransformer::reset
-    bool reset() noexcept override { return _base.reset(); }
+    bool reset() noexcept override { return _wrapped.reset(); }
 
     /// @copydoc IImageTransformer::nextImage
-    bool nextImage() noexcept override { return _base.nextImage(); }
+    bool nextImage() noexcept override { return _wrapped.nextImage(); }
 
 private:
-    /// @brief The base transformer to wrap.
-    IImageTransformer<TPixelType> &_base;
+    /// @brief The previous transformer in the chain to wrap.
+    IImageTransformer<TPixelType> &_wrapped;
 
     /// @brief The instance encapsulating the transformation algorithm.
     TTransformation _transformation;
@@ -70,10 +70,10 @@ private:
 /// @param transformation The transformation instance.
 /// @return The created transformer.
 template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
-auto createPixelTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
+auto createPixelTransformer(IImageTransformer<TPixelType> &wrapped, TTransformation transformation) noexcept
     -> PixelTransformer<TPixelType, TTransformation>
 {
-    return PixelTransformer<TPixelType, TTransformation>{base, transformation};
+    return PixelTransformer<TPixelType, TTransformation>{wrapped, transformation};
 }
 
 /// @brief Helper method to ease the creation of PixelTransformer.
@@ -83,10 +83,10 @@ auto createPixelTransformer(IImageTransformer<TPixelType> &base, TTransformation
 /// @tparam TTransformation The type of transformation.
 /// @return The created transformer.
 template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
-auto createPixelTransformer(IImageTransformer<TPixelType> &base) noexcept
+auto createPixelTransformer(IImageTransformer<TPixelType> &wrapped) noexcept
     -> PixelTransformer<TPixelType, TTransformation>
 {
-    return PixelTransformer<TPixelType, TTransformation>{base, TTransformation{}};
+    return PixelTransformer<TPixelType, TTransformation>{wrapped, TTransformation{}};
 }
 
 } // namespace Terrahertz

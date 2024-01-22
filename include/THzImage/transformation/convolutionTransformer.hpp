@@ -27,7 +27,7 @@ public:
     ///
     /// @param size The new size of the buffer.
     /// @param lineLength The length of the line in this buffer [pxl].
-    /// @param pixelsToSkip The pixels at the end of each line in the base.
+    /// @param pixelsToSkip The pixels at the end of each line in the wrapped.
     void setup(std::uint32_t const size, std::uint32_t const lineLength, std::uint32_t const pixelsToSkip) noexcept
     {
         // add an additional line to the memory to prevent access violations once the MatrixHelper reached the end of
@@ -39,15 +39,15 @@ public:
         _endPtr       = _curPtr + size;
     }
 
-    /// @brief Reads the next line from the given base transformer.
+    /// @brief Reads the next line from the given wrapped transformer.
     ///
-    /// @param base The base transformer to read from.
+    /// @param wrapped The wrapped transformer to read from.
     /// @return True if operation was successful, false otherwise.
-    bool readNextLine(IImageTransformer<TPixelType> &base) noexcept
+    bool readNextLine(IImageTransformer<TPixelType> &wrapped) noexcept
     {
         for (auto i = 0U; i < _lineLength; ++i)
         {
-            if (!base.transform(*_curPtr))
+            if (!wrapped.transform(*_curPtr))
             {
                 // reset the pointer so other operations do not cause access violations
                 _curPtr = _memory.data();
@@ -62,7 +62,7 @@ public:
         }
         for (auto i = 0U; i < _pixelsToSkip; ++i)
         {
-            if (!base.skip())
+            if (!wrapped.skip())
             {
                 // reset the pointer so other operations do not cause access violations
                 _curPtr = _memory.data();
@@ -90,7 +90,7 @@ private:
     /// @brief The length of the line in this buffer [pxl].
     std::uint32_t _lineLength{};
 
-    /// @brief The pixels at the end of each line in the base.
+    /// @brief The pixels at the end of each line in the wrapped.
     std::uint32_t _pixelsToSkip{};
 };
 
@@ -301,10 +301,10 @@ class ConvolutionTransformer : public IImageTransformer<TPixelType>
 public:
     /// @brief Initializes a new ConvolutionTransformer using the given values.
     ///
-    /// @param base The base transformer to wrap.
+    /// @param wrapped The wrapped transformer to wrap.
     /// @param transformation The instance encapsulating the transformation algorithm.
-    ConvolutionTransformer(IImageTransformer<TPixelType> &base, TTransformation transformation) noexcept
-        : _base{&base}, _transformation{transformation}, _parameters{transformation.parameters()}
+    ConvolutionTransformer(IImageTransformer<TPixelType> &wrapped, TTransformation transformation) noexcept
+        : _wrapped{&wrapped}, _transformation{transformation}, _parameters{transformation.parameters()}
     {
         setup();
     }
@@ -349,7 +349,7 @@ public:
     /// @copydoc IImageTransformer::reset
     bool reset() noexcept override
     {
-        if (_base->reset())
+        if (_wrapped->reset())
         {
             return setup();
         }
@@ -359,7 +359,7 @@ public:
     /// @copydoc IImageTransformer::nextImage
     bool nextImage() noexcept override
     {
-        if (_base->nextImage())
+        if (_wrapped->nextImage())
         {
             return setup();
         }
@@ -372,7 +372,7 @@ private:
     /// @return True if setup was successful, false otherwise.
     bool setup() noexcept
     {
-        _usedBase          = _base;
+        _usedBase          = _wrapped;
         auto const calcDim = [](std::uint32_t const image,
                                 std::uint16_t const matrix,
                                 std::uint16_t const shift) noexcept -> std::uint32_t {
@@ -383,11 +383,11 @@ private:
             return ((image - matrix) / shift) + 1U;
         };
 
-        auto const &params         = _parameters;
-        auto const  baseDimensions = _base->dimensions();
-        _linesRemaining            = baseDimensions.height;
-        _resultDimensions.width    = calcDim(baseDimensions.width, params.sizeX(), params.shiftX());
-        _resultDimensions.height   = calcDim(baseDimensions.height, params.sizeY(), params.shiftY());
+        auto const &params            = _parameters;
+        auto const  wrappedDimensions = _wrapped->dimensions();
+        _linesRemaining               = wrappedDimensions.height;
+        _resultDimensions.width       = calcDim(wrappedDimensions.width, params.sizeX(), params.shiftX());
+        _resultDimensions.height      = calcDim(wrappedDimensions.height, params.sizeY(), params.shiftY());
         if (_resultDimensions.area() == 0U)
         {
             _usedBase = &NullTransformer<TPixelType>::instance();
@@ -402,7 +402,7 @@ private:
         }
 
         auto const lineLength   = params.sizeX() + ((_resultDimensions.width - 1U) * params.shiftX());
-        auto const pixelsToSkip = baseDimensions.width - lineLength;
+        auto const pixelsToSkip = wrappedDimensions.width - lineLength;
         auto const bufferSize   = lineLength * params.sizeY();
         _lineBuffer.setup(bufferSize, lineLength, pixelsToSkip);
         _matrixHelper.setup(_lineBuffer.data(), lineLength, params.sizeY(), params.sizeX(), params.shiftX());
@@ -422,8 +422,8 @@ private:
         return true;
     }
 
-    /// @brief The base transformer to wrap.
-    IImageTransformer<TPixelType> *_base{};
+    /// @brief The wrapped transformer to wrap.
+    IImageTransformer<TPixelType> *_wrapped{};
 
     IImageTransformer<TPixelType> *_usedBase{};
 
@@ -436,10 +436,10 @@ private:
     /// @brief The dimensions of the resulting image.
     Rectangle _resultDimensions{};
 
-    /// @brief The remaining lines to load from the base.
+    /// @brief The remaining lines to load from the wrapped.
     std::uint32_t _linesRemaining{};
 
-    /// @brief A ringbuffer for the lines of the base transformer.
+    /// @brief A ringbuffer for the lines of the wrapped transformer.
     Internal::LineBuffer<TPixelType> _lineBuffer;
 
     /// @brief Helps divide the line buffer into the pointer types representing the matrizes given to the
