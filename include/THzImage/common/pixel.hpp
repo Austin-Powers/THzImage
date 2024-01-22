@@ -211,7 +211,32 @@ struct TemplatedBGRAPixel
         alpha += addend.alpha;
         return *this;
     }
-    // -=
+
+    /// @brief Subtracts a BGRAPixel from this one.
+    ///
+    /// @param subtrahend The pixel to subtract.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator-=(BGRAPixel const &subtrahend) noexcept
+    {
+        blue -= subtrahend.blue;
+        green -= subtrahend.green;
+        red -= subtrahend.red;
+        alpha -= subtrahend.alpha;
+        return *this;
+    }
+
+    /// @brief Subtracts a TemplatedBGRAPixel using the same T from this one.
+    ///
+    /// @param subtrahend The pixel to subtract.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator-=(TemplatedBGRAPixel const &subtrahend) noexcept
+    {
+        blue -= subtrahend.blue;
+        green -= subtrahend.green;
+        red -= subtrahend.red;
+        alpha -= subtrahend.alpha;
+        return *this;
+    }
     // *=
     // /=
 };

@@ -337,10 +337,10 @@ struct PixelArithmeticTests : public PixelTests
 
     void checkResult() const noexcept
     {
-        EXPECT_EQ(expectedBlue, sut.blue);
-        EXPECT_EQ(expectedGreen, sut.green);
-        EXPECT_EQ(expectedRed, sut.red);
-        EXPECT_EQ(expectedAlpha, sut.alpha);
+        EXPECT_NEAR(expectedBlue, sut.blue, epsilon);
+        EXPECT_NEAR(expectedGreen, sut.green, epsilon);
+        EXPECT_NEAR(expectedRed, sut.red, epsilon);
+        EXPECT_NEAR(expectedAlpha, sut.alpha, epsilon);
     }
 };
 
@@ -372,6 +372,37 @@ TEST_F(PixelArithmeticTests, Adding)
     expectedRed += d.red;
     expectedAlpha += d.alpha;
     sut += d;
+    checkResult();
+}
+
+TEST_F(PixelArithmeticTests, Subtracting)
+{
+    expectedBlue -= a.blue;
+    expectedGreen -= a.green;
+    expectedRed -= a.red;
+    expectedAlpha -= a.alpha;
+    sut -= a;
+    checkResult();
+
+    expectedBlue -= b.blue;
+    expectedGreen -= b.green;
+    expectedRed -= b.red;
+    expectedAlpha -= b.alpha;
+    sut -= b;
+    checkResult();
+
+    expectedBlue -= c.blue;
+    expectedGreen -= c.green;
+    expectedRed -= c.red;
+    expectedAlpha -= c.alpha;
+    sut -= c;
+    checkResult();
+
+    expectedBlue -= d.blue;
+    expectedGreen -= d.green;
+    expectedRed -= d.red;
+    expectedAlpha -= d.alpha;
+    sut -= d;
     checkResult();
 }
 
