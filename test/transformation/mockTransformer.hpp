@@ -3,6 +3,10 @@
 
 #include "THzImage/common/iImageTransformer.hpp"
 
+#include <algorithm>
+#include <cstdint>
+#include <vector>
+
 namespace Terrahertz::UnitTests {
 
 /// @brief Enables mocking of a IImageTransformer for testing purposes.
@@ -24,6 +28,18 @@ struct MockTransformer : public IImageTransformer<TPixelType>
     {
         calls.push_back(CallType::Transform);
         pixel = transformPixel;
+        if (countUpPixel)
+        {
+            ++transformPixel.blue;
+            if (transformPixel.blue == 0U)
+            {
+                ++transformPixel.green;
+                if (transformPixel.green == 0U)
+                {
+                    ++transformPixel.red;
+                }
+            }
+        }
         return transformReturnValue;
     }
 
@@ -52,6 +68,9 @@ struct MockTransformer : public IImageTransformer<TPixelType>
 
     TPixelType transformPixel{};
 
+    /// @brief If true each call to transform will increase transformPixel.
+    bool countUpPixel{};
+
     bool transformReturnValue{};
 
     bool skipReturnValue{};
@@ -71,6 +90,12 @@ struct MockTransformer : public IImageTransformer<TPixelType>
 
     /// @brief Stores the types of calls made to the transformer.
     std::vector<CallType> mutable calls{};
+
+    std::uint32_t countCalls(CallType const type) const noexcept
+    {
+        return static_cast<std::uint32_t>(std::count_if(
+            calls.cbegin(), calls.cend(), [type](CallType const ct) noexcept -> bool { return type == ct; }));
+    }
 };
 
 } // namespace Terrahertz::UnitTests
