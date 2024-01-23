@@ -406,4 +406,54 @@ TEST_F(PixelArithmeticTests, Subtracting)
     checkResult();
 }
 
+TEST_F(PixelArithmeticTests, Multiplying)
+{
+    sut = c;
+
+    expectedBlue  = sut.blue;
+    expectedGreen = sut.green;
+    expectedRed   = sut.red;
+    expectedAlpha = sut.alpha;
+
+    auto factor = 2.23F;
+    expectedBlue *= factor;
+    expectedGreen *= factor;
+    expectedRed *= factor;
+    expectedAlpha *= factor;
+    sut *= factor;
+    checkResult();
+    factor = 0.27F;
+    expectedBlue *= factor;
+    expectedGreen *= factor;
+    expectedRed *= factor;
+    expectedAlpha *= factor;
+    sut *= factor;
+    checkResult();
+}
+
+TEST_F(PixelArithmeticTests, Dividing)
+{
+    sut = d;
+
+    expectedBlue  = sut.blue;
+    expectedGreen = sut.green;
+    expectedRed   = sut.red;
+    expectedAlpha = sut.alpha;
+
+    auto divisor = 2.23F;
+    expectedBlue /= divisor;
+    expectedGreen /= divisor;
+    expectedRed /= divisor;
+    expectedAlpha /= divisor;
+    sut /= divisor;
+    checkResult();
+    divisor = 0.27F;
+    expectedBlue /= divisor;
+    expectedGreen /= divisor;
+    expectedRed /= divisor;
+    expectedAlpha /= divisor;
+    sut /= divisor;
+    checkResult();
+}
+
 } // namespace Terrahertz::UnitTests

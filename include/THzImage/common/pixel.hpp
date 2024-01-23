@@ -237,8 +237,32 @@ struct TemplatedBGRAPixel
         alpha -= subtrahend.alpha;
         return *this;
     }
-    // *=
-    // /=
+
+    /// @brief Multiplies this pixel by the given factor.
+    ///
+    /// @param factor The factor by which to multiply with.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator*=(T const factor) noexcept
+    {
+        blue *= factor;
+        green *= factor;
+        red *= factor;
+        alpha *= factor;
+        return *this;
+    }
+
+    /// @brief Divides this pixel by the given divisor.
+    ///
+    /// @param divisor The divisor by which to divide the pixel.
+    /// @return This pixel.
+    TemplatedBGRAPixel &operator/=(T const divisor) noexcept
+    {
+        blue /= divisor;
+        green /= divisor;
+        red /= divisor;
+        alpha /= divisor;
+        return *this;
+    }
 };
 
 /// @brief Struct for HSVA pixel.
