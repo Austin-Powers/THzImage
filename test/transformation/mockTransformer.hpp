@@ -91,6 +91,10 @@ struct MockTransformer : public IImageTransformer<TPixelType>
     /// @brief Stores the types of calls made to the transformer.
     std::vector<CallType> mutable calls{};
 
+    /// @brief Counts the calls, of a given type, made to the mock transformer.
+    ///
+    /// @param type The type of call that shall be counted.
+    /// @return The number of calls made to certain type of method.
     std::uint32_t countCalls(CallType const type) const noexcept
     {
         return static_cast<std::uint32_t>(std::count_if(

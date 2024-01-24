@@ -30,7 +30,19 @@ struct ConvolutionTransformerBaseTests : public testing::Test
             matrixShiftY = matrixShiftYValue;
         }
 
-        BGRAPixel convolute(BGRAPixel const **const matrix) noexcept { return matrix[0U][0U]; }
+        BGRAPixel convolute(BGRAPixel const **const matrix) noexcept
+        {
+            BGRAPixel32 result{};
+            for (auto y = 0U; y < matrixHeightValue; ++y)
+            {
+                for (auto x = 0U; x < matrixWidthValue; ++x)
+                {
+                    result += matrix[y][x];
+                }
+            }
+            result /= matrixWidthValue * matrixHeightValue;
+            return result;
+        }
 
         std::uint32_t matrixWidthValue{3U};
 
@@ -196,18 +208,29 @@ TEST_F(ConvolutionTransformerBaseTests, DoesNotCallTransformOnBaseAsLongAsOnlySk
 
 TEST_F(ConvolutionTransformerBaseTests, TransformationOfFirstPixel)
 {
-    TestClass sut{mockTransformer};
+    auto const dim = 16U;
+    TestClass  sut{mockTransformer};
     mockTransformer.resetReturnValue      = true;
-    mockTransformer.dimensionsReturnValue = Rectangle{16U, 16U};
+    mockTransformer.dimensionsReturnValue = Rectangle{dim, dim};
 
     sut.matrixShiftXValue = 2U;
     sut.matrixShiftYValue = 2U;
     EXPECT_TRUE(sut.reset());
 
-    for (auto i = 0U; i < 4U; ++i)
+    // skip one line and a couple of pixels to test skipping of pixels on the wrapped transformer
+    auto pixelsToSkip = sut.dimensions().width + 2U;
+    for (auto i = 0U; i < pixelsToSkip; ++i)
     {
         EXPECT_TRUE(sut.skip());
     }
+    BGRAPixel pixel{};
+    for (auto i = 0U; i < pixelsToSkip; ++i)
+    {
+        EXPECT_TRUE(sut.transform(pixel));
+        // check pixel has the right value
+    }
+
+    // check calls made to mockTransformer
 }
 
 } // namespace Terrahertz::UnitTests
