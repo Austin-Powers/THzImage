@@ -37,7 +37,7 @@ public:
         for (; _buffer.count > 0U; --_buffer.count)
         {
             // skip transformations of pixels not needed for future matrizes
-            if (!(_buffer.count > _buffer.size) ? _wrapped->skip() : _wrapped->transform(*_buffer.curPtr))
+            if (!((_buffer.count > _buffer.size) ? _wrapped->skip() : _wrapped->transform(*_buffer.curPtr)))
             {
                 return false;
             }
@@ -88,7 +88,12 @@ public:
                 row -= _buffer.memory.size();
             }
         }
-        return (_pixelsLeft--) != 0U;
+        if (_pixelsLeft)
+        {
+            --_pixelsLeft;
+            return true;
+        }
+        return false;
     }
 
     /// @copydoc IImageTransformer::reset
@@ -136,9 +141,39 @@ private:
     /// @brief This method will be called on creation, reset and nextImage to calculate base values needed for executing
     /// the transformation.
     ///
-    /// @return True if the
+    /// @return True if all values returned by getParameters or non-zero, false otherwise.
     bool setup() noexcept
     {
+        std::uint32_t matrixWidth;
+        std::uint32_t matrixHeight;
+        std::uint32_t matrixShiftX;
+        std::uint32_t matrixShiftY;
+        getParameters(matrixWidth, matrixHeight, matrixShiftX, matrixShiftY);
+        if (matrixWidth == 0U)
+        {
+            logMessage<LogLevel::Error, ConvolutionTransformerProject>("matrixWidth is 0");
+            handleParameterError();
+            return false;
+        }
+        if (matrixHeight == 0U)
+        {
+            logMessage<LogLevel::Error, ConvolutionTransformerProject>("matrixHeight is 0");
+            handleParameterError();
+            return false;
+        }
+        if (matrixShiftX == 0U)
+        {
+            logMessage<LogLevel::Error, ConvolutionTransformerProject>("matrixShiftX is 0");
+            handleParameterError();
+            return false;
+        }
+        if (matrixShiftY == 0U)
+        {
+            logMessage<LogLevel::Error, ConvolutionTransformerProject>("matrixShiftY is 0");
+            handleParameterError();
+            return false;
+        }
+
         auto const calcDim = [](std::uint32_t const image,
                                 std::uint32_t const matrix,
                                 std::uint32_t const shift) noexcept -> std::uint32_t {
@@ -150,16 +185,28 @@ private:
         };
         auto const baseDimensions = _wrapped->dimensions();
 
-        std::uint32_t matrixWidth;
-        std::uint32_t matrixHeight;
-        std::uint32_t matrixShiftX;
-        std::uint32_t matrixShiftY;
-        getParameters(matrixWidth, matrixHeight, matrixShiftX, matrixShiftY);
         _resultDimensions = Rectangle{calcDim(baseDimensions.width, matrixWidth, matrixShiftX),
                                       calcDim(baseDimensions.height, matrixHeight, matrixShiftY)};
+        _pixelsLeft       = _resultDimensions.area();
+        setupInternalStructures(baseDimensions.width, matrixWidth, matrixHeight, matrixShiftX, matrixShiftY);
+        return true;
+    }
 
-        _pixelsLeft = _resultDimensions.area();
+    /// @brief
+    void handleParameterError() noexcept
+    {
+        _resultDimensions = {};
+        _pixelsLeft       = 0U;
+        setupInternalStructures(10U, 10U, 10U, 1U, 1U);
+        _buffer.count = 0U;
+    }
 
+    void setupInternalStructures(std::uint32_t const baseWidth,
+                                 std::uint32_t const matrixWidth,
+                                 std::uint32_t const matrixHeight,
+                                 std::uint32_t const matrixShiftX,
+                                 std::uint32_t const matrixShiftY) noexcept
+    {
         _buffer.lineLength = matrixWidth + ((_resultDimensions.width - 1U) * matrixShiftX);
         _buffer.memory.resize(_buffer.lineLength * matrixHeight);
         _buffer.curPtr  = _buffer.memory.data();
@@ -167,7 +214,7 @@ private:
         _buffer.endPtr  = _buffer.curPtr + _buffer.memory.size();
         _buffer.size    = (_buffer.lineLength * (matrixHeight - 1U)) + matrixWidth;
         _buffer.count   = _buffer.size;
-        _buffer.skips   = baseDimensions.width - _buffer.lineLength;
+        _buffer.skips   = baseWidth - _buffer.lineLength;
 
         _matrix.rows.clear();
         for (auto line = 0U; line < matrixHeight; ++line)
@@ -178,7 +225,6 @@ private:
         _matrix.lineEnd   = _matrix.rows[0U] + (matrixShiftX * _resultDimensions.width);
         _matrix.lineShift = matrixShiftY * _buffer.lineLength;
         _matrix.skip      = matrixWidth + _matrix.lineShift;
-        return true;
     }
 
     /// @brief The base transformer.

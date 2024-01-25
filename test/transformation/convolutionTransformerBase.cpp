@@ -164,6 +164,59 @@ TEST_F(ConvolutionTransformerBaseTests, NextImagePassedThrough)
     EXPECT_EQ(mockTransformer.countCalls(CallType::Skip), 0U);
 }
 
+TEST_F(ConvolutionTransformerBaseTests, ResetReturnsFalseIfParametersContainZero)
+{
+    mockTransformer.resetReturnValue = true;
+    TestClass sut{mockTransformer};
+    sut.matrixWidthValue = 0U;
+    EXPECT_FALSE(sut.reset());
+    sut.matrixWidthValue  = 3U;
+    sut.matrixHeightValue = 0U;
+    EXPECT_FALSE(sut.reset());
+    sut.matrixHeightValue = 3U;
+    sut.matrixShiftXValue = 0U;
+    EXPECT_FALSE(sut.reset());
+    sut.matrixShiftXValue = 1U;
+    sut.matrixShiftYValue = 0U;
+    EXPECT_FALSE(sut.reset());
+    sut.matrixShiftYValue = 1U;
+    EXPECT_TRUE(sut.reset());
+    EXPECT_EQ(mockTransformer.countCalls(CallType::Reset), 5U);
+}
+
+TEST_F(ConvolutionTransformerBaseTests, NextImageReturnsFalseIfParametersContainZero)
+{
+    mockTransformer.nextImageReturnValue = true;
+    TestClass sut{mockTransformer};
+    sut.matrixWidthValue = 0U;
+    EXPECT_FALSE(sut.nextImage());
+    sut.matrixWidthValue  = 3U;
+    sut.matrixHeightValue = 0U;
+    EXPECT_FALSE(sut.nextImage());
+    sut.matrixHeightValue = 3U;
+    sut.matrixShiftXValue = 0U;
+    EXPECT_FALSE(sut.nextImage());
+    sut.matrixShiftXValue = 1U;
+    sut.matrixShiftYValue = 0U;
+    EXPECT_FALSE(sut.nextImage());
+    sut.matrixShiftYValue = 1U;
+    EXPECT_TRUE(sut.nextImage());
+    EXPECT_EQ(mockTransformer.countCalls(CallType::NextImage), 5U);
+}
+
+TEST_F(ConvolutionTransformerBaseTests, ResetReturningFalseDoesNotCauseCrashesWhenCallingTransformOrSkip)
+{
+    mockTransformer.resetReturnValue = true;
+    TestClass sut{mockTransformer};
+    sut.matrixShiftXValue = 0U;
+    EXPECT_FALSE(sut.reset());
+
+    BGRAPixel pixel{};
+    EXPECT_EQ(sut.dimensions(), Rectangle{});
+    EXPECT_FALSE(sut.transform(pixel));
+    EXPECT_FALSE(sut.skip());
+}
+
 TEST_F(ConvolutionTransformerBaseTests, DimensionsCalculatedCorrectly)
 {
     TestClass sut{mockTransformer};
@@ -212,6 +265,9 @@ TEST_F(ConvolutionTransformerBaseTests, TransformationOfFirstPixel)
     TestClass  sut{mockTransformer};
     mockTransformer.resetReturnValue      = true;
     mockTransformer.dimensionsReturnValue = Rectangle{dim, dim};
+    mockTransformer.transformReturnValue  = true;
+    mockTransformer.skipReturnValue       = true;
+    mockTransformer.countUpPixel          = true;
 
     sut.matrixShiftXValue = 2U;
     sut.matrixShiftYValue = 2U;
