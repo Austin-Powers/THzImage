@@ -30,7 +30,7 @@ struct ConvolutionTransformerBaseTests : public testing::Test
             matrixShiftY = matrixShiftYValue;
         }
 
-        BGRAPixel convolute(BGRAPixel const **const matrix) noexcept
+        BGRAPixel convolute(BGRAPixel const **const matrix) noexcept override
         {
             BGRAPixel32 result{};
             for (auto y = 0U; y < matrixHeightValue; ++y)
@@ -259,7 +259,111 @@ TEST_F(ConvolutionTransformerBaseTests, DoesNotCallTransformOnBaseAsLongAsOnlySk
     EXPECT_EQ(mockTransformer.countCalls(CallType::Skip), 0U);
 }
 
-TEST_F(ConvolutionTransformerBaseTests, TransformationOfFirstPixel)
+// TODO transform to TEST_P in order to test different shift values 1, 2, 3
+TEST_F(ConvolutionTransformerBaseTests, ValuesAreHandedToConvoluteAsExpected)
+{
+    static constexpr std::uint32_t MatrixDim = 3U;
+
+    using TestMatrix = std::array<std::array<BGRAPixel, MatrixDim>, MatrixDim>;
+
+    class ValueTestClass : public ConvolutionTransformerBase<BGRAPixel>
+    {
+    public:
+        ValueTestClass(IImageTransformer<BGRAPixel> &base) noexcept : ConvolutionTransformerBase<BGRAPixel>{base} {}
+
+        void getParameters(std::uint32_t &matrixWidth,
+                           std::uint32_t &matrixHeight,
+                           std::uint32_t &matrixShiftX,
+                           std::uint32_t &matrixShiftY) noexcept override
+        {
+            matrixWidth  = MatrixDim;
+            matrixHeight = MatrixDim;
+            matrixShiftX = 2U;
+            matrixShiftY = 2U;
+        }
+
+        BGRAPixel convolute(BGRAPixel const **const matrix) noexcept override
+        {
+            for (auto y = 0U; y < MatrixDim; ++y)
+            {
+                for (auto x = 0U; x < MatrixDim; ++x)
+                {
+                    matrixCopy[y][x] = matrix[y][x];
+                }
+            }
+            return matrix[0U][0U];
+        }
+
+        TestMatrix matrixCopy{};
+    };
+
+    auto const     imageDim = 16U;
+    ValueTestClass sut{mockTransformer};
+    mockTransformer.resetReturnValue      = true;
+    mockTransformer.dimensionsReturnValue = Rectangle{imageDim, imageDim};
+    mockTransformer.transformReturnValue  = true;
+    mockTransformer.skipReturnValue       = true;
+    mockTransformer.countUpPixel          = true;
+
+    auto const checkMatrix = [&](std::uint32_t const y, std::uint32_t const x) noexcept {
+        BGRAPixel expectedColor{};
+        for (auto matY = 0U; matY < MatrixDim; ++matY)
+        {
+            for (auto matX = 0U; matX < MatrixDim; ++matX)
+            {
+                auto const imageOffset  = (x * 2U) + (y * 2U * imageDim);
+                auto const matrixOffset = matX + (matY * imageDim);
+                expectedColor.blue      = imageOffset + matrixOffset;
+                EXPECT_EQ(sut.matrixCopy[matY][matX], expectedColor)
+                    << "X: " << x << " Y: " << y << " MatX: " << matX << " MatY: " << matY;
+            }
+        }
+    };
+
+    BGRAPixel pixel{};
+    EXPECT_TRUE(sut.reset());
+    auto const dimensions = sut.dimensions();
+    for (auto y = 0U; y < dimensions.height; ++y)
+    {
+        for (auto x = 0U; x < dimensions.height; ++x)
+        {
+            EXPECT_TRUE(sut.transform(pixel));
+            checkMatrix(y, x);
+        }
+    }
+}
+
+TEST_F(ConvolutionTransformerBaseTests, DISABLED_CallsToBaseTransformerAsExpectedOnNormalOperation)
+{
+    auto const dim = 16U;
+    TestClass  sut{mockTransformer};
+    mockTransformer.resetReturnValue      = true;
+    mockTransformer.dimensionsReturnValue = Rectangle{dim, dim};
+    mockTransformer.transformReturnValue  = true;
+    mockTransformer.skipReturnValue       = true;
+    mockTransformer.countUpPixel          = true;
+
+    sut.matrixShiftXValue = 2U;
+    sut.matrixShiftYValue = 2U;
+    EXPECT_TRUE(sut.reset());
+
+    auto      pixelsToTransform = (sut.dimensions().width * 2U) + 2U;
+    BGRAPixel pixel{};
+    for (auto i = 0U; i < pixelsToTransform; ++i)
+    {
+        EXPECT_TRUE(sut.transform(pixel));
+    }
+
+    // we load 2 complete lines for the matrix and 2 for the shift and on each line we need one skip() call
+    auto const expectedSkipCallCount = sut.matrixHeightValue + sut.matrixShiftYValue - 1U;
+    EXPECT_EQ(mockTransformer.countCalls(CallType::Skip), expectedSkipCallCount);
+
+    auto const lineLength = sut.matrixWidthValue + ((sut.dimensions().width - 1U) * sut.matrixShiftXValue);
+    auto const expectedTransformCallCount = (4U * lineLength) + sut.matrixWidthValue + sut.matrixShiftXValue;
+    EXPECT_EQ(mockTransformer.countCalls(CallType::Transform), expectedTransformCallCount);
+}
+
+TEST_F(ConvolutionTransformerBaseTests, TransformationOfFirstPixelAfterMultipleSkippedPixels)
 {
     auto const dim = 16U;
     TestClass  sut{mockTransformer};
@@ -286,7 +390,11 @@ TEST_F(ConvolutionTransformerBaseTests, TransformationOfFirstPixel)
         // check pixel has the right value
     }
 
-    // check calls made to mockTransformer
+    auto expectedSkipCallCount = 16U + 16U + 8U;
+    EXPECT_EQ(mockTransformer.countCalls(CallType::Skip), expectedSkipCallCount);
+    auto const lineLength = sut.matrixWidthValue + ((sut.dimensions().width - 1U) * sut.matrixShiftXValue);
+    auto const expectedTransformCallCount = (4U * lineLength) + sut.matrixWidthValue + sut.matrixShiftXValue;
+    EXPECT_EQ(mockTransformer.countCalls(CallType::Transform), expectedTransformCallCount);
 }
 
 } // namespace Terrahertz::UnitTests

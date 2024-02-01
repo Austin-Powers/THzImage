@@ -72,21 +72,26 @@ public:
     bool skip() noexcept override
     {
         _buffer.count += _matrix.shift;
+        bool lineEnded{false};
         for (auto &row : _matrix.rows)
         {
             row += _matrix.shift;
             if (row == _matrix.lineEnd)
             {
-                for (auto &row2 : _matrix.rows)
-                {
-                    row2 += _matrix.skip;
-                }
-                _buffer.count += _matrix.lineShift;
+                lineEnded = true;
             }
-            if (row >= _buffer.endPtr)
+        }
+        if (lineEnded)
+        {
+            for (auto &row : _matrix.rows)
             {
-                row -= _buffer.memory.size();
+                row += _matrix.lineShift;
+                while (row >= _buffer.endPtr)
+                {
+                    row -= _buffer.memory.size();
+                }
             }
+            _buffer.count += _matrix.lineShift;
         }
         if (_pixelsLeft)
         {
@@ -221,10 +226,11 @@ private:
         {
             _matrix.rows.push_back(_buffer.memory.data() + (_buffer.lineLength * line));
         }
-        _matrix.shift     = matrixShiftX;
-        _matrix.lineEnd   = _matrix.rows[0U] + (matrixShiftX * _resultDimensions.width);
-        _matrix.lineShift = matrixShiftY * _buffer.lineLength;
-        _matrix.skip      = matrixWidth + _matrix.lineShift;
+        _matrix.shift   = matrixShiftX;
+        _matrix.lineEnd = _matrix.rows[0U] + (matrixShiftX * _resultDimensions.width);
+        // we need to load additional lines if needed and the first pixels needed for the bottom row of the matrix
+        // at the end we subtract matrixShiftX as this is added every call of skip()
+        _matrix.lineShift = ((matrixShiftY - 1U) * _buffer.lineLength) + matrixWidth - matrixShiftX;
     }
 
     /// @brief The base transformer.
@@ -260,8 +266,6 @@ private:
         std::vector<TPixelType const *> rows{};
 
         std::uint32_t shift{};
-
-        std::uint32_t skip{};
 
         std::uint32_t lineShift{};
 

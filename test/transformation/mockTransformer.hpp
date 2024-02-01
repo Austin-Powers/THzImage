@@ -47,6 +47,18 @@ struct MockTransformer : public IImageTransformer<TPixelType>
     bool skip() noexcept override
     {
         calls.push_back(CallType::Skip);
+        if (countUpPixel)
+        {
+            ++transformPixel.blue;
+            if (transformPixel.blue == 0U)
+            {
+                ++transformPixel.green;
+                if (transformPixel.green == 0U)
+                {
+                    ++transformPixel.red;
+                }
+            }
+        }
         return skipReturnValue;
     }
 
