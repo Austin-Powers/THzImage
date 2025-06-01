@@ -1,5 +1,7 @@
 #include "THzImage/common/colorspaceconverter.hpp"
 
+#include "THzCommon/math/constants.hpp"
+
 #include <gtest/gtest.h>
 
 namespace Terrahertz::UnitTests {
@@ -48,6 +50,35 @@ TEST_F(CommonColorSpaceConverter, BGRtoHSVtoBGRConversion)
             for (auto b = 0U; b < 256U; b += 5)
             {
                 checkConversion(b, g, r);
+            }
+        }
+    }
+}
+
+TEST_F(CommonColorSpaceConverter, MiniHSVtoBGRConversion)
+{
+    for (auto h = 0U; h < 8U; ++h)
+    {
+        auto const hue = static_cast<float>((22.5 + (45.0 * h)) * DegreeToRadian);
+        for (auto s = 0U; s < 4U; ++s)
+        {
+            auto const saturation = 32U + (64U * s);
+            for (auto v = 0U; v < 8U; ++v)
+            {
+                auto const   value = 16U + (32U * v);
+                std::uint8_t expectedBlue{};
+                std::uint8_t expectedGreen{};
+                std::uint8_t expectedRed{};
+                HSVtoBGR(hue, saturation, value, expectedBlue, expectedGreen, expectedRed);
+
+                auto const   content = (h << 5U) | (s << 3U) | v;
+                std::uint8_t actualBlue{};
+                std::uint8_t actualGreen{};
+                std::uint8_t actualRed{};
+                MiniHSVtoBGR(content, actualBlue, actualGreen, actualRed);
+                EXPECT_EQ(expectedBlue, actualBlue);
+                EXPECT_EQ(expectedGreen, actualGreen);
+                EXPECT_EQ(expectedRed, actualRed);
             }
         }
     }
