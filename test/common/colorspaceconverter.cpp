@@ -84,6 +84,31 @@ TEST_F(CommonColorSpaceConverter, MiniHSVtoBGRConversion)
     }
 }
 
+TEST_F(CommonColorSpaceConverter, MiniHSVtoHSVConversion)
+{
+    for (auto h = 0U; h < 8U; ++h)
+    {
+        auto const expectedHue = static_cast<float>((22.5 + (45.0 * h)) * DegreeToRadian);
+        for (auto s = 0U; s < 4U; ++s)
+        {
+            auto const expectedSaturation = 32U + (64U * s);
+            for (auto v = 0U; v < 8U; ++v)
+            {
+                auto const expectedValue = 16U + (32U * v);
+
+                auto const   content = (h << 5U) | (s << 3U) | v;
+                float        actualHue{};
+                std::uint8_t actualSaturation{};
+                std::uint8_t actualValue{};
+                MiniHSVtoHSV(content, actualHue, actualSaturation, actualValue);
+                EXPECT_NEAR(expectedHue, actualHue, 0.001);
+                EXPECT_EQ(expectedSaturation, actualSaturation);
+                EXPECT_EQ(expectedValue, actualValue);
+            }
+        }
+    }
+}
+
 TEST_F(CommonColorSpaceConverter, BGRtoGrayConversion)
 {
     auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {
