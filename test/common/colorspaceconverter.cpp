@@ -62,6 +62,12 @@ TEST_F(CommonColorSpaceConverter, BGRandHSVtoMiniHSVConversion)
         auto const miniHSVfromBGR = BGRtoMiniHSV(b, g, r);
         auto const miniHSVfromHSV = HSVtoMiniHSV(h, s, v);
         EXPECT_EQ(miniHSVfromBGR, miniHSVfromHSV);
+
+        std::uint8_t expectedValue = 0U;
+        expectedValue |= (static_cast<std::uint8_t>(h / (0.25 * Pi)) << 5U);
+        expectedValue |= ((s / 64U) << 3U);
+        expectedValue |= (v / 32U);
+        EXPECT_EQ(expectedValue, miniHSVfromHSV);
     };
 
     for (auto r = 0U; r < 256U; r += 5)
