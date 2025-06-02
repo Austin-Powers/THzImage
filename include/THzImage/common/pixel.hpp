@@ -11,6 +11,9 @@ namespace Terrahertz {
 // Predeclare the other pixel type
 struct HSVAPixel;
 
+// Predeclare the other pixel type
+struct MiniHSVPixel;
+
 /// @brief Struct for a blue green read alpha pixel using 8 bits per channel.
 struct BGRAPixel
 {
@@ -47,6 +50,11 @@ struct BGRAPixel
     /// @param other The pixel to convert.
     BGRAPixel(HSVAPixel const &other) noexcept;
 
+    /// @brief Copy-Constructor to convert from a MiniHSVPixel.
+    ///
+    /// @param other The pixel to convert.
+    BGRAPixel(MiniHSVPixel const &other) noexcept;
+
     /// @brief Explicitly default the constructor so all special methods are defined.
     constexpr BGRAPixel(BGRAPixel &&) noexcept = default;
 
@@ -57,6 +65,11 @@ struct BGRAPixel
     ///
     /// @param other The pixel to convert.
     BGRAPixel &operator=(HSVAPixel const &other) noexcept;
+
+    /// @brief Assignment operator to convert from a MiniHSVPixel.
+    ///
+    /// @param other The pixel to convert.
+    BGRAPixel &operator=(MiniHSVPixel const &other) noexcept;
 
     /// @brief Explicitly default the operator so all special methods are defined.
     BGRAPixel &operator=(BGRAPixel &&) noexcept = default;
@@ -301,6 +314,11 @@ struct HSVAPixel
     /// @param other The pixel to convert.
     HSVAPixel(BGRAPixel const &other) noexcept;
 
+    /// @brief Copy-Constructor to convert from a MiniHSVPixel.
+    ///
+    /// @param other the pixel to convert.
+    HSVAPixel(MiniHSVPixel const &other) noexcept;
+
     /// @brief Explicitly default the constructor so all special methods are defined.
     HSVAPixel(HSVAPixel &&) noexcept = default;
 
@@ -311,6 +329,11 @@ struct HSVAPixel
     ///
     /// @param other The pixel to convert.
     HSVAPixel &operator=(BGRAPixel const &other) noexcept;
+
+    /// @brief Assignment operator to convert from a MiniHSVPixel.
+    ///
+    /// @param other The pixel to convert.
+    HSVAPixel &operator=(MiniHSVPixel const &other) noexcept;
 
     /// @brief Explicitly default the operator so all special methods are defined.
     HSVAPixel &operator=(HSVAPixel &&) noexcept = default;
@@ -329,6 +352,80 @@ struct HSVAPixel
     /// @param other The other pixel.
     /// @returns True if both pixels are different in at least one channel including alpha, false otherwise.
     bool operator!=(HSVAPixel const &other) const noexcept;
+};
+
+/// @brief Struct for a size reduced HSV pixel.
+struct MiniHSVPixel
+{
+    /// @brief The content of this pixel.
+    ///
+    /// 7 6 5 4 3 2 1 0
+    /// H H H S S V V V
+    ///
+    /// Hue 8 values [Pi]
+    /// 0: 0.00 - 0.25
+    /// 1: 0.25 - 0.50
+    /// 2: 0.50 - 0.75
+    /// 3: 0.75 - 1.00
+    /// 4: 1.00 - 1.25
+    /// 5: 1.25 - 1.50
+    /// 6: 1.50 - 1.75
+    /// 7: 1.75 - 2.00
+    ///
+    /// Saturation 4 values
+    /// 0:   0 -  63
+    /// 1:  64 - 127
+    /// 2: 128 - 191
+    /// 3: 192 - 255
+    ///
+    /// Value 8 Values
+    /// 0:   0 -  31
+    /// 1:  32 -  63
+    /// 2:  64 -  95
+    /// 3:  96 - 127
+    /// 4: 128 - 159
+    /// 5: 160 - 191
+    /// 6: 192 - 223
+    /// 7: 224 - 255
+    std::uint8_t content{};
+
+    /// @brief Default initializes a new MiniHSVPixel.
+    MiniHSVPixel() noexcept = default;
+
+    /// @brief Explicitly default the constructor so all special methods are defined.
+    MiniHSVPixel(MiniHSVPixel const &) noexcept = default;
+
+    /// @brief Copy-Constructor to convert from a BGRAPixel.
+    ///
+    /// @param other The pixel to convert.
+    MiniHSVPixel(BGRAPixel const &other) noexcept;
+
+    /// @brief Copy-Constructor to convert from a HSVAPixel.
+    ///
+    /// @param other The pixel to convert.
+    MiniHSVPixel(HSVAPixel const &other) noexcept;
+
+    /// @brief Explicitly default the constructor so all special methods are defined.
+    MiniHSVPixel(MiniHSVPixel &&) noexcept = default;
+
+    /// @brief Explicitly default the operator so all special methods are defined.
+    MiniHSVPixel &operator=(MiniHSVPixel const &) noexcept = default;
+
+    /// @brief Assignment operator to convert from a BGRAPixel.
+    ///
+    /// @param other The pixel to convert.
+    MiniHSVPixel &operator=(BGRAPixel const &other) noexcept;
+
+    /// @brief Assignment operator to convert from HSVAPixel.
+    ///
+    /// @param other The pixel to convert.
+    MiniHSVPixel &operator=(HSVAPixel const &other) noexcept;
+
+    /// @brief Explicitly default the operator so all special methods are defined.
+    MiniHSVPixel &operator=(MiniHSVPixel &&) noexcept = default;
+
+    /// @brief Explicitly default the destructor so all special methods are defined.
+    ~MiniHSVPixel() noexcept = default;
 };
 
 /// @brief Performes a linear interpolation between the given color values.

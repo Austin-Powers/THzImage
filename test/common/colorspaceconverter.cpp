@@ -27,6 +27,55 @@ TEST_F(CommonColorSpaceConverter, BGRtoHSVConversion)
     };
 }
 
+TEST_F(CommonColorSpaceConverter, MiniHSVToHSVandBack)
+{
+    for (auto expectedMiniHSV = 64U; expectedMiniHSV < 256U; ++expectedMiniHSV)
+    {
+        float        h{};
+        std::uint8_t s{};
+        std::uint8_t v{};
+        MiniHSVtoHSV(expectedMiniHSV, h, s, v);
+        ASSERT_EQ(expectedMiniHSV, HSVtoMiniHSV(h, s, v));
+    }
+}
+
+TEST_F(CommonColorSpaceConverter, MiniHSVToBGRandBack)
+{
+    for (auto expectedMiniHSV = 0U; expectedMiniHSV < 256U; ++expectedMiniHSV)
+    {
+        std::uint8_t b{};
+        std::uint8_t g{};
+        std::uint8_t r{};
+        MiniHSVtoBGR(expectedMiniHSV, b, g, r);
+        ASSERT_EQ(expectedMiniHSV, BGRtoMiniHSV(b, g, r));
+    }
+}
+
+TEST_F(CommonColorSpaceConverter, BGRandHSVtoMiniHSVConversion)
+{
+    auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {
+        float        h{};
+        std::uint8_t s{};
+        std::uint8_t v{};
+        BGRtoHSV(b, g, r, h, s, v);
+
+        auto const miniHSVfromBGR = BGRtoMiniHSV(b, g, r);
+        auto const miniHSVfromHSV = HSVtoMiniHSV(h, s, v);
+        EXPECT_EQ(miniHSVfromBGR, miniHSVfromHSV);
+    };
+
+    for (auto r = 0U; r < 256U; r += 5)
+    {
+        for (auto g = 0U; g < 256U; g += 5)
+        {
+            for (auto b = 0U; b < 256U; b += 5)
+            {
+                checkConversion(b, g, r);
+            }
+        }
+    }
+}
+
 TEST_F(CommonColorSpaceConverter, BGRtoHSVtoBGRConversion)
 {
     auto const checkConversion = [](std::uint8_t const b, std::uint8_t const g, std::uint8_t const r) noexcept {

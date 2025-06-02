@@ -54,6 +54,36 @@ inline void BGRtoHSV(std::uint8_t const blue,
     value = max;
 }
 
+/// @brief Convert a HSV to MiniHSV color.
+///
+/// @param hue The hue of the HSV color.
+/// @param saturation The saturation of the HSV color.
+/// @param value The value of the HSV color.
+/// @return The MiniHSV value.
+inline std::uint8_t HSVtoMiniHSV(float const hue, std::uint8_t const saturation, std::uint8_t const value) noexcept
+{
+    std::uint8_t result = 0U;
+    result |= (static_cast<std::uint8_t>(hue / (0.25 * Pi)) << 5U);
+    result |= ((saturation / 64U) << 3U);
+    result |= (value / 32U);
+    return result;
+}
+
+/// @brief Convert a BGR to MiniHSV color.
+///
+/// @param blue The blue value of the BGR color.
+/// @param green The green value of the BGR color.
+/// @param red The red value of the BGR color.
+/// @return The MiniHSV value.
+inline std::uint8_t BGRtoMiniHSV(std::uint8_t const blue, std::uint8_t const green, std::uint8_t const red) noexcept
+{
+    float        hue{};
+    std::uint8_t saturation{};
+    std::uint8_t value{};
+    BGRtoHSV(blue, green, red, hue, saturation, value);
+    return HSVtoMiniHSV(hue, saturation, value);
+}
+
 /// @brief Converts a HSV to a BGR color.
 ///
 /// @param hue The hue of the HSV color [rad].
@@ -196,7 +226,7 @@ MiniHSVtoBGR(std::uint8_t const minihsv, std::uint8_t &blue, std::uint8_t &green
 inline void MiniHSVtoHSV(std::uint8_t const minihsv, float &hue, std::uint8_t &saturation, std::uint8_t &value) noexcept
 {
     static float MiniHSVHueLookup[8U] = {
-        0.125F * PiF, 0.375F * PiF, 0.625F * PiF, 0.875F * PiF, 1.125F * PiF, 1.375F * PiF, 1.625F * PiF, 1.875F * PiF};
+        0.125f * PiF, 0.375f * PiF, 0.625f * PiF, 0.875f * PiF, 1.125f * PiF, 1.375f * PiF, 1.625f * PiF, 1.875f * PiF};
 
     static std::uint8_t MiniHSVSaturationLookup[4U] = {32U, 96U, 160U, 224U};
 

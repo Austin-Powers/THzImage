@@ -10,10 +10,19 @@ namespace Terrahertz {
 
 BGRAPixel::BGRAPixel(HSVAPixel const &other) noexcept { *this = other; }
 
+BGRAPixel::BGRAPixel(MiniHSVPixel const &other) noexcept { *this = other; }
+
 BGRAPixel &BGRAPixel::operator=(HSVAPixel const &other) noexcept
 {
     alpha = other.alpha;
     HSVtoBGR(other.hue, other.saturation, other.value, blue, green, red);
+    return *this;
+}
+
+BGRAPixel &BGRAPixel::operator=(MiniHSVPixel const &other) noexcept
+{
+    alpha = 0xFFU;
+    MiniHSVtoBGR(other.content, blue, green, red);
     return *this;
 }
 
@@ -69,10 +78,19 @@ BGRAPixel BGRAPixel::diffAbs(BGRAPixel const &other) const noexcept
 
 HSVAPixel::HSVAPixel(BGRAPixel const &other) noexcept { *this = other; }
 
+HSVAPixel::HSVAPixel(MiniHSVPixel const &other) noexcept { *this = other; }
+
 HSVAPixel &HSVAPixel::operator=(BGRAPixel const &other) noexcept
 {
     alpha = other.alpha;
     BGRtoHSV(other.blue, other.green, other.red, hue, saturation, value);
+    return *this;
+}
+
+HSVAPixel &HSVAPixel::operator=(MiniHSVPixel const &other) noexcept
+{
+    alpha = 0xFF;
+    MiniHSVtoHSV(other.content, hue, saturation, value);
     return *this;
 }
 
@@ -84,6 +102,25 @@ bool HSVAPixel::operator==(HSVAPixel const &other) const noexcept
 bool HSVAPixel::operator!=(HSVAPixel const &other) const noexcept
 {
     return value != other.value || hue != other.hue || saturation != other.saturation || alpha != other.alpha;
+}
+
+MiniHSVPixel::MiniHSVPixel(BGRAPixel const &other) noexcept : content{BGRtoMiniHSV(other.blue, other.green, other.red)}
+{}
+
+MiniHSVPixel::MiniHSVPixel(HSVAPixel const &other) noexcept
+    : content{HSVtoMiniHSV(other.hue, other.saturation, other.value)}
+{}
+
+MiniHSVPixel &MiniHSVPixel::operator=(BGRAPixel const &other) noexcept
+{
+    content = BGRtoMiniHSV(other.blue, other.green, other.red);
+    return *this;
+}
+
+MiniHSVPixel &MiniHSVPixel::operator=(HSVAPixel const &other) noexcept
+{
+    content = HSVtoMiniHSV(other.hue, other.saturation, other.value);
+    return *this;
 }
 
 BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept
