@@ -21,7 +21,7 @@ public:
     /// @return A rectangle containing the screen dimensions.
     static Rectangle getScreenDimensions() noexcept;
 
-    /// @brief Initializes a new Screen::Reader.
+    /// @brief Initializes a new Screen::Reader, will use the full screen.
     Reader() noexcept;
 
     /// @brief Initializes a new Screen::Reader using the given area for screenshots.
@@ -76,5 +76,5 @@ private:
 
 } // namespace Terrahertz::Screen
 
-#endif // !_WIN32
+#endif // _WIN32
 #endif // !THZ_IMAGE_IO_SCREENREADER_HPP
