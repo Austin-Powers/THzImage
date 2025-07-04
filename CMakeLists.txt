@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        b8d8eeefe827156de1928bb655bfad6bd2001d71 # latest 01.06.25
+	GIT_TAG        71d874d06369b6944ca1f33e9c52aad6831c6411 # latest 25.06.25
 )
 FetchContent_Declare(
 	gsl
@@ -53,6 +53,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/bmpCommons.hpp
 	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
+	src/processing/screenInputNode.cpp
 
 	include/THzImage/analysis/basicImageMetrics.hpp
 	include/THzImage/common/colorspaceconverter.hpp
@@ -79,10 +80,13 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/screenReader.hpp
 	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/io/timedReader.hpp
+	include/THzImage/processing/iNode.hpp
+	include/THzImage/processing/screenInputNode.hpp
 	include/THzImage/transformation/borderTransformer.hpp
 	include/THzImage/transformation/convolutionTransformerBase.hpp
 	include/THzImage/transformation/nullTransformer.hpp
 	include/THzImage/transformation/pixelTransformer.hpp
+	include/THzImage/thzImage.hpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
