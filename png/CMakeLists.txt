@@ -11,7 +11,7 @@ project(png VERSION 1.0)
 FetchContent_Declare(
 	zlib
 	GIT_REPOSITORY https://github.com/madler/zlib.git
-	GIT_TAG        09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851 # release-v1.3
+	GIT_TAG        5a82f71ed1dfc0bec044d9702463dbdf84ea3b71 # release-v1.3.1 with cmake remake
 )
 FetchContent_Declare(
 	libpng
