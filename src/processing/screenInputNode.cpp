@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "THzImage/processing/screenInputNode.hpp"
 
 namespace Terrahertz::ImageProcessing {
@@ -24,3 +26,5 @@ ScreenInputNode::ImageType &ScreenInputNode::operator[](size_t const index) noex
 }
 
 } // namespace Terrahertz::ImageProcessing
+
+#endif // _WIN32

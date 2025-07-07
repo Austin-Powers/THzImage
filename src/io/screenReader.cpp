@@ -187,4 +187,4 @@ void Reader::deinit() noexcept {}
 
 } // namespace Terrahertz::Screen
 
-#endif // !_WIN32
+#endif // _WIN32
