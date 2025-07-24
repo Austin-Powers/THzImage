@@ -29,7 +29,7 @@ FetchContent_Declare(
 	GIT_TAG        a3534567187d2edc428efd3f13466ff75fe5805c # release-v4.0.0
 )
 FetchContent_MakeAvailable(gsl)
-if(NOT DEFINED THzCommon)
+if(NOT DEFINED THzCommon_SOURCE_DIR)
 	message("THzCommon not found...")
 	message("Fetching THzCommon")
 	FetchContent_MakeAvailable(THzCommon)
