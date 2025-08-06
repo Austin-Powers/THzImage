@@ -99,7 +99,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 	png
 )
 
-if(THZ_IMAGE_IS_ROOT)
+if(THZ_IMAGE_IS_ROOT OR BUILD_THZ_IMAGE_TESTS)
 	# For Windows: Prevent overriding the parent project's compiler/linker settings
 	# Not needed here as there will be no parent project, but its good to remember this command
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
