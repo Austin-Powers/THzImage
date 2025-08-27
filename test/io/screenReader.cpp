@@ -105,7 +105,7 @@ TEST_F(IOScreenReader, TakeScreenshot)
     }
 
     Screen::Reader sut{dimensions};
-    EXPECT_TRUE(image.read(sut));
+    EXPECT_TRUE(image.readFrom(sut));
 
     // we cannot expect what is on the screen exactly, so we check for changes
     auto changedPixels = 0U;
@@ -126,9 +126,9 @@ TEST_F(IOScreenReader, ChangeAreaBetweenScreenshots)
     BGRAImage       image1{};
 
     Screen::Reader sut{dimensions};
-    EXPECT_TRUE(image0.read(sut));
+    EXPECT_TRUE(image0.readFrom(sut));
     EXPECT_TRUE(sut.setArea(Rectangle{200, 200, dimensions.width, dimensions.height}));
-    EXPECT_TRUE(image1.read(sut));
+    EXPECT_TRUE(image1.readFrom(sut));
 
     // we cannot expect what is on the screen exactly, so we if the areas differ
     auto changedPixels = 0U;

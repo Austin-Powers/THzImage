@@ -41,7 +41,7 @@ struct IOImageSeriesReader : public testing::Test
                 ++value;
             }
             QOI::Writer writer{info.name};
-            EXPECT_TRUE(image.write(&writer));
+            EXPECT_TRUE(image.writeTo(&writer));
         };
 
         setupImage(infos[0U]);
@@ -90,7 +90,7 @@ TEST_F(IOImageSeriesReader, OperationCorrect)
     for (auto i = 0U; (i < 16U) && sut.imagePresent(); ++i)
     {
         auto const filepath = sut.currentFilepath();
-        ASSERT_TRUE(image.read(sut));
+        ASSERT_TRUE(image.readFrom(sut));
         for (auto const &info : infos)
         {
             if (std::filesystem::path{info.name} == filepath)

@@ -144,7 +144,7 @@ TEST_F(CommonImage, ReadInitFalse)
 {
     MockReader reader{};
     EXPECT_CALL(reader, init()).WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.read(reader));
+    EXPECT_FALSE(sut.readFrom(reader));
 }
 
 TEST_F(CommonImage, ReadReadFalse)
@@ -154,7 +154,7 @@ TEST_F(CommonImage, ReadReadFalse)
     EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
     EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(false));
     EXPECT_CALL(reader, deinit()).Times(1);
-    EXPECT_FALSE(sut.read(reader));
+    EXPECT_FALSE(sut.readFrom(reader));
 }
 
 TEST_F(CommonImage, ReadReadTrue)
@@ -164,7 +164,7 @@ TEST_F(CommonImage, ReadReadTrue)
     EXPECT_CALL(reader, dimensions()).WillOnce(testing::Return(Rectangle{0, 0, 2U, 2U}));
     EXPECT_CALL(reader, read(testing::_)).WillOnce(testing::Return(true));
     EXPECT_CALL(reader, deinit()).Times(1);
-    EXPECT_TRUE(sut.read(reader));
+    EXPECT_TRUE(sut.readFrom(reader));
 }
 
 TEST_F(CommonImage, ReadGivenBufferHasCorrectSize)
@@ -189,15 +189,15 @@ TEST_F(CommonImage, ReadGivenBufferHasCorrectSize)
     };
 
     MyMockReader reader{};
-    EXPECT_TRUE(sut.read(reader));
+    EXPECT_TRUE(sut.readFrom(reader));
 }
 
-TEST_F(CommonImage, WriteGivenNullptr) { EXPECT_FALSE(sut.write(nullptr)); }
+TEST_F(CommonImage, WriteGivenNullptr) { EXPECT_FALSE(sut.writeTo(nullptr)); }
 
 TEST_F(CommonImage, WriteWithNoDataInTheImage)
 {
     MockWriter writer{};
-    EXPECT_FALSE(sut.write(&writer));
+    EXPECT_FALSE(sut.writeTo(&writer));
 }
 
 TEST_F(CommonImage, WriteInitFalse)
@@ -205,7 +205,7 @@ TEST_F(CommonImage, WriteInitFalse)
     EXPECT_TRUE(sut.setDimensions(Rectangle{0, 0, 4U, 4U}));
     MockWriter writer{};
     EXPECT_CALL(writer, init()).WillOnce(testing::Return(false));
-    EXPECT_FALSE(sut.write(&writer));
+    EXPECT_FALSE(sut.writeTo(&writer));
 }
 
 TEST_F(CommonImage, WriteWriteFalse)
@@ -215,7 +215,7 @@ TEST_F(CommonImage, WriteWriteFalse)
     EXPECT_CALL(writer, init()).WillOnce(testing::Return(true));
     EXPECT_CALL(writer, write(testing::_, testing::_)).WillOnce(testing::Return(false));
     EXPECT_CALL(writer, deinit()).Times(1);
-    EXPECT_FALSE(sut.write(&writer));
+    EXPECT_FALSE(sut.writeTo(&writer));
 }
 
 TEST_F(CommonImage, WriteWriteTrue)
@@ -225,7 +225,7 @@ TEST_F(CommonImage, WriteWriteTrue)
     EXPECT_CALL(writer, init()).WillOnce(testing::Return(true));
     EXPECT_CALL(writer, write(testing::_, testing::_)).WillOnce(testing::Return(true));
     EXPECT_CALL(writer, deinit()).Times(1);
-    EXPECT_TRUE(sut.write(&writer));
+    EXPECT_TRUE(sut.writeTo(&writer));
 }
 
 TEST_F(CommonImage, WriteGivenDataCorrect)
@@ -254,7 +254,7 @@ TEST_F(CommonImage, WriteGivenDataCorrect)
 
     MyMockWriter writer{};
     EXPECT_TRUE(sut.setDimensions(writer.expectedDimensions));
-    EXPECT_TRUE(sut.write(&writer));
+    EXPECT_TRUE(sut.writeTo(&writer));
 }
 
 TEST_F(CommonImage, CopyViaExecuteAndIngest)

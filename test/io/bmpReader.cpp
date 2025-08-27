@@ -138,11 +138,11 @@ TEST_F(IOBMPReader, ReadingDataWithTransparency)
     expected[3U] = BGRAPixel{13U, 14U, 15U, 16U};
 
     BMP::Writer writer{filepath};
-    ASSERT_TRUE(expected.write(&writer));
+    ASSERT_TRUE(expected.writeTo(&writer));
 
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
-    ASSERT_TRUE(actual.read(reader));
+    ASSERT_TRUE(actual.readFrom(reader));
     EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 4U; ++i)
@@ -165,11 +165,11 @@ TEST_F(IOBMPReader, ReadingDataWithoutTransparency)
     expected[7U] = BGRAPixel{29U, 30U, 31U};
 
     BMP::Writer writer{filepath, false};
-    ASSERT_TRUE(expected.write(&writer));
+    ASSERT_TRUE(expected.writeTo(&writer));
 
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
-    ASSERT_TRUE(actual.read(reader));
+    ASSERT_TRUE(actual.readFrom(reader));
     EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 8U; ++i)
@@ -188,11 +188,11 @@ TEST_F(IOBMPReader, ReadingDataWithoutTransparencyAndPadding)
     expected[3U] = BGRAPixel{13U, 14U, 15U};
 
     BMP::Writer writer{filepath, false};
-    ASSERT_TRUE(expected.write(&writer));
+    ASSERT_TRUE(expected.writeTo(&writer));
 
     BGRAImage   actual{};
     BMP::Reader reader{filepath};
-    ASSERT_TRUE(actual.read(reader));
+    ASSERT_TRUE(actual.readFrom(reader));
     EXPECT_FALSE(reader.imagePresent());
     ASSERT_EQ(expected.dimensions(), actual.dimensions());
     for (auto i = 0U; i < 4U; ++i)
@@ -209,7 +209,7 @@ TEST_F(IOBMPReader, OffBitsDiffersFrom54)
 
     BGRAImage   image{};
     BMP::Reader sut{filepath};
-    EXPECT_FALSE(image.read(sut));
+    EXPECT_FALSE(image.readFrom(sut));
 }
 
 TEST_F(IOBMPReader, HeightNegative)
@@ -220,7 +220,7 @@ TEST_F(IOBMPReader, HeightNegative)
 
     BGRAImage   image{};
     BMP::Reader sut{filepath};
-    EXPECT_TRUE(image.read(sut));
+    EXPECT_TRUE(image.readFrom(sut));
     ASSERT_EQ(image.dimensions(), (Rectangle{2U, 2U}));
     EXPECT_EQ(image[0U], (BGRAPixel{0x01U, 0x20U, 0x25U, 0x24U}));
     EXPECT_EQ(image[1U], (BGRAPixel{0x13U, 0x24U, 0x50U, 0x34U}));
@@ -234,7 +234,7 @@ TEST_F(IOBMPReader, FileTooSmall)
 
     BGRAImage   image{};
     BMP::Reader sut{filepath};
-    EXPECT_FALSE(image.read(sut));
+    EXPECT_FALSE(image.readFrom(sut));
 }
 
 } // namespace Terrahertz::UnitTests

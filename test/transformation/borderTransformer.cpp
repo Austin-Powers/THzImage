@@ -25,7 +25,7 @@ struct TransformationBorderTransformer : public testing::Test
     void SetUp() override
     {
         TestImageGenerator generator{baseDimensions};
-        EXPECT_TRUE(image.read(generator));
+        EXPECT_TRUE(image.readFrom(generator));
         view = image.view();
     }
 

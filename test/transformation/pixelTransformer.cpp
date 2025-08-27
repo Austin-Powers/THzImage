@@ -33,7 +33,7 @@ struct TransformationPixelTransformer : public testing::Test
     void SetUp() override
     {
         TestImageGenerator generator{Rectangle{20U, 20U}};
-        EXPECT_TRUE(imageBase.read(generator));
+        EXPECT_TRUE(imageBase.readFrom(generator));
         baseTransformer = imageBase.view();
     }
 

@@ -156,7 +156,7 @@ public:
     ///
     /// @param reader The reader to read the image data from.
     /// @return True if the image was successfully read, false otherwise.
-    [[nodiscard]] bool read(IImageReader<TPixelType> &reader) noexcept
+    [[nodiscard]] bool readFrom(IImageReader<TPixelType> &reader) noexcept
     {
         if (!reader.init())
         {
@@ -184,7 +184,7 @@ public:
     ///
     /// @param writer The writer to write the image data to.
     /// @return True if the image was successfully written, false otherwise.
-    [[nodiscard]] bool write(IImageWriter<TPixelType> *writer) const noexcept
+    [[nodiscard]] bool writeTo(IImageWriter<TPixelType> *writer) const noexcept
     {
         if (writer == nullptr)
         {

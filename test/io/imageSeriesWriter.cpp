@@ -50,7 +50,7 @@ TEST_F(IOImageSeriesWriter, OverallOperation)
     auto const checkImage = [&](char const *const filepath) noexcept {
         BGRAImage   loadedImage{};
         QOI::Reader reader{filepath};
-        ASSERT_TRUE(loadedImage.read(reader));
+        ASSERT_TRUE(loadedImage.readFrom(reader));
         ASSERT_EQ(image.dimensions(), loadedImage.dimensions());
         for (auto const idx : image.dimensions().range())
         {
@@ -60,17 +60,17 @@ TEST_F(IOImageSeriesWriter, OverallOperation)
 
     EXPECT_TRUE(image.setDimensions(Rectangle{1U, 1U}));
     image[0U] = BGRAPixel{10U, 10U, 10U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./000000.qoi");
     EXPECT_TRUE(image.setDimensions(Rectangle{2U, 3U}));
     image[2U] = BGRAPixel{10U, 10U, 10U};
     image[4U] = BGRAPixel{10U, 10U, 10U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./000001.qoi");
     EXPECT_TRUE(image.setDimensions(Rectangle{3U, 1U}));
     image[0U] = BGRAPixel{10U, 10U, 10U};
     image[1U] = BGRAPixel{12U, 12U, 12U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./000002.qoi");
 }
 
@@ -88,7 +88,7 @@ TEST_F(IOImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
     auto const checkImage = [&](char const *const filepath) noexcept {
         BGRAImage   loadedImage{};
         QOI::Reader reader{filepath};
-        ASSERT_TRUE(loadedImage.read(reader));
+        ASSERT_TRUE(loadedImage.readFrom(reader));
         ASSERT_EQ(image.dimensions(), loadedImage.dimensions());
         for (auto const idx : image.dimensions().range())
         {
@@ -98,17 +98,17 @@ TEST_F(IOImageSeriesWriter, StartNumberAndIncrementNotDefaultValues)
 
     EXPECT_TRUE(image.setDimensions(Rectangle{1U, 1U}));
     image[0U] = BGRAPixel{10U, 10U, 10U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./32_000003.qoi");
     EXPECT_TRUE(image.setDimensions(Rectangle{2U, 3U}));
     image[2U] = BGRAPixel{10U, 10U, 10U};
     image[4U] = BGRAPixel{10U, 10U, 10U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./32_000005.qoi");
     EXPECT_TRUE(image.setDimensions(Rectangle{3U, 1U}));
     image[0U] = BGRAPixel{10U, 10U, 10U};
     image[1U] = BGRAPixel{12U, 12U, 12U};
-    EXPECT_TRUE(image.write(&(*writer)));
+    EXPECT_TRUE(image.writeTo(&(*writer)));
     checkImage("./32_000007.qoi");
 }
 
