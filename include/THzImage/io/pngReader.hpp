@@ -14,6 +14,8 @@ namespace Terrahertz::PNG {
 class Reader : public IImageReader<BGRAPixel>
 {
 public:
+    using IImageReader::readInto;
+
     /// @brief Initializes a new PNG::Reader.
     ///
     /// @param filepath The path of the file to read from.

@@ -98,6 +98,8 @@ private:
 class Writer : public IImageWriter<BGRAPixel>
 {
 public:
+    using IImageWriter::writeContentOf;
+
     /// @brief Initializes a new GIF::Writer.
     ///
     /// @param filepath The path to write the GIF-File to.

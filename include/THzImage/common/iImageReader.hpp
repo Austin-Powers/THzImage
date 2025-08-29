@@ -10,6 +10,11 @@
 
 namespace Terrahertz {
 
+/// @brief Forward declaration of Image for convenience function readInto.
+/// @tparam TPixelType The type of pixel used by the image.
+template <typename TPixelType>
+class Image;
+
 /// @brief Interface for all classes reading images.
 ///
 /// @tparam TPixelType The pixel type of the reader.
@@ -24,6 +29,12 @@ public:
 
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageReader() noexcept {}
+
+    /// @brief Reads into the given buffer.
+    ///
+    /// @param buffer The buffer to put the read data into.
+    /// @return True if reading was successful, false otherwise.
+    [[nodiscard]] bool readInto(Image<TPixelType> &buffer) noexcept { return buffer.readFrom(*this); }
 
     /// @brief Checks if executing the read cycle will return an image or if reader is already exhausted.
     ///

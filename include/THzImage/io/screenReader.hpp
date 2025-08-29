@@ -16,6 +16,8 @@ namespace Terrahertz::Screen {
 class Reader : public IImageReader<BGRAPixel>
 {
 public:
+    using IImageReader::readInto;
+
     /// @brief Returns the dimensions of the screen,
     ///
     /// @return A rectangle containing the screen dimensions.

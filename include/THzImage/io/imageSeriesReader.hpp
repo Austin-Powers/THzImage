@@ -24,6 +24,8 @@ template <FileImageReader TWrapped>
 class Reader : public IImageReader<typename TWrapped::PixelType>
 {
 public:
+    using IImageReader<typename TWrapped::PixelType>::readInto;
+
     /// @brief Initializes a new ImageSeries::Reader.
     ///
     /// @param directoryPath The path of the directory from which to load the images.

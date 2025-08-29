@@ -26,6 +26,8 @@ template <FileImageWriter TWrapped>
 class Writer : public IImageWriter<typename TWrapped::PixelType>
 {
 public:
+    using IImageWriter<typename TWrapped::PixelType>::writeContentOf;
+
     /// @brief Creates a writer using the given filepath as a template.
     ///
     /// @param filepath The path for the files, has to contain a single '?' to signify where the numbering shall go.

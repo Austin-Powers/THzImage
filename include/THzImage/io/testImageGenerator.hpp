@@ -11,6 +11,8 @@ namespace Terrahertz {
 class TestImageGenerator : public IImageReader<BGRAPixel>
 {
 public:
+    using IImageReader::readInto;
+
     /// @brief Initializes a new TestImageGenerator for the given values.
     ///
     /// @param dimensions The dimensions of the test image.

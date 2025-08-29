@@ -12,6 +12,8 @@ namespace Terrahertz::PNG {
 class Writer : public IImageWriter<BGRAPixel>
 {
 public:
+    using IImageWriter::writeContentOf;
+
     /// @brief Initializes a nwe PNGWriter.
     ///
     /// @param filepath The path to write the PNG-File to.

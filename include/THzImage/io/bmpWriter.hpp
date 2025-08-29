@@ -12,6 +12,8 @@ namespace Terrahertz::BMP {
 class Writer : public IImageWriter<BGRAPixel>
 {
 public:
+    using IImageWriter::writeContentOf;
+
     /// @brief Initializes a new BMP::Writer.
     ///
     /// @param filepath The path to write the BMP-File to.

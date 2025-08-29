@@ -17,6 +17,8 @@ template <ImageReader TWrapped>
 class TimedReader : public IImageReader<typename TWrapped::PixelType>
 {
 public:
+    using IImageReader<typename TWrapped::PixelType>::readInto;
+
     /// @brief The type of clock used by this class for time keeping.
     using Clock = std::chrono::steady_clock;
 

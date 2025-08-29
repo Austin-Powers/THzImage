@@ -10,6 +10,11 @@
 
 namespace Terrahertz {
 
+/// @brief Forward declaration of Image for convenience function writeContentOf.
+/// @tparam TPixelType The type of pixel used by the image.
+template <typename TPixelType>
+class Image;
+
 /// @brief Interface for all classes writing images.
 ///
 /// @tparam TPixelType The pixel type of the writer.
@@ -24,6 +29,12 @@ public:
 
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageWriter() noexcept {}
+
+    /// @brief Writes the content of the given buffer.
+    ///
+    /// @param buffer The buffer whos content to write.
+    /// @return True if image was writing was successful, false otherwise.
+    [[nodiscard]] bool writeContentOf(Image<TPixelType> const &buffer) noexcept { return buffer.writeTo(this); }
 
     /// @brief Is called by the image to initialize the writing process.
     ///
