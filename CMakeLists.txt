@@ -40,8 +40,10 @@ add_subdirectory(png)
 add_library(${PROJECT_NAME} STATIC
 	src/analysis/basicImageMetrics.cpp
 	src/common/pixel.cpp
+	src/io/autoFileReader.cpp
 	src/io/bmpReader.cpp
 	src/io/bmpWriter.cpp
+	src/io/imageDirectoryReader.cpp
 	src/io/gifReader.cpp
 	src/io/gifWriter.cpp
 	src/io/pngReader.cpp
@@ -53,6 +55,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/bmpCommons.hpp
 	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
+	src/processing/fileInputNode.cpp
 	src/processing/screenInputNode.cpp
 
 	include/THzImage/analysis/basicImageMetrics.hpp
@@ -67,10 +70,12 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/handling/bufferTransformer.hpp
 	include/THzImage/handling/imageRingBuffer.hpp
 	include/THzImage/io/asyncWriter.hpp
+	include/THzImage/io/autoFileReader.hpp
 	include/THzImage/io/bmpReader.hpp
 	include/THzImage/io/bmpWriter.hpp
 	include/THzImage/io/gifReader.hpp
 	include/THzImage/io/gifWriter.hpp
+	include/THzImage/io/imageDirectoryReader.hpp
 	include/THzImage/io/imageSeriesReader.hpp
 	include/THzImage/io/imageSeriesWriter.hpp
 	include/THzImage/io/pngReader.hpp
@@ -81,6 +86,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/io/timedReader.hpp
 	include/THzImage/processing/iNode.hpp
+	include/THzImage/processing/fileInputNode.hpp
 	include/THzImage/processing/screenInputNode.hpp
 	include/THzImage/transformation/borderTransformer.hpp
 	include/THzImage/transformation/convolutionTransformerBase.hpp

@@ -10,10 +10,12 @@ add_executable(${PROJECTNAME}
 	handling/bufferTransformer.cpp
 	handling/imageRingBuffer.cpp
 	io/asyncWriter.cpp
+	io/autoFileReader.cpp
 	io/bmpReader.cpp
 	io/bmpWriter.cpp
 	io/gifReader.cpp
 	io/gifWriter.cpp
+	io/imageDirectoryReader.cpp
 	io/imageSeriesReader.cpp
 	io/imageSeriesWriter.cpp
 	io/pngReader.cpp
@@ -23,7 +25,7 @@ add_executable(${PROJECTNAME}
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
-	
+	processing/fileInputNode.cpp	
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformerBase.cpp
 	transformation/mockTransformer.hpp
