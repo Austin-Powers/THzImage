@@ -5,6 +5,7 @@
 #include "THzImage/common/iImageTransformer.hpp"
 #include "THzImage/common/iImageWriter.hpp"
 #include "THzImage/common/pixel.hpp"
+#include "THzImage/io/testImageGenerator.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -264,6 +265,24 @@ TEST_F(CommonImage, CopyViaExecuteAndIngest)
     BGRAImage dest{};
     auto      view = orig.view();
     EXPECT_TRUE(dest.executeAndIngest(view));
+}
+
+TEST_F(CommonImage, Comparison)
+{
+    BGRAImage image0{};
+    BGRAImage image1{};
+
+    EXPECT_EQ(image0, image0);
+    EXPECT_EQ(image0, image1);
+
+    TestImageGenerator generator{Rectangle{16U, 16U}};
+    ASSERT_TRUE(generator.readInto(image0));
+    EXPECT_NE(image0, image1);
+    ASSERT_TRUE(generator.readInto(image1));
+    EXPECT_EQ(image0, image1);
+
+    image1[4U].blue = 0xFFU;
+    EXPECT_NE(image0, image1);
 }
 
 } // namespace Terrahertz::UnitTests

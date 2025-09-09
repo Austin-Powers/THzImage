@@ -84,6 +84,36 @@ public:
     /// @return The pixel at the given index.
     [[nodiscard]] const_reference operator[](size_type index) const noexcept { return _data[index]; }
 
+    /// @brief Checks if the given image is equal to this image.
+    ///
+    /// @param other The other image to compare.
+    /// @return True if the images are equal, false otherwise.
+    [[nodiscard]] bool operator==(Image const &other) const noexcept
+    {
+        if (this == &other)
+        {
+            return true;
+        }
+        if (_dimensions != other._dimensions)
+        {
+            return false;
+        }
+        for (auto i = 0U; i < _dimensions.area(); ++i)
+        {
+            if (_data[i] != other._data[i])
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// @brief Checks if the given image is different from this image.
+    ///
+    /// @param other The other image to compare.
+    /// @return True if the images are different, false otherwise.
+    [[nodiscard]] bool operator!=(Image const &other) const noexcept { return !((*this) == other); }
+
     /// @brief Returns a view of the entire image.
     ///
     /// @return A view of the entire image.
