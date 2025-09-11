@@ -77,7 +77,8 @@ struct Reader::Impl
         fseek(_pngFile, 0, SEEK_SET);
         if (png_sig_cmp(buf, (png_size_t)0, pngBytesToCheck))
         {
-            logMessage<LogLevel::Error, ReaderProject>("PNG-file header was incorrect");
+            // This has trace log level as we might try the reader on not PNG file to check the format
+            logMessage<LogLevel::Trace, ReaderProject>("PNG-file header was incorrect");
             return false;
         }
 

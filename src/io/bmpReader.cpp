@@ -66,7 +66,8 @@ bool Reader::init() noexcept
     }
     if (header.fileHeader.magic != FileHeader::MagicBytes)
     {
-        logMessage<LogLevel::Error, ReaderProject>("Given file is not a BMP file");
+        // This has trace log level as we might try the reader on not BMP file to check the format
+        logMessage<LogLevel::Trace, ReaderProject>("Given file is not a BMP file");
         return false;
     }
     if ((header.infoHeader.bitCount != 24U) && (header.infoHeader.bitCount != 32U))

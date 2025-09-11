@@ -11,6 +11,16 @@ namespace Terrahertz::AutoFile {
 class Reader : public IImageReader<BGRAPixel>
 {
 public:
+    /// @brief The extension handling mode of the reader.
+    enum class ExtensionMode
+    {
+        /// @brief Use extension as a hint but try all other supported formats.
+        lenient,
+
+        /// @brief Use only the format hinted by the extension.
+        strict
+    };
+
     using IImageReader::readInto;
 
     /// @brief Enabled default construction of the reader.
@@ -19,9 +29,8 @@ public:
     /// @brief Initializes a new AutoFile::Reader.
     ///
     /// @param path The path of the file to open.
-    /// @param extensionOnly True if the reader shall only try the format hinted by the file extension,
-    /// false to check every known format starting with the one hinted at by the extension.
-    Reader(std::filesystem::path const path, bool extensionOnly) noexcept;
+    /// @param mode The extension handling mode of the reader.
+    Reader(std::filesystem::path const path, ExtensionMode mode = ExtensionMode::lenient) noexcept;
 
     /// @brief Explicitly deleted to prevent copy construction.
     Reader(Reader const &other) noexcept = delete;
@@ -41,9 +50,8 @@ public:
     /// @brief Resets this AutoFile::Reader.
     ///
     /// @param path The path of the file to open.
-    /// @param extensionOnly True if the reader shall only try the format hinted by the file extension,
-    /// false to check every known format starting with the one hinted at by the extension.
-    void reset(std::filesystem::path const path, bool extensionOnly) noexcept;
+    /// @param mode The extension handling mode of the reader.
+    void reset(std::filesystem::path const path, ExtensionMode mode = ExtensionMode::lenient) noexcept;
 
     /// @copydoc IImageReader::imagePresent
     bool imagePresent() const noexcept override;
@@ -61,11 +69,23 @@ public:
     void deinit() noexcept override;
 
 private:
+    /// @brief The size of the _innerReaderBuffer.
+    static constexpr size_t InnerReaderBufferSize{600U};
+
+    /// @brief Deinitializes the inner reader.
+    void deinitInnerReader() noexcept;
+
     /// @brief The path of the file to open.
     std::filesystem::path _path{};
 
-    /// @brief True if the reader shall only check the format hinted at by the file extension.
-    bool _extensionOnly{};
+    /// @brief The extension handling mode of the reader.
+    ExtensionMode _mode{};
+
+    /// @brief Pointer to the inner reader.
+    IImageReader<BGRAPixel> *_innerReader{};
+
+    /// @brief Memory to store the inner reader in.
+    std::array<std::uint8_t, InnerReaderBufferSize> _innerReaderBuffer{};
 };
 
 } // namespace Terrahertz::AutoFile

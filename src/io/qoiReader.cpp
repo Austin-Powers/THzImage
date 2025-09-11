@@ -185,7 +185,8 @@ bool Reader::init() noexcept
     }
     if (header.magic != Header::MagicBytes)
     {
-        logMessage<LogLevel::Error, ReaderProject>("Given file is not a QOI file");
+        // This has trace log level as we might try the reader on not QOI file to check the format
+        logMessage<LogLevel::Trace, ReaderProject>("Given file is not a QOI file");
         return false;
     }
     if (header.width == 0)
