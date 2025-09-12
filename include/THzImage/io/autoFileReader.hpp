@@ -12,7 +12,7 @@ class Reader : public IImageReader<BGRAPixel>
 {
 public:
     /// @brief The size of the _innerReaderBuffer.
-    static constexpr size_t InnerReaderBufferSize{600U};
+    static constexpr size_t InnerReaderBufferSize{840U};
 
     /// @brief The extension handling mode of the reader.
     enum class ExtensionMode
@@ -85,7 +85,7 @@ private:
     IImageReader<BGRAPixel> *_innerReader{};
 
     /// @brief Memory to store the inner reader in.
-    std::array<std::uint8_t, 2000U> _innerReaderBuffer{};
+    std::array<std::uint8_t, InnerReaderBufferSize> _innerReaderBuffer{};
 };
 
 } // namespace Terrahertz::AutoFile
