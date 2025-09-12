@@ -1,8 +1,11 @@
 #include "THzImage/io/autoFileReader.hpp"
 
 #include "THzImage/common/image.hpp"
+#include "THzImage/io/bmpReader.hpp"
 #include "THzImage/io/bmpWriter.hpp"
+#include "THzImage/io/pngReader.hpp"
 #include "THzImage/io/pngWriter.hpp"
+#include "THzImage/io/qoiReader.hpp"
 #include "THzImage/io/qoiWriter.hpp"
 #include "THzImage/io/testImageGenerator.hpp"
 
@@ -20,6 +23,14 @@ struct IOAutoFileReader : public testing::Test
 
     BGRAImage testImage{};
 };
+
+TEST_F(IOAutoFileReader, CheckInnerBufferSizeSufficient)
+{
+    // This will be checked by static_asserts, but this test will tell the actual sizes
+    EXPECT_GE(AutoFile::Reader::InnerReaderBufferSize, sizeof(BMP::Reader));
+    EXPECT_GE(AutoFile::Reader::InnerReaderBufferSize, sizeof(PNG::Reader));
+    EXPECT_GE(AutoFile::Reader::InnerReaderBufferSize, sizeof(QOI::Reader));
+}
 
 TEST_F(IOAutoFileReader, DefaultConstruction)
 {

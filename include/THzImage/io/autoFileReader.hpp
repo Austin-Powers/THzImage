@@ -11,6 +11,9 @@ namespace Terrahertz::AutoFile {
 class Reader : public IImageReader<BGRAPixel>
 {
 public:
+    /// @brief The size of the _innerReaderBuffer.
+    static constexpr size_t InnerReaderBufferSize{600U};
+
     /// @brief The extension handling mode of the reader.
     enum class ExtensionMode
     {
@@ -69,9 +72,6 @@ public:
     void deinit() noexcept override;
 
 private:
-    /// @brief The size of the _innerReaderBuffer.
-    static constexpr size_t InnerReaderBufferSize{600U};
-
     /// @brief Deinitializes the inner reader.
     void deinitInnerReader() noexcept;
 
