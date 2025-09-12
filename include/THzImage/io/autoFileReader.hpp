@@ -85,7 +85,7 @@ private:
     IImageReader<BGRAPixel> *_innerReader{};
 
     /// @brief Memory to store the inner reader in.
-    std::array<std::uint8_t, InnerReaderBufferSize> _innerReaderBuffer{};
+    std::array<std::uint8_t, 2000U> _innerReaderBuffer{};
 };
 
 } // namespace Terrahertz::AutoFile

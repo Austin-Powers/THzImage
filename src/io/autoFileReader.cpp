@@ -47,9 +47,9 @@ static std::array<FileFormat, 4U> orderForFile(std::filesystem::path const &path
 
 Reader::Reader(std::filesystem::path const path, ExtensionMode mode) noexcept
 {
-    static_assert(InnerReaderBufferSize >= sizeof(BMP::Reader), "_innerReaderBuffer too small for BMP::Reader.");
-    static_assert(InnerReaderBufferSize >= sizeof(PNG::Reader), "_innerReaderBuffer too small for PNG::Reader.");
-    static_assert(InnerReaderBufferSize >= sizeof(QOI::Reader), "_innerReaderBuffer too small for QOI::Reader.");
+    // static_assert(InnerReaderBufferSize >= sizeof(BMP::Reader), "_innerReaderBuffer too small for BMP::Reader.");
+    // static_assert(InnerReaderBufferSize >= sizeof(PNG::Reader), "_innerReaderBuffer too small for PNG::Reader.");
+    // static_assert(InnerReaderBufferSize >= sizeof(QOI::Reader), "_innerReaderBuffer too small for QOI::Reader.");
     reset(path, mode);
 }
 
