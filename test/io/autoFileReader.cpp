@@ -130,4 +130,22 @@ TEST_F(IOAutoFileReader, Reset)
     EXPECT_FALSE(sut.imagePresent());
 }
 
+TEST_F(IOAutoFileReader, FileWithNoExtension)
+{
+    QOI::Writer qoiWriter{"autoNoExtension"};
+    ASSERT_TRUE(testImage.writeTo(&qoiWriter));
+
+    BGRAImage        image{};
+    AutoFile::Reader sut{"autoNoExtension", AutoFile::Reader::ExtensionMode::strict};
+    EXPECT_TRUE(sut.imagePresent());
+    EXPECT_FALSE(sut.readInto(image));
+    EXPECT_FALSE(sut.imagePresent());
+
+    sut.reset("autoNoExtension");
+    EXPECT_TRUE(sut.imagePresent());
+    EXPECT_TRUE(sut.readInto(image));
+    EXPECT_FALSE(sut.imagePresent());
+    EXPECT_EQ(testImage, image);
+}
+
 } // namespace Terrahertz::UnitTests
