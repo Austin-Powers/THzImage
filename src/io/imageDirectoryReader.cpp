@@ -21,21 +21,28 @@ bool Reader::imagePresent() const noexcept { return !(_iterator == std::filesyst
 
 bool Reader::init() noexcept
 {
-    // while (imagePresent())
+    for (; imagePresent(); ++_iterator)
     {
-        // iterate till file found
-        auto const file = *_iterator;
-        // create reader
-        // call init on reader
+        auto const &file = *_iterator;
+        if (file.is_regular_file())
+        {
+            _pathOfLastImage = file.path();
+            _innerReader.reset(_pathOfLastImage);
+            if (_innerReader.init())
+            {
+                ++_iterator;
+                return true;
+            }
+        }
     }
     return false;
 }
 
-Rectangle Reader::dimensions() const noexcept { return {}; }
+Rectangle Reader::dimensions() const noexcept { return _innerReader.dimensions(); }
 
-bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept { return false; }
+bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept { return _innerReader.read(buffer); }
 
-void Reader::deinit() noexcept {}
+void Reader::deinit() noexcept { _innerReader.deinit(); }
 
 std::filesystem::path const &Reader::pathOfLastImage() const noexcept { return _pathOfLastImage; }
 

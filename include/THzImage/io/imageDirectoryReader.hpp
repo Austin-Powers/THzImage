@@ -2,9 +2,8 @@
 #define THZ_IMAGE_IO_IMAGEDIRECTORYREADER_HPP
 
 #include "THzImage/common/iImageReader.hpp"
+#include "THzImage/io/autoFileReader.hpp"
 
-#include <array>
-#include <cstdint>
 #include <filesystem>
 
 namespace Terrahertz::ImageDirectory {
@@ -27,7 +26,7 @@ public:
         /// @remark Files failing to open will be skipped.
         extensionBased,
 
-        /// @brief Only files with extensions of supproted formats will be opened (BMP, PNG. QOI).
+        /// @brief Only files with extensions of supported formats will be opened (BMP, PNG. QOI).
         /// @remark Only the format corresponding to the extension will be tried.
         /// @remark Loading will stop on first fail.
         strictExtensionBased
@@ -39,7 +38,7 @@ public:
     ///
     /// @param directorypath The path of the directory to read files from.
     /// @param mode The mode the reader is operating in.
-    Reader(std::filesystem::path const directorypath, Mode const mode = Mode::strictExtensionBased) noexcept;
+    Reader(std::filesystem::path const directorypath, Mode const mode = Mode::automatic) noexcept;
 
     /// @brief Explicitly deleted to prevent copy construction.
     Reader(Reader const &other) noexcept = delete;
@@ -86,10 +85,8 @@ private:
     /// @brief The path of the last image loaded by the reader.
     std::filesystem::path _pathOfLastImage{};
 
-    IImageReader *_innerReader{};
-
-    // Find out how much the differnt readers use
-    std::array<std::uint8_t, 40U> _innerReaderBuffer{};
+    /// @brief The AutoFile::Reader handling opening the files with the correct format.
+    AutoFile::Reader _innerReader{};
 };
 
 } // namespace Terrahertz::ImageDirectory

@@ -6,6 +6,7 @@
 #include "THzImage/io/qoiWriter.hpp"
 #include "THzImage/io/testImageGenerator.hpp"
 
+#include <array>
 #include <filesystem>
 #include <gtest/gtest.h>
 
@@ -13,48 +14,39 @@ namespace Terrahertz::UnitTests {
 
 struct IOImageDirectoryReader : public testing::Test
 {
-    static constexpr char const *testDirectory() noexcept { return "directoryReaderTest"; }
-
-    static constexpr char const *bmpFilename() noexcept { return "bmpImage.bmp"; }
-
-    static constexpr uint8_t bmpBlueValue = 0xFFU;
-
-    static constexpr char const *pngFilename() noexcept { return "pngImage.png"; }
-
-    static constexpr uint8_t pngBlueValue = 0x55U;
-
-    static constexpr char const *qoiFilename() noexcept { return "qoiImage.qoi"; }
-
-    static constexpr uint8_t qoiBlueValue = 0x11U;
-
-    static std::filesystem::path createPathFor(char const *const filename) noexcept
-    {
-        std::filesystem::path path{testDirectory()};
-        path /= std::filesystem::path{filename};
-        return path;
-    }
-
     static void SetUpTestSuite()
     {
-        BGRAImage testImage{};
-        std::filesystem::create_directory(testDirectory());
+        BGRAImage          image{};
         TestImageGenerator generator{Rectangle{16U, 16U}};
-        (void)generator.readInto(testImage);
 
-        testImage[0U].blue = bmpBlueValue;
-        BMP::Writer bmpWriter{createPathFor(bmpFilename())};
-        (void)testImage.writeTo(&bmpWriter);
-        testImage[0U].blue = pngBlueValue;
-        PNG::Writer pngWriter{createPathFor(pngFilename())};
-        (void)testImage.writeTo(&pngWriter);
-        testImage[0U].blue = qoiBlueValue;
-        QOI::Writer qoiWriter{createPathFor(qoiFilename())};
-        (void)testImage.writeTo(&qoiWriter);
+        std::filesystem::create_directories("directoryReaderTest/subDir");
+        // directoryReaderTest/subDir/containsImage
+        PNG::Writer writer0{"directoryReaderTest/actuallyQoi.png"};
+        image[0U].blue = 0x0FU;
+        (void)writer0.writeContentOf(image);
+        // directoryReaderTest/subDir/noImage.txt
+
+        // directoryReaderTest/subDir/testQoi.qoi
+        PNG::Writer writer1{"directoryReaderTest/subDir/testQoi.qoi"};
+        image[0U].blue = 0x1FU;
+        (void)writer1.writeContentOf(image);
+        // directoryReaderTest/actuallyQoi.png
+        PNG::Writer writer2{"directoryReaderTest/actuallyQoi.png"};
+        image[0U].blue = 0x2FU;
+        (void)writer2.writeContentOf(image);
+        // directoryReaderTest/testBmp.bmp
+        BMP::Writer writer3{"directoryReaderTest/testBmp.bmp"};
+        image[0U].blue = 0x3FU;
+        (void)writer3.writeContentOf(image);
+        // directoryReaderTest/testPng.png
+        PNG::Writer writer4{"directoryReaderTest/testPng.png"};
+        image[0U].blue = 0x4FU;
+        (void)writer4.writeContentOf(image);
     };
 
-    static void TearDownTestSuite() { std::filesystem::remove_all(testDirectory()); }
+    static void TearDownTestSuite() { std::filesystem::remove_all("directoryReaderTest"); }
 };
-/*
+
 TEST_F(IOImageDirectoryReader, EmptyFolder)
 {
     std::string const directoryName = "noImagesHere";
@@ -69,25 +61,10 @@ TEST_F(IOImageDirectoryReader, EmptyFolder)
     std::filesystem::remove_all(directoryName);
 }
 
-TEST_F(IOImageDirectoryReader, StrictExtensionBasedMode)
-{
-    BGRAImage image{};
-
-    ImageDirectory::Reader sut{testDirectory(), ImageDirectory::Reader::Mode::strictExtensionBased};
-
-    // read BMP
-    EXPECT_TRUE(sut.imagePresent());
-    EXPECT_TRUE(sut.readInto(image));
-
-    // read PNG
-    // read QOI
-    // fail
-}
+TEST_F(IOImageDirectoryReader, StrictExtensionBasedMode) {}
 
 TEST_F(IOImageDirectoryReader, ExtensionBasedMode) {}
 
 TEST_F(IOImageDirectoryReader, AutomaticMode) {}
 
-TEST_F(IOImageDirectoryReader, HandlingSubDirectories) {}
-*/
 } // namespace Terrahertz::UnitTests
