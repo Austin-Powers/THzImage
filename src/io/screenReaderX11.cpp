@@ -1,3 +1,49 @@
+#ifdef _X11
+
+#include "THzImage/io/screenReader.hpp"
+
+#include <cstdint>
+
+namespace Terrahertz::Screen [
+
+/// @brief Name provider for the THzImage.IO.ScreenReader class.
+struct ReaderProject
+{
+    static constexpr char const *name() noexcept { return "THzImage.IO.ScreenReader"; }
+};
+
+Rectangle Reader::getScreenDimensions() noexcept
+{
+    return Rectangle{};
+}
+
+struct Reader::Impl
+{
+    Impl(Rectangle
+}
+
+Reader::Reader() noexcept { _impl.init(getScreenDimensions()); }
+
+Reader::Reader(Rectangle const &area) noexcept { _impl.init(area); }
+
+Reader::~Reader() noexcept {}
+
+bool Reader::setArea(Rectangle const &area) noexcept { return _impl->setArea(area); }
+
+bool Reader::imagePresent() const noexcept { return true; }
+
+bool Reader::init() noexcept { return true; }
+
+Rectangle Reader::dimensions() const noexcept { return _impl->area(); }
+
+bool Reader::read(gsl::span<BGRAPixel> buffer) noexcept { return _impl->read(buffer); }
+
+void Reader::deinit() noexcept {}
+
+} // namespace Terrahertz::Screen
+
+#endif // _X11
+
 // .h
 #ifndef __SCR_RECORD_H__
 #define __SCR_RECORD_H__

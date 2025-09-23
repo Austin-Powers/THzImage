@@ -59,7 +59,7 @@ TEST_F(IOTimedReader, DelayReadingAsExpected)
     Rectangle const    dimensions{2U, 2U};
     BGRAImage          referenceImage{};
     TestImageGenerator generator{dimensions};
-    EXPECT_TRUE(referenceImage.read(generator));
+    EXPECT_TRUE(referenceImage.readFrom(generator));
 
     BGRAImage  image{};
     TestReader sut{interval, dimensions};
@@ -69,7 +69,7 @@ TEST_F(IOTimedReader, DelayReadingAsExpected)
     auto       durations   = 0LL;
     for (auto i = 1LL; i <= targetCount; ++i)
     {
-        EXPECT_TRUE(image.read(sut));
+        EXPECT_TRUE(image.readFrom(sut));
         auto const readTime = std::chrono::steady_clock::now();
         auto const duration = std::chrono::duration_cast<millisecs>(readTime - startTime);
         durations += (duration.count() / i);
@@ -102,7 +102,7 @@ TEST_F(IOTimedReader, ReaderDelaysToFixTimePoints)
     for (auto i = 1LL; i <= targetCount; ++i)
     {
         std::this_thread::sleep_for(sleepInterval);
-        EXPECT_TRUE(image.read(sut));
+        EXPECT_TRUE(image.readFrom(sut));
         auto const readTime = std::chrono::steady_clock::now();
         auto const duration = std::chrono::duration_cast<millisecs>(readTime - startTime);
         durations += (duration.count() / i);
