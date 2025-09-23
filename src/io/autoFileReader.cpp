@@ -62,6 +62,8 @@ void Reader::reset(std::filesystem::path const path, ExtensionMode mode) noexcep
     _mode = mode;
 }
 
+bool Reader::extensionSupported() const noexcept { return orderForFile(_path)[0U] != FileFormat::Unknown; }
+
 bool Reader::imagePresent() const noexcept { return _path != std::filesystem::path{}; }
 
 bool Reader::init() noexcept

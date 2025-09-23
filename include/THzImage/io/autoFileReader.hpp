@@ -56,6 +56,11 @@ public:
     /// @param mode The extension handling mode of the reader.
     void reset(std::filesystem::path const path, ExtensionMode mode = ExtensionMode::lenient) noexcept;
 
+    /// @brief Checks if the extension of the current file belongs to a supported type.
+    ///
+    /// @return True if the extension is supported, false otherwise.
+    bool extensionSupported() const noexcept;
+
     /// @copydoc IImageReader::imagePresent
     bool imagePresent() const noexcept override;
 

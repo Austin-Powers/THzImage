@@ -148,4 +148,20 @@ TEST_F(IOAutoFileReader, FileWithNoExtension)
     EXPECT_EQ(testImage, image);
 }
 
+TEST_F(IOAutoFileReader, ExtensionSupported)
+{
+    AutoFile::Reader sut{"noExtension"};
+    EXPECT_FALSE(sut.extensionSupported());
+    sut.reset("image.jpeg");
+    EXPECT_FALSE(sut.extensionSupported());
+    sut.reset("notImage.md");
+    EXPECT_FALSE(sut.extensionSupported());
+    sut.reset("image.bmp");
+    EXPECT_TRUE(sut.extensionSupported());
+    sut.reset("image.png");
+    EXPECT_TRUE(sut.extensionSupported());
+    sut.reset("image.qoi");
+    EXPECT_TRUE(sut.extensionSupported());
+}
+
 } // namespace Terrahertz::UnitTests

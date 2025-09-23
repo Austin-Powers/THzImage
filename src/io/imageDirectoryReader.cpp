@@ -12,7 +12,9 @@ struct ReaderProject
 
 Reader::Reader(std::filesystem::path const directorypath, Reader::Mode const mode) noexcept : _mode{mode}
 {
-    _iterator = std::filesystem::recursive_directory_iterator{directorypath};
+    using ExtensionMode = AutoFile::Reader::ExtensionMode;
+    _iterator           = std::filesystem::recursive_directory_iterator{directorypath};
+    _innerReaderMode    = (_mode == Mode::automatic) ? ExtensionMode::lenient : ExtensionMode::strict;
 }
 
 Reader::~Reader() noexcept { deinit(); }
@@ -27,11 +29,20 @@ bool Reader::init() noexcept
         if (file.is_regular_file())
         {
             _pathOfLastImage = file.path();
-            _innerReader.reset(_pathOfLastImage);
+            _innerReader.reset(_pathOfLastImage, _innerReaderMode);
+
             if (_innerReader.init())
             {
                 ++_iterator;
                 return true;
+            }
+            else if (_mode == Mode::strictExtensionBased)
+            {
+                if (_innerReader.extensionSupported())
+                {
+                    ++_iterator;
+                    return false;
+                }
             }
         }
     }

@@ -28,7 +28,7 @@ public:
 
         /// @brief Only files with extensions of supported formats will be opened (BMP, PNG. QOI).
         /// @remark Only the format corresponding to the extension will be tried.
-        /// @remark Loading will stop on first fail.
+        /// @remark Failures will be propagated.
         strictExtensionBased
     };
 
@@ -87,6 +87,9 @@ private:
 
     /// @brief The AutoFile::Reader handling opening the files with the correct format.
     AutoFile::Reader _innerReader{};
+
+    /// @brief The mode of _innerReader.
+    AutoFile::Reader::ExtensionMode _innerReaderMode{};
 };
 
 } // namespace Terrahertz::ImageDirectory
