@@ -129,32 +129,34 @@ TEST_F(IOImageDirectoryReader, ExtensionBasedMode)
     std::uint8_t imageCounter = 0U;
     while (sut.imagePresent())
     {
-        EXPECT_TRUE(sut.readInto(image));
-        switch (image[0U].blue)
+        if (sut.readInto(image))
         {
-        case 0x0FU:
-            ADD_FAILURE() << "Image loaded that has no extension";
-            ++imageCounter;
-            break;
-        case 0x1FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/testQoi.qoi"});
-            ++imageCounter;
-            break;
-        case 0x2FU:
-            ADD_FAILURE() << "Image loaded with wrong extension";
-            ++imageCounter;
-            break;
-        case 0x3FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testBmp.bmp"});
-            ++imageCounter;
-            break;
-        case 0x4FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testPng.png"});
-            ++imageCounter;
-            break;
-        default:
-            ADD_FAILURE() << "Unknown file loaded";
-            break;
+            switch (image[0U].blue)
+            {
+            case 0x0FU:
+                ADD_FAILURE() << "Image loaded that has no extension";
+                ++imageCounter;
+                break;
+            case 0x1FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/testQoi.qoi"});
+                ++imageCounter;
+                break;
+            case 0x2FU:
+                ADD_FAILURE() << "Image loaded with wrong extension";
+                ++imageCounter;
+                break;
+            case 0x3FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testBmp.bmp"});
+                ++imageCounter;
+                break;
+            case 0x4FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testPng.png"});
+                ++imageCounter;
+                break;
+            default:
+                ADD_FAILURE() << "Unknown file loaded";
+                break;
+            }
         }
     }
     EXPECT_EQ(imageCounter, 3U);
@@ -169,32 +171,34 @@ TEST_F(IOImageDirectoryReader, AutomaticMode)
     std::uint8_t imageCounter = 0U;
     while (sut.imagePresent())
     {
-        EXPECT_TRUE(sut.readInto(image));
-        switch (image[0U].blue)
+        if (sut.readInto(image))
         {
-        case 0x0FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/containsImage"});
-            ++imageCounter;
-            break;
-        case 0x1FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/testQoi.qoi"});
-            ++imageCounter;
-            break;
-        case 0x2FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/actuallyQoi.png"});
-            ++imageCounter;
-            break;
-        case 0x3FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testBmp.bmp"});
-            ++imageCounter;
-            break;
-        case 0x4FU:
-            EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testPng.png"});
-            ++imageCounter;
-            break;
-        default:
-            ADD_FAILURE() << "Unknown file loaded";
-            break;
+            switch (image[0U].blue)
+            {
+            case 0x0FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/containsImage"});
+                ++imageCounter;
+                break;
+            case 0x1FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/subDir/testQoi.qoi"});
+                ++imageCounter;
+                break;
+            case 0x2FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/actuallyQoi.png"});
+                ++imageCounter;
+                break;
+            case 0x3FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testBmp.bmp"});
+                ++imageCounter;
+                break;
+            case 0x4FU:
+                EXPECT_EQ(sut.pathOfLastImage(), std::filesystem::path{"directoryReaderTest/testPng.png"});
+                ++imageCounter;
+                break;
+            default:
+                ADD_FAILURE() << "Unknown file loaded";
+                break;
+            }
         }
     }
     EXPECT_EQ(imageCounter, 5U);
