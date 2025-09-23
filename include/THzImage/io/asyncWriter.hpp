@@ -73,7 +73,7 @@ private:
                 lock, std::chrono::milliseconds{10U}, [this]() { return (_image != nullptr) || _shutdown; });
             if (_image != nullptr)
             {
-                if (!_image->write(&_writer))
+                if (!_image->writeTo(&_writer))
                 {
                     logMessage<LogLevel::Error, Project>("Unable to write image");
                 }
