@@ -18,7 +18,7 @@ bool ScreenInputNode::next() noexcept { return _buffer.next(); }
 
 ScreenInputNode::ImageType &ScreenInputNode::operator[](size_t const index) noexcept
 {
-    if (index < _buffer.count())
+    if (index < _buffer.slots())
     {
         return _buffer[index];
     }

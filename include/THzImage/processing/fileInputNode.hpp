@@ -25,7 +25,7 @@ public:
     /// @param mode The mode the node is operating in.
     FileInputNode(size_t const                 bufferSize,
                   std::filesystem::path const &path,
-                  Mode const                   mode = Mode::strictExtensionBased) noexcept;
+                  Mode const                   mode = Mode::automatic) noexcept;
 
     /// @brief Returns the path of the image at the given index in the buffer.
     ///
@@ -53,6 +53,9 @@ private:
 
     /// @brief The buffer used by the node.
     ImageRingBuffer<BGRAPixel> _buffer;
+
+    /// @brief The mapping of the paths newest to oldest entry.
+    std::vector<std::filesystem::path *> _pathMap{};
 
     /// @brief Storage for the file paths corresponding to the images in the buffer.
     std::vector<std::filesystem::path> _paths{};
