@@ -39,6 +39,9 @@ public:
     /// @copydoc INode::operator[]
     [[nodiscard]] ImageType &operator[](size_t const index) noexcept override;
 
+    /// @copydoc INode::slots
+    [[nodiscard]] size_t slots() const noexcept;
+
 private:
     /// @brief The image returned if the operator[] gets an index out of range.
     ImageType _emptyImage{};

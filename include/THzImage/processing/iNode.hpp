@@ -28,6 +28,11 @@ public:
     /// @return The image for the given index, empty if indes is out of range.
     /// @remark Returns an empty image if index is out of range.
     [[nodiscard]] virtual ImageType &operator[](size_t const index) noexcept = 0;
+
+    /// @brief Returns the number of slots of the node.
+    ///
+    /// @return The number of slots of the node.
+    [[nodiscard]] virtual size_t slots() const noexcept = 0;
 };
 
 } // namespace Terrahertz::ImageProcessing::Internal
