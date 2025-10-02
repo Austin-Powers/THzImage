@@ -26,6 +26,7 @@ add_executable(${PROJECTNAME}
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
 	processing/fileInputNode.cpp	
+	processing/testInputNode.cpp
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformerBase.cpp
 	transformation/mockTransformer.hpp

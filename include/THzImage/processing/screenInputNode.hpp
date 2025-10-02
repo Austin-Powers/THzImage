@@ -22,6 +22,21 @@ public:
     /// @remarks The node starts out making screenshots fullscreen, use setAreaTo() to change the area.
     ScreenInputNode(size_t const bufferSize) noexcept;
 
+    /// @brief Explicitly deleted to prevent copy construction.
+    ScreenInputNode(ScreenInputNode const &) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move construction.
+    ScreenInputNode(ScreenInputNode &&other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent copy assignment.
+    ScreenInputNode &operator=(ScreenInputNode const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move assignment.
+    ScreenInputNode &operator=(ScreenInputNode &&other) noexcept = delete;
+
+    /// @brief Finalizes this instance, performing a deinit.
+    ~ScreenInputNode() noexcept = default;
+
     /// @brief Sets the area screenshots are made from, to fullscreen.
     void setAreaToFullscreen() noexcept;
 
@@ -40,7 +55,7 @@ public:
     [[nodiscard]] ImageType &operator[](size_t const index) noexcept override;
 
     /// @copydoc INode::slots
-    [[nodiscard]] size_t slots() const noexcept;
+    [[nodiscard]] size_t slots() const noexcept override;
 
 private:
     /// @brief The image returned if the operator[] gets an index out of range.

@@ -27,6 +27,21 @@ public:
                   std::filesystem::path const &path,
                   Mode const                   mode = Mode::automatic) noexcept;
 
+    /// @brief Explicitly deleted to prevent copy construction.
+    FileInputNode(FileInputNode const &) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move construction.
+    FileInputNode(FileInputNode &&other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent copy assignment.
+    FileInputNode &operator=(FileInputNode const &other) noexcept = delete;
+
+    /// @brief Explicitly deleted to prevent move assignment.
+    FileInputNode &operator=(FileInputNode &&other) noexcept = delete;
+
+    /// @brief Finalizes this instance, performing a deinit.
+    ~FileInputNode() noexcept = default;
+
     /// @brief Returns the path of the image at the given index in the buffer.
     ///
     /// @param index The index of the image.
@@ -42,7 +57,7 @@ public:
     [[nodiscard]] ImageType &operator[](size_t const index) noexcept override;
 
     /// @copydoc INode::slots
-    [[nodiscard]] size_t slots() const noexcept;
+    [[nodiscard]] size_t slots() const noexcept override;
 
 private:
     /// @brief The image returned if the operator[] gets an index out of range.

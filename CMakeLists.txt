@@ -57,6 +57,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/qoiCommons.hpp
 	src/processing/fileInputNode.cpp
 	src/processing/screenInputNode.cpp
+	src/processing/testInputNode.cpp
 
 	include/THzImage/analysis/basicImageMetrics.hpp
 	include/THzImage/common/colorspaceconverter.hpp
@@ -88,6 +89,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/processing/iNode.hpp
 	include/THzImage/processing/fileInputNode.hpp
 	include/THzImage/processing/screenInputNode.hpp
+	include/THzImage/processing/testInputNode.hpp
 	include/THzImage/transformation/borderTransformer.hpp
 	include/THzImage/transformation/convolutionTransformerBase.hpp
 	include/THzImage/transformation/nullTransformer.hpp
