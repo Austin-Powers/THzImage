@@ -2,17 +2,12 @@
 #define THZ_IMAGE_COMMON_PIXEL_HPP
 
 #include <algorithm>
+#include <concepts>
 #include <cstddef>
 #include <cstdint>
 #include <type_traits>
 
 namespace Terrahertz {
-
-// Predeclare the other pixel type
-struct HSVAPixel;
-
-// Predeclare the other pixel type
-struct MiniHSVPixel;
 
 /// @brief Struct for a blue green read alpha pixel using 8 bits per channel.
 struct BGRAPixel
@@ -45,31 +40,11 @@ struct BGRAPixel
     /// @brief Explicitly default the constructor so all special methods are defined.
     constexpr BGRAPixel(BGRAPixel const &) noexcept = default;
 
-    /// @brief Copy-Constructor to convert from a HSVAPixel.
-    ///
-    /// @param other The pixel to convert.
-    BGRAPixel(HSVAPixel const &other) noexcept;
-
-    /// @brief Copy-Constructor to convert from a MiniHSVPixel.
-    ///
-    /// @param other The pixel to convert.
-    BGRAPixel(MiniHSVPixel const &other) noexcept;
-
     /// @brief Explicitly default the constructor so all special methods are defined.
     constexpr BGRAPixel(BGRAPixel &&) noexcept = default;
 
     /// @brief Explicitly default the operator so all special methods are defined.
     BGRAPixel &operator=(BGRAPixel const &) noexcept = default;
-
-    /// @brief Assignment operator to convert from a HSVAPixel.
-    ///
-    /// @param other The pixel to convert.
-    BGRAPixel &operator=(HSVAPixel const &other) noexcept;
-
-    /// @brief Assignment operator to convert from a MiniHSVPixel.
-    ///
-    /// @param other The pixel to convert.
-    BGRAPixel &operator=(MiniHSVPixel const &other) noexcept;
 
     /// @brief Explicitly default the operator so all special methods are defined.
     BGRAPixel &operator=(BGRAPixel &&) noexcept = default;
@@ -314,11 +289,6 @@ struct HSVAPixel
     /// @param other The pixel to convert.
     HSVAPixel(BGRAPixel const &other) noexcept;
 
-    /// @brief Copy-Constructor to convert from a MiniHSVPixel.
-    ///
-    /// @param other the pixel to convert.
-    HSVAPixel(MiniHSVPixel const &other) noexcept;
-
     /// @brief Explicitly default the constructor so all special methods are defined.
     HSVAPixel(HSVAPixel &&) noexcept = default;
 
@@ -330,16 +300,14 @@ struct HSVAPixel
     /// @param other The pixel to convert.
     HSVAPixel &operator=(BGRAPixel const &other) noexcept;
 
-    /// @brief Assignment operator to convert from a MiniHSVPixel.
-    ///
-    /// @param other The pixel to convert.
-    HSVAPixel &operator=(MiniHSVPixel const &other) noexcept;
-
     /// @brief Explicitly default the operator so all special methods are defined.
     HSVAPixel &operator=(HSVAPixel &&) noexcept = default;
 
     /// @brief Explicitly default the destructor so all special methods are defined.
     ~HSVAPixel() noexcept = default;
+
+    /// @brief Cast operator to convert this instance into a BGRAPixel.
+    operator BGRAPixel() const noexcept;
 
     /// @brief Checks if another pixel equals this one.
     ///
@@ -426,6 +394,12 @@ struct MiniHSVPixel
 
     /// @brief Explicitly default the destructor so all special methods are defined.
     ~MiniHSVPixel() noexcept = default;
+
+    /// @brief Cast operator to convert this instance into a BGRAPixel.
+    operator BGRAPixel() const noexcept;
+
+    /// @brief Cast operator to convert this instance into a HSVAPixel.
+    operator HSVAPixel() const noexcept;
 };
 
 /// @brief Performes a linear interpolation between the given color values.
@@ -476,6 +450,11 @@ struct is_pixel_type<BGRAPixel32> : std::true_type
 template <>
 struct is_pixel_type<HSVAPixel> : std::true_type
 {};
+
+/// @brief Concept for a pixel type.
+template <typename T>
+concept Pixel = std::default_initializable<T> && std::copyable<T> && std::movable<T> &&
+                std::convertible_to<T, BGRAPixel> && std::convertible_to<BGRAPixel, T>;
 
 } // namespace Terrahertz
 

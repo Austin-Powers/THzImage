@@ -8,24 +8,6 @@
 
 namespace Terrahertz {
 
-BGRAPixel::BGRAPixel(HSVAPixel const &other) noexcept { *this = other; }
-
-BGRAPixel::BGRAPixel(MiniHSVPixel const &other) noexcept { *this = other; }
-
-BGRAPixel &BGRAPixel::operator=(HSVAPixel const &other) noexcept
-{
-    alpha = other.alpha;
-    HSVtoBGR(other.hue, other.saturation, other.value, blue, green, red);
-    return *this;
-}
-
-BGRAPixel &BGRAPixel::operator=(MiniHSVPixel const &other) noexcept
-{
-    alpha = 0xFFU;
-    MiniHSVtoBGR(other.content, blue, green, red);
-    return *this;
-}
-
 bool BGRAPixel::operator==(BGRAPixel const &other) const noexcept
 {
     return blue == other.blue && green == other.green && red == other.red && alpha == other.alpha;
@@ -78,8 +60,6 @@ BGRAPixel BGRAPixel::diffAbs(BGRAPixel const &other) const noexcept
 
 HSVAPixel::HSVAPixel(BGRAPixel const &other) noexcept { *this = other; }
 
-HSVAPixel::HSVAPixel(MiniHSVPixel const &other) noexcept { *this = other; }
-
 HSVAPixel &HSVAPixel::operator=(BGRAPixel const &other) noexcept
 {
     alpha = other.alpha;
@@ -87,11 +67,12 @@ HSVAPixel &HSVAPixel::operator=(BGRAPixel const &other) noexcept
     return *this;
 }
 
-HSVAPixel &HSVAPixel::operator=(MiniHSVPixel const &other) noexcept
+HSVAPixel::operator Terrahertz::BGRAPixel() const noexcept
 {
-    alpha = 0xFF;
-    MiniHSVtoHSV(other.content, hue, saturation, value);
-    return *this;
+    BGRAPixel bgra{};
+    HSVtoBGR(hue, saturation, value, bgra.blue, bgra.green, bgra.red);
+    bgra.alpha = alpha;
+    return bgra;
 }
 
 bool HSVAPixel::operator==(HSVAPixel const &other) const noexcept
@@ -121,6 +102,20 @@ MiniHSVPixel &MiniHSVPixel::operator=(HSVAPixel const &other) noexcept
 {
     content = HSVtoMiniHSV(other.hue, other.saturation, other.value);
     return *this;
+}
+
+MiniHSVPixel::operator Terrahertz::BGRAPixel() const noexcept
+{
+    BGRAPixel bgra{};
+    MiniHSVtoBGR(content, bgra.blue, bgra.green, bgra.red);
+    return bgra;
+}
+
+MiniHSVPixel::operator Terrahertz::HSVAPixel() const noexcept
+{
+    HSVAPixel hsva{};
+    MiniHSVtoHSV(content, hsva.hue, hsva.saturation, hsva.value);
+    return hsva;
 }
 
 BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept
