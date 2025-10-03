@@ -11,14 +11,12 @@ namespace Terrahertz {
 /// @brief Interface for all classes performing transformations on image data.
 ///
 /// @tparam TPixelType The pixel type used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class IImageTransformer
 {
 public:
     /// @brief Shortcut to the used pixel type.
     using MyPixelType = std::remove_cv_t<TPixelType>;
-
-    static_assert(is_pixel_type<MyPixelType>::value, "TPixelType is not a known pixel type");
 
     /// @brief Default the destructor to make it virtual.
     virtual ~IImageTransformer() noexcept {}

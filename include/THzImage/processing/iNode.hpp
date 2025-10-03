@@ -8,7 +8,7 @@ namespace Terrahertz::ImageProcessing::Internal {
 /// @brief The interface used by all image processing nodes.
 ///
 /// @tparam TPixelType The type of pixel used by the images returned by the node.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class INode
 {
 public:

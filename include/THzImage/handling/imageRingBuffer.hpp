@@ -16,7 +16,7 @@ namespace Terrahertz {
 /// @brief A Ringbuffer for image handling.
 ///
 /// @tparam TPixelType The type of pixel used by the image.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class ImageRingBuffer
 {
 public:

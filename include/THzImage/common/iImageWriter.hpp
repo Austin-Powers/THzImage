@@ -12,18 +12,16 @@ namespace Terrahertz {
 
 /// @brief Forward declaration of Image for convenience function writeContentOf.
 /// @tparam TPixelType The type of pixel used by the image.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class Image;
 
 /// @brief Interface for all classes writing images.
 ///
 /// @tparam TPixelType The pixel type of the writer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class IImageWriter
 {
 public:
-    static_assert(is_pixel_type<TPixelType>::value, "TPixelType is not a known pixel type");
-
     /// @brief Shortcut to the used pixel type.
     using PixelType = TPixelType;
 

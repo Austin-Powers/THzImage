@@ -12,7 +12,7 @@ namespace Terrahertz {
 /// asynchronously.
 ///
 /// @tparam TPixelType The type of pixel used by the image.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class AsyncImageRingBuffer : public ImageRingBuffer<TPixelType>
 {
 public:

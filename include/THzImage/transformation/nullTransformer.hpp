@@ -10,7 +10,7 @@ namespace Terrahertz {
 /// without the need for code in these classes handling default construction.
 ///
 /// @tparam TPixelType The pixel type used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class NullTransformer : public IImageTransformer<TPixelType>
 {
 public:

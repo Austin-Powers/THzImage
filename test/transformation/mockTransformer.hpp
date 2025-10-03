@@ -13,7 +13,7 @@ namespace Terrahertz::UnitTests {
 /// This way of mocking offers better customization through inheritance as well as less console spamming than gmock.
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 struct MockTransformer : public IImageTransformer<TPixelType>
 {
     /// @copydoc IImageTransformer::dimensions

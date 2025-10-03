@@ -23,7 +23,7 @@ concept PixelTransformation = requires(TType t, TPixelType pixel)
 ///
 /// @tparam TPixelType The type of pixel transformed.
 /// @tparam TTransformation The type of the transformation class.
-template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
+template <Pixel TPixelType, PixelTransformation<TPixelType> TTransformation>
 class PixelTransformer : public IImageTransformer<TPixelType>
 {
 public:
@@ -69,7 +69,7 @@ private:
 /// @tparam TTransformation The type of transformation.
 /// @param transformation The transformation instance.
 /// @return The created transformer.
-template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
+template <Pixel TPixelType, PixelTransformation<TPixelType> TTransformation>
 auto createPixelTransformer(IImageTransformer<TPixelType> &wrapped, TTransformation transformation) noexcept
     -> PixelTransformer<TPixelType, TTransformation>
 {
@@ -82,7 +82,7 @@ auto createPixelTransformer(IImageTransformer<TPixelType> &wrapped, TTransformat
 /// @tparam TPixelType The pixel type used by the transformer.
 /// @tparam TTransformation The type of transformation.
 /// @return The created transformer.
-template <typename TPixelType, PixelTransformation<TPixelType> TTransformation>
+template <Pixel TPixelType, PixelTransformation<TPixelType> TTransformation>
 auto createPixelTransformer(IImageTransformer<TPixelType> &wrapped) noexcept
     -> PixelTransformer<TPixelType, TTransformation>
 {

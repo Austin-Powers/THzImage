@@ -19,7 +19,7 @@ namespace Internal {
 /// @brief Stores the lines needed for running the transformation.
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class LineBuffer
 {
 public:
@@ -97,7 +97,7 @@ private:
 /// @brief Used for stepping through the line buffer and creating the matrizes for the transformation.
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class MatrixHelper
 {
 public:
@@ -279,7 +279,7 @@ private:
 
 // clang-format off
 
-template <typename TType, typename TPixelType>
+template <typename TType, Pixel TPixelType>
 concept ConvolutionTransformation = requires(TType t, TPixelType const **matrix)
 {
 	{t.parameters()} -> std::same_as<ConvolutionParameters>;
@@ -295,7 +295,7 @@ concept ConvolutionTransformation = requires(TType t, TPixelType const **matrix)
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
 /// @tparam TTransformation The type of transformation of the class.
-template <typename TPixelType, ConvolutionTransformation<TPixelType> TTransformation>
+template <Pixel TPixelType, ConvolutionTransformation<TPixelType> TTransformation>
 class ConvolutionTransformer : public IImageTransformer<TPixelType>
 {
 public:

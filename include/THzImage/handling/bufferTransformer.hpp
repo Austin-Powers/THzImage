@@ -11,7 +11,7 @@ namespace Terrahertz {
 /// @brief Transformer starting a chain of transformers from a imageRingBuffer.
 ///
 /// @tparam TPixelType The type of pixel used by the buffer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class BufferTransformer : public IImageTransformer<TPixelType>
 {
 public:

@@ -25,12 +25,10 @@ struct ImageProject
 ///
 /// @tparam TPixelType The type of pixel used by the image.
 /// @remarks Pixels are stored Left to Right, Top to Bottom.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class Image
 {
 public:
-    static_assert(is_pixel_type<TPixelType>::value, "TPixelType is not a known pixel type");
-
     /// @brief Shortcut to the pixel type used by this image.
     using value_type = TPixelType;
 

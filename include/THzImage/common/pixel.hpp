@@ -424,33 +424,6 @@ using BGRAPixelFloat = TemplatedBGRAPixel<float>;
 /// @brief Shortcut to a templated BGRAPixel class using std::uint32_t.
 using BGRAPixel32 = TemplatedBGRAPixel<std::uint32_t>;
 
-/// @brief Checks if the given type is a pixel type.
-///
-/// @tparam TPixelType The pixel type to check.
-template <typename TPixelType>
-struct is_pixel_type : std::false_type
-{};
-
-/// @brief Check for the BGRAPixel type.
-template <>
-struct is_pixel_type<BGRAPixel> : std::true_type
-{};
-
-/// @brief Check for the BGRAPixelFloat type.
-template <>
-struct is_pixel_type<BGRAPixelFloat> : std::true_type
-{};
-
-/// @brief Check for the BGRAPixel32 type.
-template <>
-struct is_pixel_type<BGRAPixel32> : std::true_type
-{};
-
-/// @brief Check for the HSVAPixel type.
-template <>
-struct is_pixel_type<HSVAPixel> : std::true_type
-{};
-
 /// @brief Concept for a pixel type.
 template <typename T>
 concept Pixel = std::default_initializable<T> && std::copyable<T> && std::movable<T> &&

@@ -18,7 +18,7 @@ struct ConvolutionTransformerProject
 /// @brief Base class for convolution based transformations.
 ///
 /// @tparam TPixelType The type of pixel used by the transformation.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class ConvolutionTransformerBase : public IImageTransformer<TPixelType>
 {
 public:

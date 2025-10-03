@@ -15,7 +15,7 @@ namespace Terrahertz {
 /// @brief Uses a given writer to write images asynchronously.
 ///
 /// @tparam TPixelType The type of pixel used by the images to write.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class AsyncWriter
 {
     /// @brief Name provider for the THzImage.IO.PNG.Writer class.

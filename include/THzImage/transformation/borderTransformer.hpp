@@ -29,7 +29,7 @@ struct Borders
 /// @brief Transformer adding a border to an image.
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
-template <typename TPixelType>
+template <Pixel TPixelType>
 class BorderTransformer : public IImageTransformer<TPixelType>
 {
 public:
