@@ -32,8 +32,7 @@ add_executable(${PROJECTNAME}
 	transformation/mockTransformer.hpp
 	transformation/nullTransformer.cpp
 	transformation/pixelTransformer.cpp
-	sandbox.cpp
-)
+	sandbox.cpp)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}

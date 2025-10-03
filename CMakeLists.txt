@@ -94,8 +94,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/transformation/convolutionTransformerBase.hpp
 	include/THzImage/transformation/nullTransformer.hpp
 	include/THzImage/transformation/pixelTransformer.hpp
-	include/THzImage/thzImage.hpp
-)
+	include/THzImage/thzImage.hpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
