@@ -4,7 +4,7 @@
 #include "THzCommon/math/rectangle.hpp"
 #include "pixel.hpp"
 
-#include <type_traits>
+#include <concepts>
 
 namespace Terrahertz {
 
@@ -48,6 +48,10 @@ public:
     /// @remark All callers should expect that no additional reset() call is required after this call.
     virtual bool nextImage() noexcept = 0;
 };
+
+/// @brief Concept for ImageTransformers.
+template <typename TTransformerType, typename TPixelType>
+concept ImageTransformer = std::derived_from<TTransformerType, IImageTransformer<TPixelType>>;
 
 } // namespace Terrahertz
 
