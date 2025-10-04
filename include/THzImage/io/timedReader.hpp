@@ -39,7 +39,7 @@ public:
     ///
     /// @tparam ...TParamTypes The types of the parameters for the constructor of the wrapped reader.
     /// @param pInterval The interval in which the reader cycle can be called.
-    /// @param ...params The parameter for the constructor of the wrapped reader.
+    /// @param ...params The parameters for the constructor of the wrapped reader.
     /// @remark The timing works by delaying the init() call till the next time-point is reached.
     ///         Time-points are bound to the given interval.
     template <typename... TParamTypes>

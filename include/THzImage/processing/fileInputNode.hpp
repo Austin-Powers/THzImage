@@ -60,7 +60,7 @@ public:
     [[nodiscard]] size_t slots() const noexcept override;
 
 private:
-    /// @brief The image returned if the operator[] gets an index out of range.
+    /// @brief The image returned if operator[] gets an index out of range.
     ImageType _emptyImage{};
 
     /// @brief The path returned if pathOf() gets and index out of range.
