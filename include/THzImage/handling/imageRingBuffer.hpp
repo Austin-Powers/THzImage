@@ -33,8 +33,11 @@ public:
     ///
     /// @param transformer The transformer to get new images from.
     /// @param slots The amount of images this buffer holds.
-    ImageRingBuffer(IImageTransformer<TPixelType> &transformer, size_t const slots) noexcept
-        : _transformer{&transformer}, _slots{slots}
+    /// @param forwardNext True if nextImage of the transformer shall be called on next(), false otherwise.
+    ImageRingBuffer(IImageTransformer<TPixelType> &transformer,
+                    size_t const                   slots,
+                    bool const                     forwardNext = true) noexcept
+        : _transformer{&transformer}, _slots{slots}, _forwardNext{forwardNext}
     {
         setup();
     }
@@ -92,9 +95,13 @@ protected:
         }
         else
         {
-            if ((_count > 0U) && !_transformer->nextImage())
+            if (_forwardNext && (_count > 0U))
             {
-                return false;
+                // start calling nextImage after the first image has been processed
+                if (!_transformer->nextImage())
+                {
+                    return false;
+                }
             }
             if (!_map[_slots - 1U]->executeAndIngest(*_transformer))
             {
@@ -140,6 +147,9 @@ private:
 
     /// @brief Counter for the loaded images.
     size_t _count{};
+
+    /// @brief True if nextImage of the transformer shall be called on next(), false otherwise.
+    bool _forwardNext{};
 };
 
 } // namespace Terrahertz

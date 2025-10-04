@@ -40,6 +40,35 @@ struct HandlingImageRingBuffer : public testing::Test
         std::uint8_t value{};
     };
 
+    struct TestTransformer : public IImageTransformer<BGRAPixel>
+    {
+        Rectangle dimensions() const noexcept override { return dim; }
+
+        bool transform(BGRAPixel &pixel) noexcept override
+        {
+            pixel.blue  = value;
+            pixel.green = value;
+            pixel.red   = value;
+            return true;
+        }
+
+        bool skip() noexcept override { return true; }
+
+        bool reset() noexcept override { return true; }
+
+        bool nextImage() noexcept override
+        {
+            ++value;
+            return next;
+        }
+
+        Rectangle dim{2U, 2U};
+
+        bool next{true};
+
+        std::uint8_t value{};
+    };
+
     using TestSubject = ImageRingBuffer<BGRAPixel>;
 
     TestReader reader{};
@@ -115,35 +144,6 @@ TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformer)
         }
     };
 
-    struct TestTransformer : public IImageTransformer<BGRAPixel>
-    {
-        Rectangle dimensions() const noexcept override { return dim; }
-
-        bool transform(BGRAPixel &pixel) noexcept override
-        {
-            pixel.blue  = value;
-            pixel.green = value;
-            pixel.red   = value;
-            return true;
-        }
-
-        bool skip() noexcept override { return true; }
-
-        bool reset() noexcept override { return true; }
-
-        bool nextImage() noexcept override
-        {
-            ++value;
-            return next;
-        }
-
-        Rectangle dim{2U, 2U};
-
-        bool next{true};
-
-        std::uint8_t value{};
-    };
-
     TestTransformer transformer{};
 
     TestSubject sut2{transformer, 3U};
@@ -165,6 +165,40 @@ TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformer)
 
     transformer.next = false;
     EXPECT_FALSE(sut2.next());
+}
+
+TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformerForwardNextFalse)
+{
+    auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
+        for (auto idx : image.dimensions().range())
+        {
+            EXPECT_EQ(image[idx].blue, value);
+            EXPECT_EQ(image[idx].green, value);
+            EXPECT_EQ(image[idx].red, value);
+        }
+    };
+
+    TestTransformer transformer{};
+
+    TestSubject sut2{transformer, 3U, false};
+
+    EXPECT_TRUE(sut2.next());
+    checkImage(sut2[0U], transformer.value);
+    EXPECT_EQ(sut2.count(), 1U);
+
+    EXPECT_TRUE(sut2.next());
+    checkImage(sut2[0U], transformer.value);
+    checkImage(sut2[1U], transformer.value);
+    EXPECT_EQ(sut2.count(), 2U);
+
+    EXPECT_TRUE(sut2.next());
+    checkImage(sut2[0U], transformer.value);
+    checkImage(sut2[1U], transformer.value);
+    checkImage(sut2[2U], transformer.value);
+    EXPECT_EQ(sut2.count(), 3U);
+
+    transformer.next = false;
+    EXPECT_TRUE(sut2.next());
 }
 
 } // namespace Terrahertz::UnitTests
