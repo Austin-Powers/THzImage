@@ -10,12 +10,16 @@ TestInputNode::TestInputNode(Rectangle const &dimensions) noexcept
     (void)_image.readFrom(generator);
 }
 
-bool TestInputNode::next() noexcept { return true; }
+bool TestInputNode::next() noexcept
+{
+    ++_counter;
+    return true;
+}
 
 TestInputNode::ImageType &TestInputNode::operator[](size_t const) noexcept { return _image; }
 
 size_t TestInputNode::slots() const noexcept { return 1U; }
 
-size_t TestInputNode::count() const noexcept { return 1U; }
+size_t TestInputNode::count() const noexcept { return _counter; }
 
 } // namespace Terrahertz::ImageProcessing

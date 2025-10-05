@@ -46,6 +46,9 @@ public:
 private:
     /// @brief The image to make available.
     BGRAImage _image{};
+
+    /// @brief Counts how often next() has been called.
+    size_t _counter{};
 };
 
 } // namespace Terrahertz::ImageProcessing
