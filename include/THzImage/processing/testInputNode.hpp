@@ -40,6 +40,9 @@ public:
     /// @copydoc INode::slots
     [[nodiscard]] size_t slots() const noexcept override;
 
+    /// @copydoc INode::count
+    [[nodiscard]] size_t count() const noexcept override;
+
 private:
     /// @brief The image to make available.
     BGRAImage _image{};

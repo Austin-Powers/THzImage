@@ -33,6 +33,11 @@ public:
     ///
     /// @return The number of slots of the node.
     [[nodiscard]] virtual size_t slots() const noexcept = 0;
+
+    /// @brief Returns the number of images processed by the node.
+    ///
+    /// @return The number of images processed by the node.
+    [[nodiscard]] virtual size_t count() const noexcept = 0;
 };
 
 } // namespace Terrahertz::ImageProcessing::Internal

@@ -27,6 +27,8 @@ ScreenInputNode::ImageType &ScreenInputNode::operator[](size_t const index) noex
 
 size_t ScreenInputNode::slots() const noexcept { return _buffer.slots(); }
 
+size_t ScreenInputNode::count() const noexcept { return _buffer.count(); }
+
 } // namespace Terrahertz::ImageProcessing
 
 #endif // _WIN32

@@ -41,6 +41,7 @@ TEST_F(ProcessingTransformerNode, BaseBehavior)
     std::uint8_t const  value{16U};
     TestTransformerNode sut{2U, true, value};
     EXPECT_EQ(sut.slots(), 2U);
+    EXPECT_EQ(sut.count(), 0U);
     EXPECT_EQ(sut[2U].dimensions(), Rectangle{});
 }
 
@@ -54,15 +55,19 @@ TEST_F(ProcessingTransformerNode, TransformerWrappingCorrect)
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value);
+    EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value + 1U);
+    EXPECT_EQ(sut.count(), 2U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value + 2U);
+    EXPECT_EQ(sut.count(), 3U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value + 3U);
+    EXPECT_EQ(sut.count(), 4U);
 }
 
 TEST_F(ProcessingTransformerNode, ForwardNextSetToFalse)
@@ -75,15 +80,19 @@ TEST_F(ProcessingTransformerNode, ForwardNextSetToFalse)
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value);
+    EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value);
+    EXPECT_EQ(sut.count(), 2U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value);
+    EXPECT_EQ(sut.count(), 3U);
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut[0U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut[0U][0U].blue, value);
+    EXPECT_EQ(sut.count(), 4U);
 }
 
 } // namespace Terrahertz::UnitTests

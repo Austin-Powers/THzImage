@@ -20,6 +20,9 @@ TEST_F(ProcessingTestInputNode, CorrectBehavior)
     ImageProcessing::TestInputNode sut{Rectangle{16U, 16U}};
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut.slots(), 1U);
+    EXPECT_EQ(sut.count(), 1U);
+    EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 1U);
     EXPECT_EQ(sut[0U], expectedImage);
     EXPECT_EQ(sut[1U], expectedImage);
     EXPECT_EQ(sut[2U], expectedImage);

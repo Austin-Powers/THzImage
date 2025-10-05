@@ -44,4 +44,6 @@ FileInputNode::ImageType &FileInputNode::operator[](size_t const index) noexcept
 
 size_t FileInputNode::slots() const noexcept { return _buffer.slots(); }
 
+size_t FileInputNode::count() const noexcept { return _buffer.count(); }
+
 } // namespace Terrahertz::ImageProcessing

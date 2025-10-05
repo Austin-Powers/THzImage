@@ -70,6 +70,7 @@ TEST_F(ProcessingFileInputNode, NothingLoadedBeforeFirstCallToNext)
     std::filesystem::path const expectedPath{};
 
     EXPECT_EQ(sut.slots(), bufferSize);
+    EXPECT_EQ(sut.count(), 0U);
     for (auto i = 0U; i < bufferSize; ++i)
     {
         EXPECT_EQ(sut[i].dimensions(), expectedDimensions);
@@ -90,12 +91,19 @@ TEST_F(ProcessingFileInputNode, Automatic)
 {
     ImageProcessing::FileInputNode sut{10U, "fileNodeTest"};
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 2U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 3U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 4U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 5U);
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 5U);
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 5U);
 
     for (auto i = 0U; i < sut.slots(); ++i)
     {
@@ -130,10 +138,15 @@ TEST_F(ProcessingFileInputNode, ExtensionBased)
 {
     ImageProcessing::FileInputNode sut{10U, "fileNodeTest", ImageProcessing::FileInputNode::Mode::extensionBased};
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 2U);
     EXPECT_TRUE(sut.next());
+    EXPECT_EQ(sut.count(), 3U);
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 3U);
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 3U);
 
     for (auto i = 0U; i < sut.slots(); ++i)
     {
