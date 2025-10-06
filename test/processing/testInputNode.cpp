@@ -9,7 +9,7 @@ namespace Terrahertz::UnitTest {
 struct ProcessingTestInputNode : public testing::Test
 {};
 
-TEST_F(ProcessingTestInputNode, CorrectBehavior)
+TEST_F(ProcessingTestInputNode, CorrectBaseBehavior)
 {
     Rectangle const dimensions{16U, 16U};
 
@@ -17,7 +17,7 @@ TEST_F(ProcessingTestInputNode, CorrectBehavior)
     BGRAImage          expectedImage{};
     ASSERT_TRUE(expectedImage.readFrom(generator));
 
-    ImageProcessing::TestInputNode sut{Rectangle{16U, 16U}};
+    ImageProcessing::TestInputNode sut{dimensions};
     EXPECT_EQ(sut.slots(), 1U);
     EXPECT_EQ(sut.count(), 0U);
     EXPECT_TRUE(sut.next());
@@ -27,6 +27,13 @@ TEST_F(ProcessingTestInputNode, CorrectBehavior)
     EXPECT_EQ(sut[0U], expectedImage);
     EXPECT_EQ(sut[1U], expectedImage);
     EXPECT_EQ(sut[2U], expectedImage);
+}
+
+TEST_F(ProcessingTestInputNode, ZeroDimensions)
+{
+    Rectangle const                dimensions{};
+    ImageProcessing::TestInputNode sut{dimensions};
+    EXPECT_EQ(sut[0].dimensions(), dimensions);
 }
 
 } // namespace Terrahertz::UnitTest
