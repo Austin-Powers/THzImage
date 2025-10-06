@@ -250,7 +250,10 @@ private:
 using BGRAImage = Image<BGRAPixel>;
 
 /// @brief Using declaration for an image using HSVAPixel.
-using BGRAImage = Image<BGRAPixel>;
+using HSVAImage = Image<HSVAPixel>;
+
+/// @brief Using declaration for an image using MiniHSVPixel.
+using MiniHSVImage = Image<MiniHSVPixel>;
 
 } // namespace Terrahertz
 
