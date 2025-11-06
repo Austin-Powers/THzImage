@@ -492,4 +492,20 @@ TEST_F(CommonMiniHSVPixel, BasicConversions)
     }
 }
 
+TEST_F(CommonMiniHSVPixel, Comparison)
+{
+    MiniHSVPixel a{};
+    MiniHSVPixel b{};
+    MiniHSVPixel c{};
+
+    a.content = 24U;
+    b.content = 32U;
+    c.content = 24U;
+
+    EXPECT_EQ(a, a);
+    EXPECT_NE(a, b);
+    EXPECT_NE(c, b);
+    EXPECT_EQ(a, c);
+}
+
 } // namespace Terrahertz::UnitTests

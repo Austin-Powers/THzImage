@@ -400,6 +400,18 @@ struct MiniHSVPixel
 
     /// @brief Cast operator to convert this instance into a HSVAPixel.
     operator HSVAPixel() const noexcept;
+
+    /// @brief Checks if another pixel equals this one.
+    ///
+    /// @param other The other pixel.
+    /// @returns True if both pixels are equal, false otherwise.
+    bool operator==(MiniHSVPixel const &other) const noexcept;
+
+    /// @brief Checks if another pixel not equals this one.
+    ///
+    /// @param other The other pixel.
+    /// @returns True if both pixels are different, false otherwise.
+    bool operator!=(MiniHSVPixel const &other) const noexcept;
 };
 
 /// @brief Performes a linear interpolation between the given color values.

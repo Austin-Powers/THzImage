@@ -118,6 +118,10 @@ MiniHSVPixel::operator Terrahertz::HSVAPixel() const noexcept
     return hsva;
 }
 
+bool MiniHSVPixel::operator==(MiniHSVPixel const &other) const noexcept { return content == other.content; }
+
+bool MiniHSVPixel::operator!=(MiniHSVPixel const &other) const noexcept { return content != other.content; }
+
 BGRAPixel lerp(BGRAPixel const &a, BGRAPixel const &b, float const t) noexcept
 {
     BGRAPixel result = a;
