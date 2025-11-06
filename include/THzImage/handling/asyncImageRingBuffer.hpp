@@ -53,7 +53,7 @@ public:
         auto const result = _readingResult;
         if (result)
         {
-            ImageRingBuffer<TPixelType>::updateMap();
+            ImageRingBuffer<TPixelType>::skip();
         }
         _reading = true;
         _worker.wakeUp.notify_one();

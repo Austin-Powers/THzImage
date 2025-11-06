@@ -69,10 +69,17 @@ public:
     {
         if (loadNextImage())
         {
-            updateMap();
+            skip();
             return true;
         }
         return false;
+    }
+
+    /// @brief Performs the update of map and increments the counter without loading the next image.
+    void skip() noexcept
+    {
+        std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
+        ++_count;
     }
 
     /// @brief Returns the total amount of images loaded by this buffer.
@@ -109,13 +116,6 @@ protected:
             }
         }
         return true;
-    }
-
-    /// @brief Updates the map after a successful read.
-    void updateMap() noexcept
-    {
-        std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
-        ++_count;
     }
 
 private:

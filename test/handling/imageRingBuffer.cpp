@@ -71,6 +71,16 @@ struct HandlingImageRingBuffer : public testing::Test
 
     using TestSubject = ImageRingBuffer<BGRAPixel>;
 
+    void checkImage(BGRAImage const &image, std::uint8_t const value) noexcept
+    {
+        for (auto idx : image.dimensions().range())
+        {
+            EXPECT_EQ(image[idx].blue, value);
+            EXPECT_EQ(image[idx].green, value);
+            EXPECT_EQ(image[idx].red, value);
+        }
+    }
+
     TestReader reader{};
 
     TestSubject sut{reader, 3U};
@@ -93,15 +103,6 @@ TEST_F(HandlingImageRingBuffer, ConstructionCorrect)
 
 TEST_F(HandlingImageRingBuffer, NextCalledUsingReader)
 {
-    auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
-        for (auto idx : image.dimensions().range())
-        {
-            EXPECT_EQ(image[idx].blue, value);
-            EXPECT_EQ(image[idx].green, value);
-            EXPECT_EQ(image[idx].red, value);
-        }
-    };
-
     EXPECT_TRUE(sut.next());
     checkImage(sut[0U], reader.value);
     EXPECT_EQ(sut.count(), 1U);
@@ -135,15 +136,6 @@ TEST_F(HandlingImageRingBuffer, NextCalledUsingReader)
 
 TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformer)
 {
-    auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
-        for (auto idx : image.dimensions().range())
-        {
-            EXPECT_EQ(image[idx].blue, value);
-            EXPECT_EQ(image[idx].green, value);
-            EXPECT_EQ(image[idx].red, value);
-        }
-    };
-
     TestTransformer transformer{};
 
     TestSubject sut2{transformer, 3U};
@@ -169,15 +161,6 @@ TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformer)
 
 TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformerForwardNextFalse)
 {
-    auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
-        for (auto idx : image.dimensions().range())
-        {
-            EXPECT_EQ(image[idx].blue, value);
-            EXPECT_EQ(image[idx].green, value);
-            EXPECT_EQ(image[idx].red, value);
-        }
-    };
-
     TestTransformer transformer{};
 
     TestSubject sut2{transformer, 3U, false};
@@ -199,6 +182,25 @@ TEST_F(HandlingImageRingBuffer, NextCalledUsingTransformerForwardNextFalse)
 
     transformer.next = false;
     EXPECT_TRUE(sut2.next());
+}
+
+TEST_F(HandlingImageRingBuffer, SkipChangesBufferAsExpected)
+{
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+
+    sut.skip();
+    checkImage(sut[0U], reader.value - 2U);
+    checkImage(sut[1U], reader.value);
+    checkImage(sut[2U], reader.value - 1U);
+    EXPECT_EQ(sut.count(), 4U);
+
+    sut.skip();
+    checkImage(sut[0U], reader.value - 1U);
+    checkImage(sut[1U], reader.value - 2U);
+    checkImage(sut[2U], reader.value);
+    EXPECT_EQ(sut.count(), 5U);
 }
 
 } // namespace Terrahertz::UnitTests
