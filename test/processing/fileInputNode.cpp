@@ -15,6 +15,8 @@ namespace Terrahertz::UnitTests {
 
 struct ProcessingFileInputNode : public testing::Test
 {
+    using SutClass = ImageProcessing::FileInputNode;
+
     static void SetUpTestSuite()
     {
         BGRAImage          image{};
@@ -64,7 +66,7 @@ TEST_F(ProcessingFileInputNode, NothingLoadedBeforeFirstCallToNext)
 {
     auto const bufferSize = 3U;
 
-    ImageProcessing::FileInputNode sut{bufferSize, "fileNodeTest"};
+    SutClass sut{bufferSize, "fileNodeTest"};
 
     Rectangle const             expectedDimensions{};
     std::filesystem::path const expectedPath{};
@@ -80,16 +82,16 @@ TEST_F(ProcessingFileInputNode, NothingLoadedBeforeFirstCallToNext)
 
 TEST_F(ProcessingFileInputNode, IndexOutOfBoundsReturnsEmpty)
 {
-    ImageProcessing::FileInputNode sut{1U, "fileNodeTest"};
-    Rectangle const                expectedDimensions{};
-    std::filesystem::path const    expectedPath{};
+    SutClass                    sut{1U, "fileNodeTest"};
+    Rectangle const             expectedDimensions{};
+    std::filesystem::path const expectedPath{};
     EXPECT_EQ(sut[1U].dimensions(), expectedDimensions);
     EXPECT_EQ(sut.pathOf(1U), expectedPath);
 }
 
 TEST_F(ProcessingFileInputNode, Automatic)
 {
-    ImageProcessing::FileInputNode sut{10U, "fileNodeTest"};
+    SutClass sut{10U, "fileNodeTest"};
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
@@ -136,7 +138,7 @@ TEST_F(ProcessingFileInputNode, Automatic)
 
 TEST_F(ProcessingFileInputNode, ExtensionBased)
 {
-    ImageProcessing::FileInputNode sut{10U, "fileNodeTest", ImageProcessing::FileInputNode::Mode::extensionBased};
+    SutClass sut{10U, "fileNodeTest", SutClass::Mode::extensionBased};
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut.count(), 1U);
     EXPECT_TRUE(sut.next());
@@ -173,7 +175,7 @@ TEST_F(ProcessingFileInputNode, ExtensionBased)
 
 TEST_F(ProcessingFileInputNode, StrictExtensionBased)
 {
-    ImageProcessing::FileInputNode sut{10U, "fileNodeTest", ImageProcessing::FileInputNode::Mode::strictExtensionBased};
+    SutClass sut{10U, "fileNodeTest", SutClass::Mode::strictExtensionBased};
 
     uint8_t successCounter = 0U;
     for (auto i = 0U; i < 10U; ++i)
@@ -205,6 +207,62 @@ TEST_F(ProcessingFileInputNode, StrictExtensionBased)
             }
         }
     }
+}
+
+TEST_F(ProcessingFileInputNode, ToCountNominalOperation)
+{
+    Rectangle const defaultRectangle{};
+
+    SutClass sut{2U, "fileNodeTest", SutClass::Mode::automatic};
+
+    EXPECT_EQ(sut.toCount(0U), SutClass::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut[0U].dimensions(), defaultRectangle);
+    EXPECT_EQ(sut[1U].dimensions(), defaultRectangle);
+
+    EXPECT_EQ(sut.toCount(2U), SutClass::ToCountResult::Updated);
+    auto const dim0 = sut[0U].dimensions();
+    auto const dim1 = sut[1U].dimensions();
+    EXPECT_NE(dim0, defaultRectangle);
+    EXPECT_NE(dim1, defaultRectangle);
+
+    EXPECT_EQ(sut.toCount(2U), SutClass::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut[0U].dimensions(), dim0);
+    EXPECT_EQ(sut[1U].dimensions(), dim1);
+
+    EXPECT_EQ(sut.toCount(1U), SutClass::ToCountResult::Ahead);
+    EXPECT_EQ(sut[0U].dimensions(), dim0);
+    EXPECT_EQ(sut[1U].dimensions(), dim1);
+}
+
+TEST_F(ProcessingFileInputNode, ToCountFailure)
+{
+    SutClass sut{2U, "fileNodeTest", SutClass::Mode::strictExtensionBased};
+
+    auto dim0 = sut[0U].dimensions();
+    auto dim1 = sut[1U].dimensions();
+
+    auto failureHappened = false;
+    for (auto i = 1; i < 12U; ++i)
+    {
+        auto const result = sut.toCount(i);
+        if (result == SutClass::ToCountResult::Failure)
+        {
+            failureHappened = true;
+            // buffered images should not be overwritten
+            EXPECT_EQ(sut[0U].dimensions(), dim0);
+            EXPECT_EQ(sut[1U].dimensions(), dim1);
+
+            // count should not be updated
+            EXPECT_EQ(sut.count(), i - 1U);
+            break;
+        }
+        else
+        {
+            dim0 = sut[0U].dimensions();
+            dim1 = sut[1U].dimensions();
+        }
+    }
+    EXPECT_TRUE(failureHappened);
 }
 
 } // namespace Terrahertz::UnitTests

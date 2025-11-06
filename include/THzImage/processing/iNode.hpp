@@ -15,12 +15,35 @@ public:
     /// @brief The type of image returned by the node.
     using ImageType = Image<TPixelType>;
 
+    /// @brief The different results that can be produced by the toCount method.
+    enum class ToCountResult
+    {
+        /// @brief Node was updated to the specified counter.
+        Updated,
+
+        /// @brief Node was already at the specified counter.
+        NotUpdated,
+
+        /// @brief Node is ahead of the specified counter.
+        Ahead,
+
+        /// @brief Processing next image failed.
+        Failure
+    };
+
     virtual ~INode() noexcept {};
 
     /// @brief Triggers the node to process the next image.
     ///
     /// @return True if processing was successful, false otherwise.
     [[nodiscard]] virtual bool next() noexcept = 0;
+
+    /// @brief Calls next until the target count is reached.
+    ///
+    /// @param target The count at which to stop calling next.
+    /// @return True if count was reached, false if the node already overstepped count.
+    /// @remark Nodes in a chain can call this method so their count stays in sync with other nodes.
+    [[nodiscard]] virtual ToCountResult toCount(size_t const target) noexcept = 0;
 
     /// @brief Access the images stored by the node.
     ///

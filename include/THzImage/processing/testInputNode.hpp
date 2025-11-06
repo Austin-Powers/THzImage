@@ -34,6 +34,9 @@ public:
     /// @return True if the next image was loaded, false otherwise.
     [[nodiscard]] bool next() noexcept override;
 
+    /// @copydoc INode::toCount
+    [[nodiscard]] ToCountResult toCount(size_t const target) noexcept override;
+
     /// @copydoc INode::operator[]
     [[nodiscard]] ImageType &operator[](size_t const index) noexcept override;
 

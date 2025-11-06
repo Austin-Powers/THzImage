@@ -33,6 +33,26 @@ bool FileInputNode::next() noexcept
     return result;
 }
 
+FileInputNode::ToCountResult FileInputNode::toCount(size_t const target) noexcept
+{
+    if (target < _buffer.count())
+    {
+        return ToCountResult::Ahead;
+    }
+    if (target == _buffer.count())
+    {
+        return ToCountResult::NotUpdated;
+    }
+    while (target > _buffer.count())
+    {
+        if (!next())
+        {
+            return ToCountResult::Failure;
+        }
+    }
+    return ToCountResult::Updated;
+}
+
 FileInputNode::ImageType &FileInputNode::operator[](size_t const index) noexcept
 {
     if (index < _buffer.slots())

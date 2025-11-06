@@ -95,4 +95,30 @@ TEST_F(ProcessingTransformerNode, ForwardNextSetToFalse)
     EXPECT_EQ(sut.count(), 4U);
 }
 
+TEST_F(ProcessingTransformerNode, ToCount)
+{
+    Rectangle const defaultRectangle{};
+
+    std::uint8_t const  value{16U};
+    TestTransformerNode sut{2U, false, value};
+
+    EXPECT_EQ(sut.toCount(0U), TestTransformerNode::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut[0U].dimensions(), defaultRectangle);
+    EXPECT_EQ(sut[1U].dimensions(), defaultRectangle);
+
+    EXPECT_EQ(sut.toCount(2U), TestTransformerNode::ToCountResult::Updated);
+    auto const dim0 = sut[0U].dimensions();
+    auto const dim1 = sut[1U].dimensions();
+    EXPECT_NE(dim0, defaultRectangle);
+    EXPECT_NE(dim1, defaultRectangle);
+
+    EXPECT_EQ(sut.toCount(2U), TestTransformerNode::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut[0U].dimensions(), dim0);
+    EXPECT_EQ(sut[1U].dimensions(), dim1);
+
+    EXPECT_EQ(sut.toCount(1U), TestTransformerNode::ToCountResult::Ahead);
+    EXPECT_EQ(sut[0U].dimensions(), dim0);
+    EXPECT_EQ(sut[1U].dimensions(), dim1);
+}
+
 } // namespace Terrahertz::UnitTests

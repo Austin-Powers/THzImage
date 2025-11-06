@@ -8,6 +8,10 @@
 
 namespace Terrahertz::ImageProcessing::Internal {
 
+/// @brief Wrapper to enable usage of transformers as nodes.
+///
+/// @tparam TPixelType The type of pixel put out by the transformer.
+/// @tparam TTransformerType The type of transformer to wrap.
 template <Pixel TPixelType, ImageTransformer<TPixelType> TTransformerType>
 class TransformerNode : public INode<TPixelType>
 {
@@ -29,6 +33,29 @@ public:
     ///
     /// @return True if the next image was loaded, false otherwise.
     [[nodiscard]] bool next() noexcept override { return _buffer.next(); }
+
+    /// @copydoc INode::toCount
+    [[nodiscard]] TransformerNode::ToCountResult toCount(size_t const target) noexcept override
+    {
+        if (target < _buffer.count())
+        {
+            return TransformerNode::ToCountResult::Ahead;
+        }
+        if (target == _buffer.count())
+        {
+            return TransformerNode::ToCountResult::NotUpdated;
+        }
+        while (target > _buffer.count())
+        {
+            // TODO instead of next, toCount should be used
+            // this will require a to skip the skip images we would be overwriting anyway
+            if (!next())
+            {
+                return TransformerNode::ToCountResult::Failure;
+            }
+        }
+        return TransformerNode::ToCountResult::Updated;
+    }
 
     /// @copydoc INode::operator[]
     [[nodiscard]] Image<TPixelType> &operator[](size_t const index) noexcept override

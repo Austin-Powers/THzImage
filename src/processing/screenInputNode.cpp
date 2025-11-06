@@ -16,6 +16,25 @@ bool ScreenInputNode::setAreaTo(Rectangle const area) noexcept { return _reader.
 
 bool ScreenInputNode::next() noexcept { return _buffer.next(); }
 
+ScreenInputNode::ToCountResult ScreenInputNode::toCount(size_t const target) noexcept
+{
+    if (target < _buffer.count())
+    {
+        return ToCountResult::Ahead;
+    }
+
+    auto result = ToCountResult::NotUpdated;
+    while (target > _buffer.count())
+    {
+        result = ToCountResult::Updated;
+        if (!_buffer.next())
+        {
+            return ToCountResult::Failure;
+        }
+    }
+    return result;
+}
+
 ScreenInputNode::ImageType &ScreenInputNode::operator[](size_t const index) noexcept
 {
     if (index < _buffer.slots())

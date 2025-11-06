@@ -16,6 +16,20 @@ bool TestInputNode::next() noexcept
     return true;
 }
 
+TestInputNode::ToCountResult TestInputNode::toCount(size_t const target) noexcept
+{
+    if (_counter > target)
+    {
+        return TestInputNode::ToCountResult::Ahead;
+    }
+    else if (_counter == target)
+    {
+        return TestInputNode::ToCountResult::NotUpdated;
+    }
+    _counter = target;
+    return TestInputNode::ToCountResult::Updated;
+}
+
 TestInputNode::ImageType &TestInputNode::operator[](size_t const) noexcept { return _image; }
 
 size_t TestInputNode::slots() const noexcept { return 1U; }
