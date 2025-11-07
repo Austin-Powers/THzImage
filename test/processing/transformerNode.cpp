@@ -95,7 +95,7 @@ TEST_F(ProcessingTransformerNode, ForwardNextSetToFalse)
     EXPECT_EQ(sut.count(), 4U);
 }
 
-TEST_F(ProcessingTransformerNode, ToCount)
+TEST_F(ProcessingTransformerNode, ToCountSimpleCase)
 {
     Rectangle const defaultRectangle{};
 
@@ -119,6 +119,14 @@ TEST_F(ProcessingTransformerNode, ToCount)
     EXPECT_EQ(sut.toCount(1U), TestTransformerNode::ToCountResult::Ahead);
     EXPECT_EQ(sut[0U].dimensions(), dim0);
     EXPECT_EQ(sut[1U].dimensions(), dim1);
+}
+
+TEST_F(ProcessingTransformerNode, ToCountCallsToCountOfWrappedNodeIfGapExceedsSlots)
+{
+    std::uint8_t const  value{16U};
+    TestTransformerNode sut{2U, false, value};
+
+    // TODO
 }
 
 } // namespace Terrahertz::UnitTests

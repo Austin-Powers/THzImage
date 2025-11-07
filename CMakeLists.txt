@@ -55,6 +55,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/bmpCommons.hpp
 	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
+	src/processing/dataReductionNode.cpp
 	src/processing/fileInputNode.cpp
 	src/processing/screenInputNode.cpp
 	src/processing/testInputNode.cpp
@@ -87,6 +88,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/io/timedReader.hpp
 	include/THzImage/processing/iNode.hpp
+	include/THzImage/processing/dataReductionNode.hpp
 	include/THzImage/processing/fileInputNode.hpp
 	include/THzImage/processing/screenInputNode.hpp
 	include/THzImage/processing/testInputNode.hpp
@@ -94,7 +96,8 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/transformation/convolutionTransformerBase.hpp
 	include/THzImage/transformation/nullTransformer.hpp
 	include/THzImage/transformation/pixelTransformer.hpp
-	include/THzImage/thzImage.hpp)
+	include/THzImage/thzImage.hpp
+)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include

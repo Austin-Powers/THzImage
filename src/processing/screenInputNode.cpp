@@ -22,17 +22,19 @@ ScreenInputNode::ToCountResult ScreenInputNode::toCount(size_t const target) noe
     {
         return ToCountResult::Ahead;
     }
-
-    auto result = ToCountResult::NotUpdated;
-    while (target > _buffer.count())
+    if (target == _buffer.count())
     {
-        result = ToCountResult::Updated;
-        if (!_buffer.next())
-        {
-            return ToCountResult::Failure;
-        }
+        return ToCountResult::NotUpdated;
     }
-    return result;
+    while ((target - 1U) > _buffer.count())
+    {
+        _buffer.skip();
+    }
+    if (!_buffer.next())
+    {
+        return ToCountResult::Failure;
+    }
+    return ToCountResult::Updated;
 }
 
 ScreenInputNode::ImageType &ScreenInputNode::operator[](size_t const index) noexcept

@@ -25,14 +25,17 @@ add_executable(${PROJECTNAME}
 	io/screenReader.cpp
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
+	processing/dataReductionNode.cpp
 	processing/fileInputNode.cpp	
 	processing/testInputNode.cpp
+	processing/transformerNode.cpp
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformerBase.cpp
 	transformation/mockTransformer.hpp
 	transformation/nullTransformer.cpp
 	transformation/pixelTransformer.cpp
-	sandbox.cpp)
+	sandbox.cpp
+)
 
 target_include_directories(${PROJECTNAME} PUBLIC
 	${PROJECT_SOURCE_DIR}
