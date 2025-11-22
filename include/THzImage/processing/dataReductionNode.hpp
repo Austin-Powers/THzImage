@@ -1,14 +1,14 @@
 #ifndef THZ_IMAGE_PROCESSING_DATAREDUCTIONNODE_HPP
 #define THZ_IMAGE_PROCESSING_DATAREDUCTIONNODE_HPP
 
-#include "THzImage/processing/transformerNode.hpp"
+#ifdef CURRENTLY_NOT_IMPLEMENTED
 
 #include <vector>
 
 namespace Terrahertz::ImageProcessing {
 namespace Internal {
 
-class DataReductionTransformer : public IImageTransformer<MiniHSVPixel>
+class DataReductionNode : public IImageTransformer<MiniHSVPixel>
 {
 public:
     /// @brief Initializes a new DataReductionTransformer.
@@ -53,5 +53,7 @@ private:
 using DataReductionNode = Internal::TransformerNode<MiniHSVPixel, Internal::DataReductionTransformer>;
 
 } // namespace Terrahertz::ImageProcessing
+
+#endif
 
 #endif // !THZ_IMAGE_PROCESSING_DATAREDUCTIONNODE_HPP

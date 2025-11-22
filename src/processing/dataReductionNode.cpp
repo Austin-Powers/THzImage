@@ -1,5 +1,7 @@
 #include "THzImage/processing/dataReductionNode.hpp"
 
+#ifdef CURRENTLY_NOT_IMPLEMENTED
+
 namespace Terrahertz::ImageProcessing::Internal {
 
 DataReductionTransformer::DataReductionTransformer(INode<BGRAPixel> &node, std::uint8_t const scaleFactor) noexcept
@@ -29,3 +31,5 @@ bool DataReductionTransformer::nextImage() noexcept
 }
 
 } // namespace Terrahertz::ImageProcessing::Internal
+
+#endif

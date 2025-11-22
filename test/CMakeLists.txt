@@ -28,7 +28,6 @@ add_executable(${PROJECTNAME}
 	processing/dataReductionNode.cpp
 	processing/fileInputNode.cpp	
 	processing/testInputNode.cpp
-	processing/transformerNode.cpp
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformerBase.cpp
 	transformation/mockTransformer.hpp

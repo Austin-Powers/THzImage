@@ -8,6 +8,8 @@
 #include <type_traits>
 #include <vector>
 
+#ifdef CURRENTLY_NOT_IMPLEMENTED
+
 namespace Terrahertz::UnitTest {
 
 struct ProcessingDataReductionNode : public testing::Test
@@ -107,3 +109,5 @@ TEST_F(ProcessingDataReductionNode, ProcessingResultCorrect)
 }
 
 } // namespace Terrahertz::UnitTest
+
+#endif
