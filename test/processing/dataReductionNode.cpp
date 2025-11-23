@@ -10,7 +10,7 @@
 
 #ifdef CURRENTLY_NOT_IMPLEMENTED
 
-namespace Terrahertz::UnitTest {
+namespace Terrahertz::UnitTests {
 
 struct ProcessingDataReductionNode : public testing::Test
 {
@@ -108,6 +108,6 @@ TEST_F(ProcessingDataReductionNode, ProcessingResultCorrect)
     // }
 }
 
-} // namespace Terrahertz::UnitTest
+} // namespace Terrahertz::UnitTests
 
 #endif

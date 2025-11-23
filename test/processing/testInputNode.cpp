@@ -4,7 +4,7 @@
 
 #include <gtest/gtest.h>
 
-namespace Terrahertz::UnitTest {
+namespace Terrahertz::UnitTests {
 
 struct ProcessingTestInputNode : public testing::Test
 {
@@ -51,4 +51,4 @@ TEST_F(ProcessingTestInputNode, ToCount)
     EXPECT_EQ(sut.count(), 4U);
 }
 
-} // namespace Terrahertz::UnitTest
+} // namespace Terrahertz::UnitTests
