@@ -27,8 +27,8 @@ add_executable(${PROJECTNAME}
 	io/timedReader.cpp
 	processing/dataReductionNode.cpp
 	processing/fileInputNode.cpp	
+	processing/readerlessNodeBase.cpp
 	processing/testInputNode.cpp
-	processing/commonNodeBase.cpp
 	transformation/borderTransformer.cpp
 	transformation/convolutionTransformerBase.cpp
 	transformation/mockTransformer.hpp

@@ -88,9 +88,9 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/testImageGenerator.hpp
 	include/THzImage/io/timedReader.hpp
 	include/THzImage/processing/iNode.hpp
-	include/THzImage/processing/commonNodeBase.hpp
 	include/THzImage/processing/dataReductionNode.hpp
 	include/THzImage/processing/fileInputNode.hpp
+	include/THzImage/processing/readerlessNodeBase.hpp
 	include/THzImage/processing/screenInputNode.hpp
 	include/THzImage/processing/testInputNode.hpp
 	include/THzImage/transformation/borderTransformer.hpp
