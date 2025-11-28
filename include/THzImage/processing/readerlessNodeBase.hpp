@@ -14,61 +14,98 @@ namespace Terrahertz::ImageProcessing {
 ///
 /// @tparam TPixelType The type of pixel output by this node.
 template <Pixel TPixelType>
-class ReaderlessNodeBase : public Internal::INode<TPixelType>
+class ReaderlessNodeBase : public Internal::INode<TPixelType>, IImageReader<TPixelType>
 {
 public:
-    /// @brief
+    using MyImageType     = Image<TPixelType>;
     using MyToCountResult = Internal::INode<TPixelType>::ToCountResult;
 
-    ReaderlessNodeBase() noexcept = default;
+    /// @brief Initializes a new readerless node.
+    ///
+    /// @param bufferSize The amount of images the node will store.
+    ReaderlessNodeBase(size_t const bufferSize) noexcept : _buffer{*this, bufferSize} {}
 
+    // INode methods
     /// @copydoc INode::next
-    [[nodiscard]] bool next() noexcept override { return false; }
+    [[nodiscard]] bool next() noexcept override { return _buffer.next(); }
 
     /// @copydoc INode::toCount
-    [[nodiscard]] MyToCountResult toCount(size_t const target) noexcept override { return MyToCountResult::Failure; }
+    [[nodiscard]] MyToCountResult toCount(size_t const target) noexcept override
+    {
+        if (target < _buffer.count())
+        {
+            return MyToCountResult::Ahead;
+        }
+        if (target == _buffer.count())
+        {
+            return MyToCountResult::NotUpdated;
+        }
+        auto const gap = target - _buffer.count();
+        if (gap > _buffer.slots())
+        {
+            for (auto i = gap - _buffer.slots(); i != 0U; --i)
+            {
+                _buffer.skip();
+            }
+        }
+        while (target > _buffer.count())
+        {
+            if (!next())
+            {
+                return MyToCountResult::Failure;
+            }
+        }
+        return MyToCountResult::Updated;
+    }
 
     /// @copydoc INode::operator[]
-    [[nodiscard]] Image<TPixelType> &operator[](size_t const index) noexcept override { return _emptyImage; }
+    [[nodiscard]] MyImageType &operator[](size_t const index) noexcept override
+    {
+        if (index < _buffer.slots())
+        {
+            return _buffer[index];
+        }
+        return _emptyImage;
+    }
 
     /// @copydoc INode::slots
-    [[nodiscard]] size_t slots() const noexcept override { return 0U; }
+    [[nodiscard]] size_t slots() const noexcept override { return _buffer.slots(); }
 
     /// @copydoc INode::count
-    [[nodiscard]] size_t count() const noexcept override { return 0U; }
+    [[nodiscard]] size_t count() const noexcept override { return _buffer.count(); }
+
+    // IImageReader methods
+    /// @copydoc IImageReader::imagePresent
+    bool imagePresent() const noexcept override { return true; }
+
+    /// @copydoc IImageReader::init
+    bool init() noexcept override { return true; }
+
+    /// @copydoc IImageReader::dimensions
+    Rectangle dimensions() const noexcept override { return nextDimensions(); }
+
+    /// @copydoc IImageReader::read
+    bool read(gsl::span<TPixelType> buffer) noexcept override { return process(buffer, _buffer.count() + 1U); }
+
+    /// @copydoc IImageReader::deinit
+    void deinit() noexcept override {}
 
 protected:
-    virtual void process() noexcept = 0;
+    /// @brief Retrieves the dimensions of the next image.
+    ///
+    /// @return The dimensions of the next image.
+    virtual Rectangle nextDimensions() const noexcept = 0;
+
+    /// @brief Hands in the buffer of the next image to store the processing result.
+    ///
+    /// @param buffer The buffer to store the processing result.
+    /// @param count The count of the processed image.
+    /// @return True if processing was succesful, false otherwise.
+    virtual bool process(gsl::span<TPixelType> buffer, size_t count) noexcept = 0;
 
 private:
-    /// @brief Reader that does not change the image in the buffer.
-    class NullReader : public IImageReader<TPixelType>
-    {
-    public:
-        /// @copydoc IImageReader::imagePresent
-        bool imagePresent() const noexcept override { return true; }
-
-        /// @copydoc IImageReader::init
-        bool init() noexcept override { return true; }
-
-        /// @copydoc IImageReader::dimensions
-        Rectangle dimensions() const noexcept override { return _dimensions; }
-
-        /// @copydoc IImageReader::read
-        bool read(gsl::span<TPixelType> buffer) noexcept override { return true; }
-
-        /// @copydoc IImageReader::deinit
-        void deinit() noexcept override {}
-
-        /// @brief The dimensions for the image.
-        Rectangle _dimensions{};
-    };
-
     /// @brief The image returned if the operator[] gets and index out of range.
     Image<TPixelType> _emptyImage{};
-
-    /// @brief The reader used by the buffer.
-    NullReader _reader{};
 
     /// @brief The buffer used by the node.
     ImageRingBuffer<TPixelType> _buffer{};
