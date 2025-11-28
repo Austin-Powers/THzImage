@@ -12,26 +12,33 @@ struct ProcessingReaderlessNodeBase : public testing::Test
     public:
         TestReaderlessNode(size_t const bufferSize) noexcept : ReaderlessNodeBase(bufferSize) {}
 
-        bool processResult{true};
-
-        Rectangle nextDimensionsResult{2U, 2U};
+        bool prepareProcessingResult{true};
 
         std::vector<size_t> countList{};
 
-    private:
-        Rectangle nextDimensions() const noexcept override { return nextDimensionsResult; }
+        Rectangle dimensionsOfNextImageResult{2U, 2U};
 
-        bool process(gsl::span<BGRAPixel> buffer, size_t const count) noexcept override
+        bool runProcessingResult{true};
+
+    private:
+        bool prepareProcessing(size_t const count) noexcept override
         {
             countList.push_back(count);
-            if (processResult)
+            return prepareProcessingResult;
+        }
+
+        Rectangle dimensionsOfNextImage() const noexcept override { return dimensionsOfNextImageResult; }
+
+        bool runProcessing(gsl::span<BGRAPixel> buffer) noexcept override
+        {
+            if (runProcessingResult)
             {
                 for (auto &pixel : buffer)
                 {
-                    pixel.blue = static_cast<std::uint8_t>(count);
+                    pixel.blue = static_cast<std::uint8_t>(countList.back());
                 }
             }
-            return processResult;
+            return runProcessingResult;
         }
     };
 
@@ -54,13 +61,20 @@ TEST_F(ProcessingReaderlessNodeBase, CallingNextAdvancesCount)
     TestReaderlessNode sut{2U};
     EXPECT_TRUE(sut.next());
     EXPECT_EQ(sut.count(), 1U);
-    EXPECT_EQ(sut[0U].dimensions(), sut.nextDimensionsResult);
+    EXPECT_EQ(sut[0U].dimensions(), sut.dimensionsOfNextImageResult);
 }
 
-TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfProcessReturnsFalse)
+TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfPrepareProcessingReturnsFalse)
 {
     TestReaderlessNode sut{2U};
-    sut.processResult = false;
+    sut.prepareProcessingResult = false;
+    EXPECT_FALSE(sut.next());
+}
+
+TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfRunProcessingReturnsFalse)
+{
+    TestReaderlessNode sut{2U};
+    sut.runProcessingResult = false;
     EXPECT_FALSE(sut.next());
 }
 
@@ -97,11 +111,11 @@ TEST_F(ProcessingReaderlessNodeBase, ToCountBasicBehavior)
     EXPECT_EQ(sut.toCount(2U), TestToCountResult::Ahead);
     EXPECT_EQ(sut.count(), 4U);
 
-    sut.processResult = false;
+    sut.runProcessingResult = false;
     EXPECT_EQ(sut.toCount(6U), TestToCountResult::Failure);
     EXPECT_EQ(sut.count(), 4U);
 
-    sut.processResult = true;
+    sut.runProcessingResult = true;
     EXPECT_EQ(sut.toCount(6U), TestToCountResult::Updated);
     EXPECT_EQ(sut.count(), 6U);
     EXPECT_EQ(sut[0U][0U].blue, 6U);

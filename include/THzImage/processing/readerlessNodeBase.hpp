@@ -79,29 +79,34 @@ public:
     bool imagePresent() const noexcept override { return true; }
 
     /// @copydoc IImageReader::init
-    bool init() noexcept override { return true; }
+    bool init() noexcept override { return prepareProcessing(_buffer.count() + 1U); }
 
     /// @copydoc IImageReader::dimensions
-    Rectangle dimensions() const noexcept override { return nextDimensions(); }
+    Rectangle dimensions() const noexcept override { return dimensionsOfNextImage(); }
 
     /// @copydoc IImageReader::read
-    bool read(gsl::span<TPixelType> buffer) noexcept override { return process(buffer, _buffer.count() + 1U); }
+    bool read(gsl::span<TPixelType> buffer) noexcept override { return runProcessing(buffer); }
 
     /// @copydoc IImageReader::deinit
     void deinit() noexcept override {}
 
 protected:
+    /// @brief Is Called in preparation for processing the next image.
+    ///
+    /// @param count The count of the processed image.
+    /// @return True if the class is able to process the next image, false otherwise.
+    virtual bool prepareProcessing(size_t const count) noexcept = 0;
+
     /// @brief Retrieves the dimensions of the next image.
     ///
     /// @return The dimensions of the next image.
-    virtual Rectangle nextDimensions() const noexcept = 0;
+    virtual Rectangle dimensionsOfNextImage() const noexcept = 0;
 
     /// @brief Hands in the buffer of the next image to store the processing result.
     ///
     /// @param buffer The buffer to store the processing result.
-    /// @param count The count of the processed image.
     /// @return True if processing was succesful, false otherwise.
-    virtual bool process(gsl::span<TPixelType> buffer, size_t count) noexcept = 0;
+    virtual bool runProcessing(gsl::span<TPixelType> buffer) noexcept = 0;
 
 private:
     /// @brief The image returned if the operator[] gets and index out of range.
