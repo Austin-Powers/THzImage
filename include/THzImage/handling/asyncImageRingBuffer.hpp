@@ -43,7 +43,7 @@ public:
     [[nodiscard]] size_t slots() const noexcept override { return ImageRingBuffer<TPixelType>::slots() - 1U; }
 
     /// @copydoc ImageRingBuffer::next
-    bool next() noexcept
+    bool next(bool const countFailure = false) noexcept override
     {
         WorkerThread::UniqueLock lock{_worker.mutex};
         while (_reading)
@@ -54,6 +54,10 @@ public:
         if (result)
         {
             ImageRingBuffer<TPixelType>::skip();
+        }
+        if (countFailure)
+        {
+            ImageRingBuffer<TPixelType>::skip(true);
         }
         _reading = true;
         _worker.wakeUp.notify_one();

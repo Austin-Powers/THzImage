@@ -64,21 +64,31 @@ public:
 
     /// @brief Loads the next image either from the reader or the transformer.
     ///
+    /// @param countFailure If true failures increase the counter as well.
     /// @return True if the next image was loaded, false otherwise.
-    virtual bool next() noexcept
+    virtual bool next(bool const countFailure = false) noexcept
     {
         if (loadNextImage())
         {
             skip();
             return true;
         }
+        if (countFailure)
+        {
+            skip(true);
+        }
         return false;
     }
 
     /// @brief Performs the update of map and increments the counter without loading the next image.
-    void skip() noexcept
+    ///
+    /// @param keepMapping True if updating the map shall be omitted.
+    void skip(bool keepMapping = false) noexcept
     {
-        std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
+        if (!keepMapping)
+        {
+            std::rotate(_map.rbegin(), _map.rbegin() + 1U, _map.rend());
+        }
         ++_count;
     }
 

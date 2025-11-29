@@ -42,6 +42,16 @@ struct HandlingAsyncImageRingBuffer : public testing::Test
 
     using TestSubject = AsyncImageRingBuffer<BGRAPixel>;
 
+    void checkImage(BGRAImage const &image, std::uint8_t const value) noexcept
+    {
+        for (auto idx : image.dimensions().range())
+        {
+            EXPECT_EQ(image[idx].blue, value);
+            EXPECT_EQ(image[idx].green, value);
+            EXPECT_EQ(image[idx].red, value);
+        }
+    }
+
     TestReader reader{};
 
     TestSubject sut{reader, 3U};
@@ -108,15 +118,6 @@ TEST_F(HandlingAsyncImageRingBuffer, NextCalledUsingReader)
 
 TEST_F(HandlingAsyncImageRingBuffer, NextCalledUsingTransformer)
 {
-    auto const checkImage = [](BGRAImage const &image, std::uint8_t const value) noexcept {
-        for (auto idx : image.dimensions().range())
-        {
-            EXPECT_EQ(image[idx].blue, value);
-            EXPECT_EQ(image[idx].green, value);
-            EXPECT_EQ(image[idx].red, value);
-        }
-    };
-
     struct TestTransformer : public IImageTransformer<BGRAPixel>
     {
         Rectangle dimensions() const noexcept override { return dim; }

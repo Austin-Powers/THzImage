@@ -203,4 +203,31 @@ TEST_F(HandlingImageRingBuffer, SkipChangesBufferAsExpected)
     EXPECT_EQ(sut.count(), 5U);
 }
 
+TEST_F(HandlingImageRingBuffer, SkipKeepsMappingIfRequested)
+{
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+
+    sut.skip(true);
+    checkImage(sut[0U], reader.value);
+    checkImage(sut[1U], reader.value - 1U);
+    checkImage(sut[2U], reader.value - 2U);
+    EXPECT_EQ(sut.count(), 4U);
+}
+
+TEST_F(HandlingImageRingBuffer, NextCountsFailureIfRequested)
+{
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+    EXPECT_TRUE(sut.next());
+
+    reader.present = false;
+    EXPECT_FALSE(sut.next(true));
+    checkImage(sut[0U], reader.value);
+    checkImage(sut[1U], reader.value - 1U);
+    checkImage(sut[2U], reader.value - 2U);
+    EXPECT_EQ(sut.count(), 4U);
+}
+
 } // namespace Terrahertz::UnitTests
