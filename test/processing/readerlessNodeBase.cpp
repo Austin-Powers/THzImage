@@ -42,7 +42,7 @@ struct ProcessingReaderlessNodeBase : public testing::Test
         }
     };
 
-    using TestToCountResult = TestReaderlessNode::ToCountResult;
+    using TestToCountResult = ImageProcessing::ToCountResult;
 };
 
 TEST_F(ProcessingReaderlessNodeBase, ConstructionAsExpected)
@@ -69,6 +69,7 @@ TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfPrepareProcessingR
     TestReaderlessNode sut{2U};
     sut.prepareProcessingResult = false;
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 0U);
 }
 
 TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfRunProcessingReturnsFalse)
@@ -76,6 +77,15 @@ TEST_F(ProcessingReaderlessNodeBase, CallingNextReturnsFalseIfRunProcessingRetur
     TestReaderlessNode sut{2U};
     sut.runProcessingResult = false;
     EXPECT_FALSE(sut.next());
+    EXPECT_EQ(sut.count(), 0U);
+}
+
+TEST_F(ProcessingReaderlessNodeBase, CallingNextWithCountFailureTrue)
+{
+    TestReaderlessNode sut{2U};
+    sut.prepareProcessingResult = false;
+    EXPECT_FALSE(sut.next(true));
+    EXPECT_EQ(sut.count(), 1U);
 }
 
 TEST_F(ProcessingReaderlessNodeBase, ProcessAccessesTheCorrectSlot)
@@ -134,6 +144,14 @@ TEST_F(ProcessingReaderlessNodeBase, ToCountSkips)
     EXPECT_EQ(sut.countList[0U], 3U);
     EXPECT_EQ(sut.countList[1U], 4U);
     EXPECT_EQ(sut.countList[2U], 5U);
+}
+
+TEST_F(ProcessingReaderlessNodeBase, ToCountForce)
+{
+    TestReaderlessNode sut{3U};
+    sut.runProcessingResult = false;
+    EXPECT_EQ(sut.toCount(4U, true), ImageProcessing::ToCountResult::Updated);
+    EXPECT_EQ(sut.count(), 4U);
 }
 
 } // namespace Terrahertz::UnitTests

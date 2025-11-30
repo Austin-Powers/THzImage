@@ -31,11 +31,12 @@ public:
 
     /// @brief Triggers loading the next image.
     ///
+    /// @param countFailure If true, failures increase the count as well.
     /// @return True if the next image was loaded, false otherwise.
-    [[nodiscard]] bool next() noexcept override;
+    [[nodiscard]] bool next(bool const countFailure = false) noexcept override;
 
     /// @copydoc INode::toCount
-    [[nodiscard]] ToCountResult toCount(size_t const target) noexcept override;
+    [[nodiscard]] ToCountResult toCount(size_t const target, bool const force = false) noexcept override;
 
     /// @copydoc INode::operator[]
     [[nodiscard]] ImageType &operator[](size_t const index) noexcept override;

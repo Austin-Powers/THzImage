@@ -43,12 +43,21 @@ TEST_F(ProcessingTestInputNode, ToCount)
     Rectangle const dimensions{16U, 16U};
     SutClass        sut{dimensions};
 
-    EXPECT_EQ(sut.toCount(4U), SutClass::ToCountResult::Updated);
+    EXPECT_EQ(sut.toCount(4U), ImageProcessing::ToCountResult::Updated);
     EXPECT_EQ(sut.count(), 4U);
-    EXPECT_EQ(sut.toCount(2U), SutClass::ToCountResult::Ahead);
+    EXPECT_EQ(sut.toCount(2U), ImageProcessing::ToCountResult::Ahead);
     EXPECT_EQ(sut.count(), 4U);
-    EXPECT_EQ(sut.toCount(4U), SutClass::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut.toCount(4U), ImageProcessing::ToCountResult::NotUpdated);
     EXPECT_EQ(sut.count(), 4U);
+}
+
+TEST_F(ProcessingTestInputNode, BoolsInNextAndToCountAreIgnored)
+{
+    Rectangle const dimensions{16U, 16U};
+    SutClass        sut{dimensions};
+    EXPECT_TRUE(sut.next(true));
+    EXPECT_EQ(sut.count(), 1U);
+    EXPECT_EQ(sut.toCount(2U, true), ImageProcessing::ToCountResult::Updated);
 }
 
 } // namespace Terrahertz::UnitTests

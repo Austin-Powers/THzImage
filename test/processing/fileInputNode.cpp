@@ -209,27 +209,43 @@ TEST_F(ProcessingFileInputNode, StrictExtensionBased)
     }
 }
 
+TEST_F(ProcessingFileInputNode, NextCountFailure)
+{
+    SutClass sut{4U, "fileNodeTest", SutClass::Mode::strictExtensionBased};
+
+    uint8_t successCounter = 0U;
+    for (auto i = 0U; i < 10U; ++i)
+    {
+        EXPECT_EQ(sut.count(), i);
+        if (sut.next(true))
+        {
+            ++successCounter;
+        }
+    }
+    EXPECT_EQ(successCounter, 3U);
+}
+
 TEST_F(ProcessingFileInputNode, ToCountNominalOperation)
 {
     Rectangle const defaultRectangle{};
 
     SutClass sut{2U, "fileNodeTest", SutClass::Mode::automatic};
 
-    EXPECT_EQ(sut.toCount(0U), SutClass::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut.toCount(0U), ImageProcessing::ToCountResult::NotUpdated);
     EXPECT_EQ(sut[0U].dimensions(), defaultRectangle);
     EXPECT_EQ(sut[1U].dimensions(), defaultRectangle);
 
-    EXPECT_EQ(sut.toCount(2U), SutClass::ToCountResult::Updated);
+    EXPECT_EQ(sut.toCount(2U), ImageProcessing::ToCountResult::Updated);
     auto const dim0 = sut[0U].dimensions();
     auto const dim1 = sut[1U].dimensions();
     EXPECT_NE(dim0, defaultRectangle);
     EXPECT_NE(dim1, defaultRectangle);
 
-    EXPECT_EQ(sut.toCount(2U), SutClass::ToCountResult::NotUpdated);
+    EXPECT_EQ(sut.toCount(2U), ImageProcessing::ToCountResult::NotUpdated);
     EXPECT_EQ(sut[0U].dimensions(), dim0);
     EXPECT_EQ(sut[1U].dimensions(), dim1);
 
-    EXPECT_EQ(sut.toCount(1U), SutClass::ToCountResult::Ahead);
+    EXPECT_EQ(sut.toCount(1U), ImageProcessing::ToCountResult::Ahead);
     EXPECT_EQ(sut[0U].dimensions(), dim0);
     EXPECT_EQ(sut[1U].dimensions(), dim1);
 }
@@ -245,7 +261,7 @@ TEST_F(ProcessingFileInputNode, ToCountFailure)
     for (auto i = 1; i < 12U; ++i)
     {
         auto const result = sut.toCount(i);
-        if (result == SutClass::ToCountResult::Failure)
+        if (result == ImageProcessing::ToCountResult::Failure)
         {
             failureHappened = true;
             // buffered images should not be overwritten
@@ -263,6 +279,14 @@ TEST_F(ProcessingFileInputNode, ToCountFailure)
         }
     }
     EXPECT_TRUE(failureHappened);
+}
+
+TEST_F(ProcessingFileInputNode, ToCountForce)
+{
+    SutClass sut{2U, "fileNodeTest", SutClass::Mode::strictExtensionBased};
+
+    EXPECT_EQ(sut.toCount(8U, true), ImageProcessing::ToCountResult::Updated);
+    EXPECT_EQ(sut.count(), 8U);
 }
 
 } // namespace Terrahertz::UnitTests

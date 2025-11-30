@@ -10,24 +10,24 @@ TestInputNode::TestInputNode(Rectangle const &dimensions) noexcept
     (void)_image.readFrom(generator);
 }
 
-bool TestInputNode::next() noexcept
+bool TestInputNode::next(bool) noexcept
 {
     ++_counter;
     return true;
 }
 
-TestInputNode::ToCountResult TestInputNode::toCount(size_t const target) noexcept
+ToCountResult TestInputNode::toCount(size_t const target, bool) noexcept
 {
     if (_counter > target)
     {
-        return TestInputNode::ToCountResult::Ahead;
+        return ToCountResult::Ahead;
     }
     else if (_counter == target)
     {
-        return TestInputNode::ToCountResult::NotUpdated;
+        return ToCountResult::NotUpdated;
     }
     _counter = target;
-    return TestInputNode::ToCountResult::Updated;
+    return ToCountResult::Updated;
 }
 
 TestInputNode::ImageType &TestInputNode::operator[](size_t const) noexcept { return _image; }

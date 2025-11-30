@@ -64,7 +64,7 @@ public:
 
     /// @brief Loads the next image either from the reader or the transformer.
     ///
-    /// @param countFailure If true failures increase the counter as well.
+    /// @param countFailure If true, failures increase the count as well.
     /// @return True if the next image was loaded, false otherwise.
     virtual bool next(bool const countFailure = false) noexcept
     {

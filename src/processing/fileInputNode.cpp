@@ -22,9 +22,9 @@ std::filesystem::path const &FileInputNode::pathOf(size_t const index) const noe
     return _emptyPath;
 }
 
-bool FileInputNode::next() noexcept
+bool FileInputNode::next(bool const countFailure) noexcept
 {
-    auto const result = _buffer.next();
+    auto const result = _buffer.next(countFailure);
     if (result)
     {
         (*_pathMap[_pathMap.size() - 1U]) = _reader.pathOfLastImage();
@@ -33,7 +33,7 @@ bool FileInputNode::next() noexcept
     return result;
 }
 
-FileInputNode::ToCountResult FileInputNode::toCount(size_t const target) noexcept
+ToCountResult FileInputNode::toCount(size_t const target, bool const force) noexcept
 {
     if (target < _buffer.count())
     {
@@ -45,7 +45,7 @@ FileInputNode::ToCountResult FileInputNode::toCount(size_t const target) noexcep
     }
     while (target > _buffer.count())
     {
-        if (!next())
+        if (!next(force) && !force)
         {
             return ToCountResult::Failure;
         }

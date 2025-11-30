@@ -17,8 +17,7 @@ template <Pixel TPixelType>
 class ReaderlessNodeBase : public Internal::INode<TPixelType>, IImageReader<TPixelType>
 {
 public:
-    using MyImageType     = Image<TPixelType>;
-    using MyToCountResult = Internal::INode<TPixelType>::ToCountResult;
+    using MyImageType = Image<TPixelType>;
 
     /// @brief Initializes a new readerless node.
     ///
@@ -27,18 +26,18 @@ public:
 
     // INode methods
     /// @copydoc INode::next
-    [[nodiscard]] bool next() noexcept override { return _buffer.next(); }
+    [[nodiscard]] bool next(bool const countFailure = false) noexcept override { return _buffer.next(countFailure); }
 
     /// @copydoc INode::toCount
-    [[nodiscard]] MyToCountResult toCount(size_t const target) noexcept override
+    [[nodiscard]] ToCountResult toCount(size_t const target, bool const force = false) noexcept override
     {
         if (target < _buffer.count())
         {
-            return MyToCountResult::Ahead;
+            return ToCountResult::Ahead;
         }
         if (target == _buffer.count())
         {
-            return MyToCountResult::NotUpdated;
+            return ToCountResult::NotUpdated;
         }
         auto const gap = target - _buffer.count();
         if (gap > _buffer.slots())
@@ -50,12 +49,12 @@ public:
         }
         while (target > _buffer.count())
         {
-            if (!next())
+            if (!next(force) && !force)
             {
-                return MyToCountResult::Failure;
+                return ToCountResult::Failure;
             }
         }
-        return MyToCountResult::Updated;
+        return ToCountResult::Updated;
     }
 
     /// @copydoc INode::operator[]

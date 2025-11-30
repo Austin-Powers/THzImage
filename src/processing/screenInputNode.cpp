@@ -14,9 +14,9 @@ void ScreenInputNode::setAreaToFullscreen() noexcept
 
 bool ScreenInputNode::setAreaTo(Rectangle const area) noexcept { return _reader.setArea(area); }
 
-bool ScreenInputNode::next() noexcept { return _buffer.next(); }
+bool ScreenInputNode::next(bool const countFailure) noexcept { return _buffer.next(countFailure); }
 
-ScreenInputNode::ToCountResult ScreenInputNode::toCount(size_t const target) noexcept
+ToCountResult ScreenInputNode::toCount(size_t const target, bool const force) noexcept
 {
     if (target < _buffer.count())
     {
@@ -30,7 +30,7 @@ ScreenInputNode::ToCountResult ScreenInputNode::toCount(size_t const target) noe
     {
         _buffer.skip();
     }
-    if (!_buffer.next())
+    if (!_buffer.next(force) && !force)
     {
         return ToCountResult::Failure;
     }

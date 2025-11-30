@@ -1,35 +1,31 @@
 #include "THzImage/processing/dataReductionNode.hpp"
 
-#ifdef CURRENTLY_NOT_IMPLEMENTED
+namespace Terrahertz::ImageProcessing {
 
-namespace Terrahertz::ImageProcessing::Internal {
+DataReductionNode::DataReductionNode(INode<BGRAPixel>  &node,
+                                     std::uint8_t const scaleFactor,
+                                     size_t const       bufferSize) noexcept
+    : ReaderlessNodeBase(bufferSize), _node{node}, _scaleFactor{scaleFactor}
+{}
 
-DataReductionTransformer::DataReductionTransformer(INode<BGRAPixel> &node, std::uint8_t const scaleFactor) noexcept
-    : _node{node}, _scaleFactor{scaleFactor}
+bool DataReductionNode::prepareProcessing(size_t const count) noexcept
 {
-    if (node.count() == 0U)
-    {}
-}
-
-Rectangle DataReductionTransformer::dimensions() const noexcept { return _targetDimensions; }
-
-bool DataReductionTransformer::transform(MyPixelType &) noexcept { return true; }
-
-bool DataReductionTransformer::skip() noexcept { return true; }
-
-bool DataReductionTransformer::reset() noexcept { return true; }
-
-bool DataReductionTransformer::nextImage() noexcept
-{
-    auto const result = _node.next();
-    if (result)
+    auto const result = _node.toCount(count);
+    if (_node[0U].dimensions().area() == 0U)
     {
-        auto const &imageDimensions = _node[0U].dimensions();
-        _targetDimensions = Rectangle{imageDimensions.width / _scaleFactor, imageDimensions.height / _scaleFactor};
+        return false;
     }
-    return result;
+    return (result == ToCountResult::NotUpdated) || (result == ToCountResult::Updated);
 }
 
-} // namespace Terrahertz::ImageProcessing::Internal
+Rectangle DataReductionNode::dimensionsOfNextImage() const noexcept
+{
+    Rectangle dimensions = _node[0U].dimensions();
+    dimensions.width /= _scaleFactor;
+    dimensions.height /= _scaleFactor;
+    return dimensions;
+}
 
-#endif
+bool DataReductionNode::runProcessing(gsl::span<MiniHSVPixel> buffer) noexcept { return true; }
+
+} // namespace Terrahertz::ImageProcessing
