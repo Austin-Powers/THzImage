@@ -3,6 +3,8 @@
 
 #include "THzImage/processing/readerlessNodeBase.hpp"
 
+#include <vector>
+
 namespace Terrahertz::ImageProcessing {
 
 class DataReductionNode : public ReaderlessNodeBase<MiniHSVPixel>
@@ -30,6 +32,12 @@ private:
 
     /// @brief The scale factor of data reduction.
     std::uint8_t _scaleFactor{};
+
+    /// @brief The dimensions of the next image.
+    Rectangle _dimensionsOfNextImage{};
+
+    /// @brief The bins for storing the pixels of the next line of the result.
+    std::vector<BGRAPixel> _bins{};
 };
 
 } // namespace Terrahertz::ImageProcessing

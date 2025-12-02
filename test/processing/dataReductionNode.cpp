@@ -79,11 +79,27 @@ TEST_F(ProcessingDataReductionNode, BaseNodeIsAhead)
     EXPECT_FALSE(sut.next());
     EXPECT_FALSE(sut.next());
     EXPECT_FALSE(sut.next());
-    EXPECT_EQ(sut.toCount(2U), ImageProcessing::ToCountResult::Failure);
     EXPECT_EQ(sut.toCount(3U), ImageProcessing::ToCountResult::Failure);
 }
 
-TEST_F(ProcessingDataReductionNode, CatchingUpToBaseNodeThatIsAhead) {}
+TEST_F(ProcessingDataReductionNode, CatchingUpToBaseNodeThatIsAhead)
+{
+    EXPECT_EQ(testNode.toCount(3U), ImageProcessing::ToCountResult::Updated);
+    {
+        SutClass sut{testNode, std::uint8_t{2U}, 2U};
+        EXPECT_FALSE(sut.next(true));
+        EXPECT_EQ(sut.count(), 1U);
+        EXPECT_FALSE(sut.next(true));
+        EXPECT_EQ(sut.count(), 2U);
+        EXPECT_TRUE(sut.next(true));
+        EXPECT_EQ(sut.count(), 3U);
+    }
+    {
+        SutClass sut{testNode, std::uint8_t{2U}, 2U};
+        EXPECT_EQ(sut.toCount(3U, true), ImageProcessing::ToCountResult::Updated);
+        EXPECT_EQ(sut.count(), 3U);
+    }
+}
 
 TEST_F(ProcessingDataReductionNode, DimensionsCalculatedCorrectly)
 {
@@ -99,14 +115,14 @@ TEST_F(ProcessingDataReductionNode, DimensionsCalculatedCorrectly)
 
 TEST_F(ProcessingDataReductionNode, ProcessingResultCorrect)
 {
-    // for (std::uint8_t i = 2U; i < 6U; ++i)
-    // {
-    //     ImageProcessing::DataReductionNode sut{2U, true, testNode, i};
-    //     EXPECT_TRUE(sut.next());
-    //
-    //     MiniHSVImage const expectedResult = replicateDataReduction(testNode[0U], i);
-    //     EXPECT_EQ(sut[0U], expectedResult);
-    // }
+    for (std::uint8_t i = 2U; i < 6U; ++i)
+    {
+        ImageProcessing::DataReductionNode sut{testNode, i, 2U};
+        EXPECT_TRUE(sut.next());
+
+        MiniHSVImage const expectedResult = replicateDataReduction(testNode[0U], i);
+        EXPECT_EQ(sut[0U], expectedResult);
+    }
 }
 
 } // namespace Terrahertz::UnitTests
