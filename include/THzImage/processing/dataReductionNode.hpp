@@ -27,6 +27,17 @@ private:
     /// @copydoc ReaderlessNodeBase::runProcessing
     bool runProcessing(gsl::span<MiniHSVPixel> buffer) noexcept override;
 
+    /// @brief Performs the processing if the scaling factor is one.
+    ///
+    /// @param buffer The buffer for the resulting data.
+    void processForScaleFactorOne(gsl::span<MiniHSVPixel> buffer) noexcept;
+
+    /// @brief Performs the processing if the scaling factor is greater than one.
+    ///
+    /// @param buffer The buffer for the resulting data.
+    /// x@return True if operation was successful, false otherwise.
+    void processForScaleFactorGreaterOne(gsl::span<MiniHSVPixel> buffer) noexcept;
+
     /// @brief The node from which to pull the images.
     INode<BGRAPixel> &_node;
 

@@ -3,7 +3,6 @@
 #include "THzImage/io/pngWriter.hpp"
 #include "THzImage/processing/fileInputNode.hpp"
 #include "THzImage/processing/testInputNode.hpp"
-#include "mockNode.hpp"
 
 #include <gtest/gtest.h>
 #include <type_traits>
@@ -16,8 +15,6 @@ struct ProcessingDataReductionNode : public testing::Test
     Rectangle const baseDimensions{24U, 31U};
 
     ImageProcessing::TestInputNode testNode{baseDimensions};
-
-    MockNode<BGRAPixel> mockNode{};
 
     MiniHSVImage replicateDataReduction(BGRAImage const &base, uint8_t const factor) noexcept
     {
@@ -115,7 +112,7 @@ TEST_F(ProcessingDataReductionNode, DimensionsCalculatedCorrectly)
 
 TEST_F(ProcessingDataReductionNode, ProcessingResultCorrect)
 {
-    for (std::uint8_t i = 2U; i < 6U; ++i)
+    for (std::uint8_t i = 1U; i < 6U; ++i)
     {
         ImageProcessing::DataReductionNode sut{testNode, i, 2U};
         EXPECT_TRUE(sut.next());

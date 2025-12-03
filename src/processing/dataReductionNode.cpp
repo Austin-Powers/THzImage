@@ -27,21 +27,44 @@ Rectangle DataReductionNode::dimensionsOfNextImage() const noexcept { return _di
 
 bool DataReductionNode::runProcessing(gsl::span<MiniHSVPixel> buffer) noexcept
 {
+    if (_dimensionsOfNextImage.area() > buffer.size())
+    {
+        return false;
+    }
+    if (_scaleFactor == 1U)
+    {
+        processForScaleFactorOne(buffer);
+    }
+    else
+    {
+        processForScaleFactorGreaterOne(buffer);
+    }
+    return true;
+}
+
+void DataReductionNode::processForScaleFactorOne(gsl::span<MiniHSVPixel> buffer) noexcept
+{
+    auto const &baseImage = _node[0U];
+    for (auto i = 0U; i < buffer.size(); ++i)
+    {
+        buffer[i] = baseImage[i];
+    }
+}
+
+void DataReductionNode::processForScaleFactorGreaterOne(gsl::span<MiniHSVPixel> buffer) noexcept
+{
     auto const updatePixel = [](BGRAPixel &target, BGRAPixel other) {
         target.blue  = std::max(target.blue, other.blue);
         target.green = std::max(target.green, other.green);
         target.red   = std::max(target.red, other.red);
     };
 
-    auto const &baseImage = _node[0U];
-    if (_dimensionsOfNextImage.area() > buffer.size())
-    {
-        return false;
-    }
     if (_bins.size() < _dimensionsOfNextImage.width)
     {
         _bins.resize(_dimensionsOfNextImage.width);
     }
+
+    auto const         &baseImage     = _node[0U];
     std::uint32_t const lineRemainder = baseImage.dimensions().width % _scaleFactor;
 
     size_t sourceIndex = 0U;
@@ -81,7 +104,6 @@ bool DataReductionNode::runProcessing(gsl::span<MiniHSVPixel> buffer) noexcept
         }
         sourceIndex += lineRemainder;
     }
-    return true;
 }
 
 } // namespace Terrahertz::ImageProcessing
