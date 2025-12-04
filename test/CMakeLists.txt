@@ -26,6 +26,7 @@ add_executable(${PROJECTNAME}
 	io/testImageGenerator.cpp
 	io/timedReader.cpp
 	processing/dataReductionNode.cpp
+	processing/easyWriter.cpp
 	processing/fileInputNode.cpp	
 	processing/readerlessNodeBase.cpp
 	processing/testInputNode.cpp

@@ -56,6 +56,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/gifCommons.hpp
 	src/io/qoiCommons.hpp
 	src/processing/dataReductionNode.cpp
+	src/processing/easyWriter.cpp
 	src/processing/fileInputNode.cpp
 	src/processing/screenInputNode.cpp
 	src/processing/testInputNode.cpp
@@ -89,6 +90,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/io/timedReader.hpp
 	include/THzImage/processing/iNode.hpp
 	include/THzImage/processing/dataReductionNode.hpp
+	include/THzImage/processing/easyWriter.hpp
 	include/THzImage/processing/fileInputNode.hpp
 	include/THzImage/processing/readerlessNodeBase.hpp
 	include/THzImage/processing/screenInputNode.hpp
