@@ -8,8 +8,7 @@ EasyWriter::EasyWriter(std::filesystem::path const filepath) noexcept
     // maybe extract filename generation from imageserieswriter to replicate names for appending
 }
 
-template <>
-bool EasyWriter::write(Image<BGRAPixel> const &image) noexcept
+bool EasyWriter::writeImage(Image<BGRAPixel> const &image) noexcept
 {
     if (_writer)
     {

@@ -7,6 +7,7 @@
 #include "THzImage/processing/iNode.hpp"
 
 #include <filesystem>
+#include <type_traits>
 
 namespace Terrahertz::ImageProcessing {
 
@@ -27,26 +28,32 @@ public:
     template <Pixel TPixelType>
     [[nodiscard]] bool write(Image<TPixelType> const &image) noexcept
     {
-        if (_bgraCopy.setDimensions(image.dimensions()))
+        if constexpr (std::is_same_v<TPixelType, BGRAPixel>)
         {
-            auto const pixels = image.dimensions().area();
-            for (auto i = 0U; i < pixels; ++i)
+            return writeImage(image);
+        }
+        else
+        {
+            if (_bgraCopy.setDimensions(image.dimensions()))
             {
-                _bgraCopy[i] = image[i];
+                auto const pixels = image.dimensions().area();
+                for (auto i = 0U; i < pixels; ++i)
+                {
+                    _bgraCopy[i] = image[i];
+                }
+                return writeImage(_bgraCopy);
             }
-            return write(_bgraCopy);
         }
         return false;
     }
 
+private:
     /// @brief Writes the given BGRAImage to a PNG file.
     ///
     /// @param image The image to write.
     /// @return True if the image was written, false otherwise.
-    template <>
-    [[nodiscard]] bool write(Image<BGRAPixel> const &image) noexcept;
+    [[nodiscard]] bool writeImage(Image<BGRAPixel> const &image) noexcept;
 
-private:
     /// @brief The PNG image series writer used to write the images.
     std::optional<ImageSeries::Writer<PNG::Writer>> _writer{};
 
