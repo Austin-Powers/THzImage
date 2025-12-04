@@ -16,7 +16,6 @@ add_executable(${PROJECTNAME}
 	io/gifReader.cpp
 	io/gifWriter.cpp
 	io/imageDirectoryReader.cpp
-	io/imageSeriesReader.cpp
 	io/imageSeriesWriter.cpp
 	io/pngReader.cpp
 	io/pngWriter.cpp
