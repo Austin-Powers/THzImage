@@ -5,6 +5,9 @@
 #include "THzImage/common/image.hpp"
 #include "THzImage/common/imageView.hpp"
 #include "THzImage/common/pixel.hpp"
+#include "THzImage/processing/dataReductionNode.hpp"
+#include "THzImage/processing/easyWriter.hpp"
+#include "THzImage/processing/fileInputNode.hpp"
 #include "THzImage/processing/screenInputNode.hpp"
 
 #endif // !THZ_IMAGE_THZIMAGE_HPP
