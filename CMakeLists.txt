@@ -50,7 +50,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/pngWriter.cpp
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
-	src/io/screenReader.cpp
+	src/io/screenReaderWin32.cpp
 	src/io/testImageGenerator.cpp
 	src/io/bmpCommons.hpp
 	src/io/gifCommons.hpp
