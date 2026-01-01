@@ -1,9 +1,6 @@
 #ifndef THZ_IMAGE_PROCESSING_SCREENINPUTNODE_HPP
 #define THZ_IMAGE_PROCESSING_SCREENINPUTNODE_HPP
 
-// functions used by this class are OS specific and we support only windows for now
-#ifdef _WIN32
-
 #include "THzCommon/math/rectangle.hpp"
 #include "THzImage/common/pixel.hpp"
 #include "THzImage/handling/imageRingBuffer.hpp"
@@ -77,5 +74,4 @@ private:
 
 } // namespace Terrahertz::ImageProcessing
 
-#endif // _WIN32
 #endif // !THZ_IMAGE_PROCESSING_SCREENINPUTNODE_HPP

@@ -1,5 +1,3 @@
-#ifdef _WIN32
-
 #include "THzImage/processing/screenInputNode.hpp"
 
 namespace Terrahertz::ImageProcessing {
@@ -51,5 +49,3 @@ size_t ScreenInputNode::slots() const noexcept { return _buffer.slots(); }
 size_t ScreenInputNode::count() const noexcept { return _buffer.count(); }
 
 } // namespace Terrahertz::ImageProcessing
-
-#endif // _WIN32

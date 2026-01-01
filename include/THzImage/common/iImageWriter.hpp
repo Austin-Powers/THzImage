@@ -70,7 +70,7 @@ template<typename TFileWriterType>
 concept FileImageWriter = requires(TFileWriterType reader)
 {
     // check if class is an ImageWriter
-    ImageWriter<TFileWriterType>;
+    requires ImageWriter<TFileWriterType>;
 
     // check if ImageWriter can be constructed using a std::filesystem::path
     TFileWriterType(std::filesystem::path{});

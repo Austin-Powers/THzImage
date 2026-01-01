@@ -50,7 +50,10 @@ add_library(${PROJECT_NAME} STATIC
 	src/io/pngWriter.cpp
 	src/io/qoiReader.cpp
 	src/io/qoiWriter.cpp
+	src/io/screenReaderDummy.cpp
+	src/io/screenReaderWayland.cpp
 	src/io/screenReaderWin32.cpp
+	src/io/screenReaderX11.cpp
 	src/io/testImageGenerator.cpp
 	src/io/bmpCommons.hpp
 	src/io/gifCommons.hpp
@@ -63,6 +66,7 @@ add_library(${PROJECT_NAME} STATIC
 
 	include/THzImage/analysis/basicImageMetrics.hpp
 	include/THzImage/common/colorspaceconverter.hpp
+	include/THzImage/common/displayserver.hpp
 	include/THzImage/common/iImageReader.hpp
 	include/THzImage/common/iImageTransformer.hpp
 	include/THzImage/common/iImageWriter.hpp

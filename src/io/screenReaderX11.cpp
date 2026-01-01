@@ -1,3 +1,6 @@
+#include "THzImage/common/displayserver.hpp"
+#ifdef THZ_IMAGE_X11_SCREENREADER_USED
+
 #ifdef _X11
 
 #include "THzImage/io/screenReader.hpp"
@@ -316,3 +319,5 @@ SCRREC_PIX ScrWin_GetScreenPixel(SCRREC_CAPTURE *sc, int x, int y)
     result.bgr.red      = pixColor.red >> 8;
     return result;
 }
+
+#endif // THZ_IMAGE_X11_SCREENREADER_USED

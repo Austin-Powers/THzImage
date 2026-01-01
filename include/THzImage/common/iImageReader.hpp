@@ -79,7 +79,7 @@ template<typename TFileReaderType>
 concept FileImageReader = requires(TFileReaderType reader)
 {
     // check if class is an ImageReader
-    ImageReader<TFileReaderType>;
+    requires ImageReader<TFileReaderType>;
 
     // check if ImageReader can be constructed using a std::filesystem::path
     TFileReaderType(std::filesystem::path{});
