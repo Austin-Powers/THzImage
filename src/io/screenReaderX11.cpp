@@ -1,13 +1,14 @@
 #include "THzImage/common/displayserver.hpp"
 #ifdef THZ_IMAGE_X11_SCREENREADER_USED
 
-#ifdef _X11
-
 #include "THzImage/io/screenReader.hpp"
 
-#include <cstdint>
+#include "THzCommon/logging/logging.hpp"
 
-namespace Terrahertz::Screen [
+#include <cstdint>
+#include <X11/Xlib.h>
+
+namespace Terrahertz::Screen {
 
 /// @brief Name provider for the THzImage.IO.ScreenReader class.
 struct ReaderProject
@@ -20,10 +21,64 @@ Rectangle Reader::getScreenDimensions() noexcept
     return Rectangle{};
 }
 
+/// @brief Implementation of the Reader.
 struct Reader::Impl
 {
-    Impl(Rectangle
-}
+    /// @brief Initializes the implementation of the Screen::Reader class.
+    ///
+    /// @param area The area of the Screen the Reader shall capture.
+    /// @remarks If The given area exceeds the screen, the screenDimensions will be used instead.
+    Impl(Rectangle const &area) noexcept
+    {
+        Logger::globalInstance().addProject<ReaderProject>();
+        if (!setArea(area))
+        {
+            logMessage<LogLevel::Warning, ReaderProject>(
+                "Construction using invalid area, defaulting to screen dimensions");
+            if (!setArea(Screen::Reader::getScreenDimensions()))
+            {
+                logMessage<LogLevel::Error, ReaderProject>("Defaulting to screen dimensions failed");
+            }
+        }
+    }
+
+    /// @brief Sets the area of the screen the reader captures.
+    ///
+    /// @param area The area of the screen the reader captures, needs to be inside the screen.
+    /// @return True if the area has been set, false otherwise.
+    [[nodiscard]] bool setArea(Rectangle const &area) noexcept
+    {
+        auto const check = Screen::Reader::getScreenDimensions().intersection(area);
+        if (area != check)
+        {
+            logMessage<LogLevel::Error, ReaderProject>("Given area outside the screen");
+            return false;
+        }
+
+        _area = area;
+        return true;
+    }
+
+    /// @brief Returns the area on the screen the reader captures.
+    ///
+    /// @return The area on the screen the reader captures.
+    [[nodiscard]] Rectangle area() const noexcept { return _area; }
+
+    /// @brief Reads the current state of the area of the screen.
+    ///
+    /// @param buffer The buffer to store the image data in.
+    /// @return True on successful reading, false otherwise.
+    [[nodiscard]] bool read(gsl::span<BGRAPixel> buffer) noexcept
+    {
+        return false;
+    }
+
+    /// @brief The area on the screen the reader captures.
+    Rectangle _area{};
+
+    /// @brief Pointer to the connection to the X-Server.
+    Display* _display{};
+};
 
 Reader::Reader() noexcept { _impl.init(getScreenDimensions()); }
 
@@ -45,8 +100,6 @@ void Reader::deinit() noexcept {}
 
 } // namespace Terrahertz::Screen
 
-#endif // _X11
-
 // .h
 #ifndef __SCR_RECORD_H__
 #define __SCR_RECORD_H__
@@ -56,8 +109,6 @@ extern "C"
 {
 #endif
 
-#include <stdtype.h>
-
     typedef struct _scr_rec_rectangle
     {
         int x, y;
@@ -65,17 +116,17 @@ extern "C"
     } SCRREC_RECT;
     typedef struct _pixel_bgr0
     {
-        UINT8 blue;
-        UINT8 green;
-        UINT8 red;
-        UINT8 reserved;
+        std::uint8_t blue;
+        std::uint8_t green;
+        std::uint8_t red;
+        std::uint8_t reserved;
     } PIX_BGR0;
     typedef struct _scr_rec_pixel
     {
         union
         {
             PIX_BGR0 bgr;
-            UINT32   u32;
+            std::uint32_t u32;
         };
     } SCRREC_PIX;
     typedef struct _scr_rec_image
@@ -85,21 +136,21 @@ extern "C"
         void       *internal; // for internal use
     } SCRREC_IMAGE;
 
-    UINT8 ScrRec_InitCapture(void);
-    UINT8 ScrRec_GetWindowCoords(void);
-    UINT8 ScrRec_DeinitCapture(void);
-    UINT8 ScrRec_TakeAndSave(void);
+    std::uint8_t ScrRec_InitCapture(void);
+    std::uint8_t ScrRec_GetWindowCoords(void);
+    std::uint8_t ScrRec_DeinitCapture(void);
+    std::uint8_t ScrRec_TakeAndSave(void);
 
-    UINT8 ScrRec_InitVideo(void);
-    UINT8 ScrRec_DeinitVideo(void);
-    UINT8 ScrRec_TestVideoRec(void);
-    UINT8 ScrRec_StartVideoRec(const char *fileName, int frameRate);
-    UINT8 ScrRec_StopVideoRec(void);
+    std::uint8_t ScrRec_InitVideo(void);
+    std::uint8_t ScrRec_DeinitVideo(void);
+    std::uint8_t ScrRec_TestVideoRec(void);
+    std::uint8_t ScrRec_StartVideoRec(const char *fileName, int frameRate);
+    std::uint8_t ScrRec_StopVideoRec(void);
 
     // internal functions
     typedef struct _scr_rec_capture SCRREC_CAPTURE;
 
-    UINT8        ScrWin_Init(SCRREC_CAPTURE **retSC);
+    std::uint8_t        ScrWin_Init(SCRREC_CAPTURE **retSC);
     void         ScrWin_Deinit(SCRREC_CAPTURE *sc);
     SCRREC_IMAGE ScrWin_Image(SCRREC_CAPTURE *sc, const SCRREC_RECT *rect);
     void         ScrWin_FreeImage(SCRREC_IMAGE *si);
@@ -114,18 +165,13 @@ extern "C"
 
 // .c
 #include <X11/Xatom.h>
-#include <X11/Xlib.h>
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-// #include <X11/cursorfont.h>
-#include "scr-record.h"
-
 #include <X11/Xutil.h>
-#include <stdtype.h>
 
 struct _scr_rec_capture
 {
@@ -139,7 +185,7 @@ static Window GetProp_Window(Display *disp, Window win, const char *propName);
 // static void* get_property(Display* disp, Window win, Atom propType, const char* propName, unsigned long* size);
 static XImage *GetWindowImage(Display *dsp, Window win, const SCRREC_RECT *rect);
 
-UINT8 ScrWin_Init(SCRREC_CAPTURE **retSC)
+std::uint8_t ScrWin_Init(SCRREC_CAPTURE **retSC)
 {
     SCRREC_CAPTURE sc;
 

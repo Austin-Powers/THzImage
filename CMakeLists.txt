@@ -35,6 +35,10 @@ if(NOT DEFINED THzCommon_SOURCE_DIR)
 	FetchContent_MakeAvailable(THzCommon)
 endif()
 
+add_definitions(-DUSING_X11)
+
+find_package(X11)
+
 add_subdirectory(png)
 
 add_library(${PROJECT_NAME} STATIC
@@ -107,12 +111,14 @@ add_library(${PROJECT_NAME} STATIC
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
+	${X11_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
 	Microsoft.GSL::GSL
 	THzCommon
 	png
+	${X11_LIBRARIES}
 )
 
 if(THZ_IMAGE_IS_ROOT OR BUILD_THZ_IMAGE_TESTS)

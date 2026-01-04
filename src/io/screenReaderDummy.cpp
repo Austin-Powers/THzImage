@@ -4,7 +4,6 @@
 #include "THzImage/io/screenReader.hpp"
 
 #include "THzCommon/math/rectangle.hpp"
-
 namespace Terrahertz::Screen {
 
 struct Reader::Impl
