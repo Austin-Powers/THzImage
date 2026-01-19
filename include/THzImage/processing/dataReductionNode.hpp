@@ -7,6 +7,7 @@
 
 namespace Terrahertz::ImageProcessing {
 
+/// @brief Reduces the data amount of processed images by downscaling and converting to MiniHSVPixel-format.
 class DataReductionNode : public ReaderlessNodeBase<MiniHSVPixel>
 {
 public:

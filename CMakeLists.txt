@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	THzCommon
 	GIT_REPOSITORY https://github.com/Austin-Powers/THzCommon
-	GIT_TAG        319ba1236d6cf716ecda4b6bf9e722d57b7c1405 # latest 28.11.25
+	GIT_TAG        1ffa1b398ef61cce7aff8f8665da2d2878ce6aa8 # latest 19.01.26
 )
 FetchContent_Declare(
 	gsl
@@ -39,8 +39,7 @@ endif()
 find_package(X11)
 if(DEFINED X11_INCLUDE_DIR)
 add_definitions(-DUSING_X11)
-set(DS_INCLUDE_DIR ${X11_INCLUDE_DIR})
-set(DS_LIBRARIES ${X11_LIBRARIES})
+set(DS_LIBRARIES X11:X11)
 endif()
 
 add_subdirectory(png)
@@ -115,7 +114,6 @@ add_library(${PROJECT_NAME} STATIC
 
 target_include_directories(${PROJECT_NAME} PUBLIC
 	${PROJECT_SOURCE_DIR}/include
-	${DS_INCLUDE_DIR}
 )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

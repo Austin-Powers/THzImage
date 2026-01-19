@@ -1,6 +1,7 @@
 #include "THzImage/io/autoFileReader.hpp"
 
 #include "THzCommon/logging/logging.hpp"
+#include "THzCommon/utility/stringhelpers.hpp"
 #include "THzImage/io/bmpReader.hpp"
 #include "THzImage/io/pngReader.hpp"
 #include "THzImage/io/qoiReader.hpp"
@@ -30,15 +31,16 @@ enum class FileFormat
 /// @return The order in which to check the files.
 static std::array<FileFormat, 4U> orderForFile(std::filesystem::path const &path) noexcept
 {
-    if ((path.extension() == ".png") || (path.extension() == ".PNG"))
+    auto const extension = toLower(path.extension().string());
+    if (extension == ".png")
     {
         return {FileFormat::PNG, FileFormat::BMP, FileFormat::QOI, FileFormat::Unknown};
     }
-    if ((path.extension() == ".bmp") || (path.extension() == ".BMP"))
+    if (extension == ".bmp")
     {
         return {FileFormat::BMP, FileFormat::PNG, FileFormat::QOI, FileFormat::Unknown};
     }
-    if ((path.extension() == ".qoi") || (path.extension() == ".QOI"))
+    if (extension == ".qoi")
     {
         return {FileFormat::QOI, FileFormat::PNG, FileFormat::BMP, FileFormat::Unknown};
     }
