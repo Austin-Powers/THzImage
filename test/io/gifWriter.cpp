@@ -46,13 +46,13 @@ TEST_F(IOGIFWriterColorReduction, ConversionResultCloseToOriginal)
 
 TEST_F(IOGIFWriterColorReduction, ReductionGivenDataWithLessThan255Colors) {}
 
-struct IO_GIFWriter_Dithering : public testing::Test
+struct IO_GIFWriterDithering : public testing::Test
 {
     GIF::Internal::ColorReduction colorReduction{};
     GIF::Internal::Dithering      sut{};
 };
 
-TEST_F(IO_GIFWriter_Dithering, InitialStateCorrect)
+TEST_F(IO_GIFWriterDithering, InitialStateCorrect)
 {
     for (auto i = 0U; i < 256U; ++i)
     {
@@ -61,7 +61,7 @@ TEST_F(IO_GIFWriter_Dithering, InitialStateCorrect)
     }
 }
 
-TEST_F(IO_GIFWriter_Dithering, ConversionResultCloseToOriginal)
+TEST_F(IO_GIFWriterDithering, ConversionResultCloseToOriginal)
 {
     BGRAImage          image{};
     TestImageGenerator generator{Rectangle{64U, 64U}};
