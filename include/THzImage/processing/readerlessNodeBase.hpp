@@ -112,7 +112,7 @@ private:
     Image<TPixelType> _emptyImage{};
 
     /// @brief The buffer used by the node.
-    ImageRingBuffer<TPixelType> _buffer{};
+    ImageRingBuffer<TPixelType> _buffer;
 };
 
 } // namespace Terrahertz::ImageProcessing

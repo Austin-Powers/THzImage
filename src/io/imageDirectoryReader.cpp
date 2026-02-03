@@ -12,6 +12,7 @@ struct ReaderProject
 
 Reader::Reader(std::filesystem::path const directorypath, Reader::Mode const mode) noexcept : _mode{mode}
 {
+    Logger::globalInstance().addProject<ReaderProject>();
     using ExtensionMode = AutoFile::Reader::ExtensionMode;
     _iterator           = std::filesystem::recursive_directory_iterator{directorypath};
     _innerReaderMode    = (_mode == Mode::automatic) ? ExtensionMode::lenient : ExtensionMode::strict;

@@ -26,7 +26,8 @@ add_executable(${PROJECTNAME}
 	io/timedReader.cpp
 	processing/dataReductionNode.cpp
 	processing/easyWriter.cpp
-	processing/fileInputNode.cpp	
+	processing/fileInputNode.cpp
+	processing/imageInputNode.cpp
 	processing/readerlessNodeBase.cpp
 	processing/testInputNode.cpp
 	transformation/borderTransformer.cpp

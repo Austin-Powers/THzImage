@@ -68,6 +68,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/processing/dataReductionNode.cpp
 	src/processing/easyWriter.cpp
 	src/processing/fileInputNode.cpp
+	src/processing/imageInputNode.cpp
 	src/processing/screenInputNode.cpp
 	src/processing/testInputNode.cpp
 
@@ -102,6 +103,7 @@ add_library(${PROJECT_NAME} STATIC
 	include/THzImage/processing/dataReductionNode.hpp
 	include/THzImage/processing/easyWriter.hpp
 	include/THzImage/processing/fileInputNode.hpp
+	include/THzImage/processing/imageInputNode.hpp
 	include/THzImage/processing/readerlessNodeBase.hpp
 	include/THzImage/processing/screenInputNode.hpp
 	include/THzImage/processing/testInputNode.hpp
