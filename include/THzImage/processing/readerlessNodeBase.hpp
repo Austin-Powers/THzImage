@@ -14,7 +14,7 @@ namespace Terrahertz::ImageProcessing {
 ///
 /// @tparam TPixelType The type of pixel output by this node.
 template <Pixel TPixelType>
-class ReaderlessNodeBase : public Internal::INode<TPixelType>, IImageReader<TPixelType>
+class ReaderlessNodeBase : public INode<TPixelType>, IImageReader<TPixelType>
 {
 public:
     using MyImageType = Image<TPixelType>;

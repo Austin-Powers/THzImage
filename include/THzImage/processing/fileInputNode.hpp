@@ -12,7 +12,7 @@
 namespace Terrahertz::ImageProcessing {
 
 /// @brief Node for loading a directory of images, not including sub-directories.
-class FileInputNode : public Internal::INode<BGRAPixel>
+class FileInputNode : public INode<BGRAPixel>
 {
 public:
     /// @brief Shortcut to the mode enum from ImageDirectoryReader.

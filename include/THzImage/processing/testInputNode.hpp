@@ -8,7 +8,7 @@
 namespace Terrahertz::ImageProcessing {
 
 /// @brief Node for inserting test images into the node system.
-class TestInputNode : public Internal::INode<BGRAPixel>
+class TestInputNode : public INode<BGRAPixel>
 {
 public:
     /// @brief Initializes a new TestInputNode.

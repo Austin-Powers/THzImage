@@ -10,7 +10,7 @@
 namespace Terrahertz::ImageProcessing {
 
 /// @brief Node for taking screenshots as an image source.
-class ScreenInputNode : public Internal::INode<BGRAPixel>
+class ScreenInputNode : public INode<BGRAPixel>
 {
 public:
     /// @brief Initializes a new ScreenInputNode.

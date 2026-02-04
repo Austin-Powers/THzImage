@@ -20,7 +20,6 @@ enum class ToCountResult
     /// @brief Processing next image failed.
     Failure
 };
-namespace Internal {
 
 /// @brief The interface used by all image processing nodes.
 ///
@@ -66,7 +65,6 @@ public:
     [[nodiscard]] virtual size_t count() const noexcept = 0;
 };
 
-} // namespace Internal
 } // namespace Terrahertz::ImageProcessing
 
 #endif // !THZ_IMAGE_PROCESSING_INODE_HPP
