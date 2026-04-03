@@ -39,7 +39,7 @@ endif()
 find_package(X11)
 if(DEFINED X11_INCLUDE_DIR)
 add_definitions(-DUSING_X11)
-set(DS_LIBRARIES X11:X11)
+set(DS_LIBRARIES X11::X11)
 endif()
 
 add_subdirectory(png)
