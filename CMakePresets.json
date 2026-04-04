@@ -1,5 +1,10 @@
 {
   "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "windows-base",
@@ -10,7 +15,8 @@
       "installDir": "${sourceDir}/out/install/${presetName}",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe"
+        "CMAKE_CXX_COMPILER": "cl.exe",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       },
       "condition": {
         "type": "equals",
@@ -19,8 +25,8 @@
       }
     },
     {
-      "name": "x64-debug",
-      "displayName": "x64 Debug",
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
       "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
       "inherits": "windows-base",
       "architecture": {
@@ -32,13 +38,167 @@
       }
     },
     {
-      "name": "x64-release",
-      "displayName": "x64 Release",
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
       "description": "Target Windows (64-bit) with the Visual Studio development environment. (RelWithDebInfo)",
-      "inherits": "x64-debug",
+      "inherits": "win-x64-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
+    },
+    {
+      "name": "linux-base",
+      "description": "Target Linux with gcc and ninja-build",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "installDir": "${sourceDir}/out/install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "/usr/bin/gcc",
+        "CMAKE_CXX_COMPILER": "/usr/bin/g++",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "lin-x64-debug",
+      "displayName": "Linux x64 Debug",
+      "description": "Target Linux (64-bit) with GCC. (Debug)",
+      "inherits": "linux-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "lin-x64-release",
+      "displayName": "Linux x64 Release",
+      "description": "Target Linux (64-bit) with GCC. (RelWithDebInfo)",
+      "inherits": "lin-x64-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "windows-base",
+      "description": "Target Windows with the Visual Studio development environment.",
+      "hidden": true,
+      "jobs": 4,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "inherits": "windows-base",
+      "configurePreset": "win-x64-debug"
+    },
+    {
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "inherits": "windows-base",
+      "configurePreset": "win-x64-release"
+    },
+    {
+      "name": "linux-base",
+      "description": "Target Linux with gcc and ninja-build",
+      "hidden": true,
+      "jobs": 4,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "lin-x64-debug",
+      "displayName": "Linux x64 Debug",
+      "description": "Target Linux (64-bit) with GCC. (Debug)",
+      "inherits": "linux-base",
+      "configurePreset": "lin-x64-debug"
+    },
+    {
+      "name": "lin-x64-release",
+      "displayName": "Linux x64 Release",
+      "description": "Target Linux (64-bit) with GCC. (Release)",
+      "inherits": "linux-base",
+      "configurePreset": "lin-x64-release"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "windows-base",
+      "description": "Target Windows with the Visual Studio development environment",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "win-x64-debug",
+      "displayName": "Windows x64 Debug",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Debug)",
+      "inherits": "windows-base",
+      "configurePreset": "win-x64-debug"
+    },
+    {
+      "name": "win-x64-release",
+      "displayName": "Windows x64 Release",
+      "description": "Target Windows (64-bit) with the Visual Studio development environment. (Release)",
+      "inherits": "windows-base",
+      "configurePreset": "win-x64-release"
+    },
+    {
+      "name": "linux-base",
+      "description": "Target Linux with gcc and ninja-build",
+      "hidden": true,
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution": {
+        "stopOnFailure": true
+      }
+    },
+    {
+      "name": "lin-x64-debug",
+      "displayName": "Linux x64 Debug",
+      "description": "Target Linux (64-bit) with GCC. (Debug)",
+      "inherits": "linux-base",
+      "configurePreset": "lin-x64-debug"
+    },
+    {
+      "name": "lin-x64-release",
+      "displayName": "Linux x64 Release",
+      "description": "Target Linux (64-bit) with GCC. (Release)",
+      "inherits": "linux-base",
+      "configurePreset": "lin-x64-release"
     }
   ]
 }
