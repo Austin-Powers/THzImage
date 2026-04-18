@@ -285,4 +285,57 @@ TEST_F(CommonImage, Comparison)
     EXPECT_NE(image0, image1);
 }
 
+TEST_F(CommonImage, ConvertAndStoreReturnsFalseIfGivenImageIsEmpty)
+{
+    BGRAImage sutA{};
+    BGRAImage sutB{};
+
+    EXPECT_FALSE(sutA.convertAndStore(sutB));
+}
+
+TEST_F(CommonImage, ConvertAndStoreRegularOperation)
+{
+    Rectangle const dimensions{2U, 2U};
+    auto const      pixelCount = dimensions.area();
+
+    MiniHSVImage imageA{};
+    BGRAImage    imageB{};
+    MiniHSVImage imageC{};
+    MiniHSVImage imageD{};
+
+    EXPECT_TRUE(imageA.setDimensions(dimensions));
+    imageA[0U].content = 32U;
+    imageA[1U].content = 189U;
+    imageA[2U].content = 9U;
+    imageA[3U].content = 222U;
+
+    EXPECT_TRUE(imageB.convertAndStore(imageA));
+    EXPECT_TRUE(imageC.convertAndStore(imageB));
+    EXPECT_TRUE(imageD.convertAndStore(imageA));
+
+    EXPECT_EQ(dimensions, imageB.dimensions());
+    EXPECT_EQ(dimensions, imageC.dimensions());
+    EXPECT_EQ(dimensions, imageD.dimensions());
+
+    for (auto i = 0U; i < pixelCount; ++i)
+    {
+        BGRAPixel const expectedPixel = imageA[i];
+        EXPECT_EQ(expectedPixel, imageB[i]);
+    }
+    for (auto i = 0U; i < pixelCount; ++i)
+    {
+        EXPECT_EQ(imageA[i], imageC[i]);
+    }
+    for (auto i = 0U; i < pixelCount; ++i)
+    {
+        EXPECT_EQ(imageA[i], imageD[i]);
+    }
+}
+
+TEST_F(CommonImage, ConvertAndStoreCanHandleBeingGivenItself)
+{
+    // we expect true as the image is already a copy of itself, therefore the operation can be considered successful
+    EXPECT_TRUE(sut.convertAndStore(sut));
+}
+
 } // namespace Terrahertz::UnitTests
