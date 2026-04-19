@@ -3,6 +3,7 @@
 
 #include "THzCommon/logging/logging.hpp"
 #include "THzCommon/math/rectangle.hpp"
+#include "THzCommon/memory/addresshelper.hpp"
 #include "THzCommon/utility/spanhelpers.hpp"
 #include "iImageReader.hpp"
 #include "iImageTransformer.hpp"
@@ -77,30 +78,7 @@ public:
     template <Pixel TOtherType>
     [[nodiscard]] bool convertAndStore(Image<TOtherType> const &toConvert) noexcept
     {
-        if (toConvert.dimensions().area() == 0U)
-        {
-            return false;
-        }
-        if (!setDimensions(toConvert.dimensions()))
-        {
-            return false;
-        }
-        auto const pixelCount = _dimensions.area();
-        for (auto i = 0U; i < pixelCount; ++i)
-        {
-            _data[i] = toConvert[i];
-        }
-        return true;
-    }
-
-    /// @brief Converts the given image to this type and stores the result in this image.
-    /// @tparam TOtherType The other pixel type.
-    /// @param toConvert The image to convert and
-    /// @return True if operation was succesfull, false otherwise.
-    template <>
-    [[nodiscard]] bool convertAndStore(Image<TPixelType> const &toConvert) noexcept
-    {
-        if (this == &toConvert)
+        if (sameAddress(this, &toConvert))
         {
             return true;
         }
