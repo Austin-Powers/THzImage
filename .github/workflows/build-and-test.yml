@@ -16,22 +16,14 @@ jobs:
         run: sudo apt install gcc-11 g++-11
 
       - name: Create Build Environment
-        run: cmake -E make_directory ${{runner.workspace}}/build
-
-      - name: Configure CMake
-        shell: bash
-        working-directory: ${{runner.workspace}}/build
-        env:
-          CXX: /usr/bin/g++-11
-          CC: /usr/bin/gcc-11
-        run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_FLAGS=--coverage -DCMAKE_C_FLAGS=--coverage
+        run: pip install meson && meson setup ${{runner.workspace}}/build
 
       - name: Build
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: cmake --build . --config $BUILD_TYPE --target all
+        run: meson compile
 
       - name: Test
         working-directory: ${{runner.workspace}}/build
         shell: bash
-        run: ctest -C $BUILD_TYPE -V
+        run: meson test

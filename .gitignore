@@ -40,5 +40,6 @@ out/
 obj/
 bin/
 
-# libpng shenanigans
-pnglibconf.h
+# Meson
+subprojects/*
+!subprojects/*.wrap
