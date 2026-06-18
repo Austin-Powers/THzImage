@@ -94,7 +94,7 @@ private:
     std::uint32_t _pixelsToSkip{};
 };
 
-/// @brief Used for stepping through the line buffer and creating the matrizes for the transformation.
+/// @brief Used for stepping through the line buffer and creating the matrices for the transformation.
 ///
 /// @tparam TPixelType The type of pixel used by the transformer.
 template <Pixel TPixelType>
@@ -208,7 +208,7 @@ struct ConvolutionTransformerProject
     static constexpr char const *name() noexcept { return "THzImage.Transformation.Convolution"; }
 };
 
-/// @brief Checks and stores the paramters of convolution transformation.
+/// @brief Checks and stores the parameters of convolution transformation.
 class ConvolutionParameters
 {
 public:
@@ -442,7 +442,7 @@ private:
     /// @brief A ringbuffer for the lines of the wrapped transformer.
     Internal::LineBuffer<TPixelType> _lineBuffer;
 
-    /// @brief Helps divide the line buffer into the pointer types representing the matrizes given to the
+    /// @brief Helps divide the line buffer into the pointer types representing the matrices given to the
     /// transformation.
     Internal::MatrixHelper<TPixelType> _matrixHelper;
 };

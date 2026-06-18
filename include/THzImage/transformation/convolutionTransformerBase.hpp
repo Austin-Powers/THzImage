@@ -36,7 +36,7 @@ public:
         // prepare buffer content
         for (; _buffer.count > 0U; --_buffer.count)
         {
-            // skip transformations of pixels not needed for future matrizes
+            // skip transformations of pixels not needed for future matrices
             if (!((_buffer.count > _buffer.size) ? _wrapped->skip() : _wrapped->transform(*_buffer.curPtr)))
             {
                 return false;
@@ -133,7 +133,7 @@ public:
                                std::uint32_t &matrixShiftY) noexcept = 0;
 
     /// @brief This method is the filter kernel for the convolution implementation.
-    /// The base class will extract matrizes from the image going left to right,
+    /// The base class will extract matrices from the image going left to right,
     /// top to bottom using the parameters taken from getParameters(...).
     /// The task if this method is turning the given matrix into a single pixel that can then be handed to the next
     /// transformer in the processing chain.

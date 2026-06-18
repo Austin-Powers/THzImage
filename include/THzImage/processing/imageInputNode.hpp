@@ -8,7 +8,7 @@ namespace Terrahertz::ImageProcessing {
 
 /// @brief Node for putting a single image into the processing chain.
 /// This can be used to perform processing on a single image
-/// or to manipulate the image between processing runsssss.
+/// or to manipulate the image between processing runs.
 class ImageInputNode : public INode<BGRAPixel>
 {
 public:

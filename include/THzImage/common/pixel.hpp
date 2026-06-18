@@ -9,7 +9,7 @@
 
 namespace Terrahertz {
 
-/// @brief Struct for a blue green read alpha pixel using 8 bits per channel.
+/// @brief Struct for a blue green red alpha pixel using 8 bits per channel.
 struct BGRAPixel
 {
     /// @brief Blue value of the pixel.
@@ -91,7 +91,7 @@ struct BGRAPixel
     BGRAPixel diffAbs(BGRAPixel const &other) const noexcept;
 };
 
-/// @brief Struct for a blue green read alpha pixel using a custom data type for the channels.
+/// @brief Struct for a blue green red alpha pixel using a custom data type for the channels.
 ///
 /// This struct offers operators for doing math with the regular BGRAPixel,
 /// to for instance calculate the average color of a set of pixels.
@@ -165,7 +165,7 @@ struct TemplatedBGRAPixel
 
     /// @brief Cast operator to convert this instance into a regular BGRAPixel.
     ///
-    /// @return A BGRAPixel, the Ting point value will be clamped to the std::uint8_t range.
+    /// @return A BGRAPixel, the floating point value will be clamped to the std::uint8_t range.
     operator BGRAPixel() const noexcept
     {
         auto const convert = [](T value) noexcept -> std::uint8_t {
