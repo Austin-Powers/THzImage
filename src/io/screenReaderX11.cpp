@@ -1,12 +1,24 @@
 #include "THzImage/common/displayserver.hpp"
 #ifdef THZ_IMAGE_X11_SCREENREADER_USED
 
+#include "THzCommon/logging/logging.hpp"
 #include "THzImage/io/screenReader.hpp"
 
-#include "THzCommon/logging/logging.hpp"
 
-#include <cstdint>
+/*
+TODO From the old CMake setup, need to figure out how to do that in meson
+
+# inlude X11 lib if possible
+find_package(X11)
+if(DEFINED X11_INCLUDE_DIR)
+add_definitions(-DUSING_X11)
+set(DS_LIBRARIES X11::X11)
+endif()
+*/
+
 #include <X11/Xlib.h>
+#include <cstdint>
+
 
 namespace Terrahertz::Screen {
 
@@ -16,10 +28,7 @@ struct ReaderProject
     static constexpr char const *name() noexcept { return "THzImage.IO.ScreenReader"; }
 };
 
-Rectangle Reader::getScreenDimensions() noexcept
-{
-    return Rectangle{};
-}
+Rectangle Reader::getScreenDimensions() noexcept { return Rectangle{}; }
 
 /// @brief Implementation of the Reader.
 struct Reader::Impl
@@ -68,16 +77,13 @@ struct Reader::Impl
     ///
     /// @param buffer The buffer to store the image data in.
     /// @return True on successful reading, false otherwise.
-    [[nodiscard]] bool read(gsl::span<BGRAPixel> buffer) noexcept
-    {
-        return false;
-    }
+    [[nodiscard]] bool read(gsl::span<BGRAPixel> buffer) noexcept { return false; }
 
     /// @brief The area on the screen the reader captures.
     Rectangle _area{};
 
     /// @brief Pointer to the connection to the X-Server.
-    Display* _display{};
+    Display *_display{};
 };
 
 Reader::Reader() noexcept { _impl.init(getScreenDimensions()); }
@@ -125,7 +131,7 @@ extern "C"
     {
         union
         {
-            PIX_BGR0 bgr;
+            PIX_BGR0      bgr;
             std::uint32_t u32;
         };
     } SCRREC_PIX;
@@ -150,7 +156,7 @@ extern "C"
     // internal functions
     typedef struct _scr_rec_capture SCRREC_CAPTURE;
 
-    std::uint8_t        ScrWin_Init(SCRREC_CAPTURE **retSC);
+    std::uint8_t ScrWin_Init(SCRREC_CAPTURE **retSC);
     void         ScrWin_Deinit(SCRREC_CAPTURE *sc);
     SCRREC_IMAGE ScrWin_Image(SCRREC_CAPTURE *sc, const SCRREC_RECT *rect);
     void         ScrWin_FreeImage(SCRREC_IMAGE *si);
@@ -165,13 +171,14 @@ extern "C"
 
 // .c
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <X11/Xutil.h>
+
 
 struct _scr_rec_capture
 {
@@ -234,17 +241,17 @@ static Window GetProp_Window(Display *disp, Window win, const char *propName)
 
     propNameA = XInternAtom(disp, propName, False);
     retVal    = XGetWindowProperty(disp,
-                                win,
-                                propNameA,
-                                0x00,
-                                sizeof(Window) / 4,
-                                False,
-                                XA_WINDOW,
-                                &retPropType,
-                                &propBits,
-                                &nItems,
-                                &bytesLeft,
-                                (unsigned char **)&retWindow);
+                                   win,
+                                   propNameA,
+                                   0x00,
+                                   sizeof(Window) / 4,
+                                   False,
+                                   XA_WINDOW,
+                                   &retPropType,
+                                   &propBits,
+                                   &nItems,
+                                   &bytesLeft,
+                                   (unsigned char **)&retWindow);
     if (retVal != Success)
         return 0;
     winID = (nItems >= 1) ? retWindow[0] : 0;
