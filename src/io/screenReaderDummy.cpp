@@ -1,10 +1,12 @@
 #include "THzImage/common/displayserver.hpp"
 #ifdef THZ_IMAGE_DUMMY_SCREENREADER_USED
 
+#include "THzCommon/math/rectangle.hpp"
 #include "THzImage/io/screenReader.hpp"
 
-#include "THzCommon/math/rectangle.hpp"
 namespace Terrahertz::Screen {
+
+Rectangle Reader::getScreenDimensions() noexcept { return Rectangle{800U, 600U}; }
 
 struct Reader::Impl
 {};
