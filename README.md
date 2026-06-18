@@ -5,8 +5,8 @@ Collection of classes, functions and templates for image processing.
 - __analysis__ Classes and functions for analyzing images
 - __common__ Common image related classes used throughout the library
 - __handling__ Classes related to storing multiple images in memory
-- __io__ Classes realted to reading and writing image from and to files
-- __processing__ Classes for conventiently building processing chains for images
+- __io__ Classes related to reading and writing image from and to files
+- __processing__ Classes for conveniently building processing chains for images
 - __transformation__ Classes for transforming images data
 
 ## Details
@@ -42,8 +42,8 @@ Below is more detailed information about the contents of each subdirectory.
 - __`definition BGRAImageView`__ _(imageView.hpp)_ Using declaration for an image view using BGRAPixel.
 - __`definition BGRAImageView`__ _(imageView.hpp)_ Using declaration for an image view using HSVAPixel.
   
-- __`struct BGRAPixel`__ _(pixel.hpp)_ Struct for a blue green read alpha pixel using 8 bits per channel.
-- __`struct TemplatedBGRAPixel`__ _(pixel.hpp)_ Struct for a blue green read alpha pixel using a custom data type for the channels. This struct offers operators for doing math with the regular BGRAPixel, to for instance calculate the average color of a set of pixels.
+- __`struct BGRAPixel`__ _(pixel.hpp)_ Struct for a blue green red alpha pixel using 8 bits per channel.
+- __`struct TemplatedBGRAPixel`__ _(pixel.hpp)_ Struct for a blue green red alpha pixel using a custom data type for the channels. This struct offers operators for doing math with the regular BGRAPixel, to for instance calculate the average color of a set of pixels.
 - __`struct HSVAPixel`__ _(pixel.hpp)_ Struct for HSVA pixel.
 - __`struct MiniHSVPixel`__ _(pixel.hpp)_ Struct for a size reduced HSV pixel.
 - __`definition BGRAPixelFloat`__ _(pixel.hpp)_ Shortcut to a templated BGRAPixel class using float.
@@ -103,7 +103,7 @@ Below is more detailed information about the contents of each subdirectory.
   
 - __`class FileInputNode`__ _(fileInputNode.hpp)_ Node for loading a directory of images, not including sub-directories.
   
-- __`class ImageInputNode`__ _(imageInputNode.hpp)_ Node for putting a single image into the processing chain. This can be used to perform processing on a single image or to manipulate the image between processing runsssss.
+- __`class ImageInputNode`__ _(imageInputNode.hpp)_ Node for putting a single image into the processing chain. This can be used to perform processing on a single image or to manipulate the image between processing runs.
   
 - __`enum ToCountResult`__ _(iNode.hpp)_ The different results that can be produced by the toCount method of an node.
 - __`class INode`__ _(iNode.hpp)_ The interface used by all image processing nodes.
@@ -120,9 +120,9 @@ Below is more detailed information about the contents of each subdirectory.
 - __`class BorderTransformer`__ _(borderTransformer.hpp)_ Transformer adding a border to an image.
   
 - __`class LineBuffer`__ _(convolutionTransformer.hpp)_ Stores the lines needed for running the transformation.
-- __`class MatrixHelper`__ _(convolutionTransformer.hpp)_ Used for stepping through the line buffer and creating the matrizes for the transformation.
+- __`class MatrixHelper`__ _(convolutionTransformer.hpp)_ Used for stepping through the line buffer and creating the matrices for the transformation.
 - __`struct ConvolutionTransformerProject`__ _(convolutionTransformer.hpp)_ Name provider for the THzImage.IO.BMP.Reader class.
-- __`class ConvolutionParameters`__ _(convolutionTransformer.hpp)_ Checks and stores the paramters of convolution transformation.
+- __`class ConvolutionParameters`__ _(convolutionTransformer.hpp)_ Checks and stores the parameters of convolution transformation.
 - __`concept ConvolutionTransformation`__ _(convolutionTransformer.hpp)_ 
 - __`class ConvolutionTransformer`__ _(convolutionTransformer.hpp)_ Class wrapping Pixel-Matrix-to-Pixel transformation algorithms        to make them implement the IImageTransformer interface.
   
@@ -134,4 +134,3 @@ Below is more detailed information about the contents of each subdirectory.
 - __`concept PixelTransformation`__ _(pixelTransformer.hpp)_ Concept of a class transforming pixels of TPixelType.
 - __`class PixelTransformer`__ _(pixelTransformer.hpp)_ Class wrapping Pixel-to-Pixel transformation algorithms        to make them implement the IImageTransformer interface.
   
-
